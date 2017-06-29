@@ -1,6 +1,6 @@
-Dependencies: jupyter, pandas, numpy, beautifulsoup4, pillow, json, sqlite3
+Dependencies: jupyter, pandas, numpy, beautifulsoup4, json, sqlite3
 
 1. Install python3 environment
 2. pip install -upgrade pip
 3. pip install xxx 
-   where xxx is in [jupyter, pandas, numpy, beautifulsoup4, pillow, json, sqlite3]
+   where xxx is in [jupyter, pandas, numpy, beautifulsoup4, json, sqlite3]
