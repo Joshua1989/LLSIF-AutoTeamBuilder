@@ -61,7 +61,7 @@ class Card:
 				 is_valid(bond, 0, self.max_bond),
 				 is_valid(skill_level, 1, 8),
 				 is_valid(slot_num, self.min_slot_num, self.max_slot_num)]
-		is_none = [x is None for x in [level, bond, skill_level, slot_num]]
+		is_none = [x is None for x in [level, bond, slot_num, skill_level]]
 		if not all(check):
 			attr_name = np.array(['Level', 'Bond', 'Skill Level', 'Slot Number'])
 			print(self)
@@ -71,7 +71,8 @@ class Card:
 		new_attr = np.array([self.level, self.bond, self.slot_num, 0 if self.skill is None else self.skill.level], dtype=int)
 		new_attr[not_none] = np.array([level, bond, slot_num, 0 if skill_level is None else skill_level])[not_none]
 		self.level, self.bond, self.slot_num, skill_level = new_attr
-		if self.skill is not None: self.skill.set_level(skill_level)
+		if self.skill is not None and skill_level in list(range(1,9)): 
+			self.skill.set_level(skill_level)
 		self.smile, self.pure, self.cool, self.hp = [self.stats_list[self.level-1][i] for i in [0,1,2,5]]
 	def idolize(self, idolized=True):
 		self.idolized = idolized or self.promo
