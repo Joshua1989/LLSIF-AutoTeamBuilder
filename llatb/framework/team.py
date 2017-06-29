@@ -184,7 +184,7 @@ class Team:
 	def to_LLHelper(self, filename):
 		def card_string(card):
 			card_field_list = ['smile', 'pure', 'cool', 'skilllevel', 'cardid', 'mezame']
-			gem_field_list = ['gemnum', 'gemsinglepercent', 'gemallpercent', 'gemskill', 'gemacc']
+			gem_field_list = ['gemnum', 'gemsinglepercent', 'gemallpercent', 'gemskill', 'gemacc', 'maxcost']
 			gem_data = {k:0 for k in gem_field_list}
 			for gem in card.equipped_gems:
 				if 'Kiss' in gem.name and gem.attribute == card.main_attr:
@@ -203,6 +203,7 @@ class Team:
 					gem_data['gemskill'] = 1
 				if 'Trick' in gem.name:
 					gem_data['gemacc'] = 1
+			gem_data['maxcost'] = card.slot_num
 			field_name = card_field_list + gem_field_list
 			field_val  = [  card.smile + card.bond * (card.main_attr=='Smile'), 
 							card.pure + card.bond * (card.main_attr=='Pure'), 
