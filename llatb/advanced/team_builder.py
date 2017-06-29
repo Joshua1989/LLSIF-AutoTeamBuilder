@@ -184,7 +184,40 @@ class TeamBuilder:
 			best_gem_score += alloc_list[0][1]
 
 		return team_info, team_base_score, best_gem_score, CR
-	def find_optimal_gem_allocation(self, alloc_info, Qmax_init=0, first_alloc=None, first_Q=None):
+	def find_optimal_gem_allocation_DP(self, alloc_info):
+		def check_feasible(plan):
+			remain = self.owned_gem.copy()
+			for alloc in plan:
+				for gem in alloc:
+					remain[gem] -= 1
+					if remain[gem] < 0:
+						return False
+			return True
+
+		# Initialize trellis
+		trellis = [[[[],[],0] for i in range(9)]]
+		# Construct trellis
+		for i in range(9):
+			stage = []
+			for alloc, score in alloc_info[i]:
+				next_plan, next_score_list, next_cum_score = [], [], 0
+				# For each allocation in stage i, find the next feasible step with maximum score
+				for plan, score_list, cum_score in trellis[-1]:
+					temp_plan, temp_score_list, temp_cum_score = plan+[alloc], score_list+[score], cum_score+score
+					if temp_cum_score > next_cum_score and check_feasible(temp_plan):
+						next_plan, next_score_list, next_cum_score = temp_plan, temp_score_list, temp_cum_score
+				if len(next_plan) > 0:
+					stage.append([next_plan, next_score_list, next_cum_score])
+			trellis.append(stage)
+
+		# Find best allocation and its score
+		best_plan, best_score_list, Qmax = None, None, 0
+		for plan, score_list, cum_score in trellis[-1]:
+			if cum_score > Qmax:
+				best_plan, best_score_list, Qmax = plan, score_list, cum_score
+		x_opt = [[best_plan[i], best_score_list[i]] for i in range(9)]
+		return x_opt, Qmax
+	def find_optimal_gem_allocation_DC(self, alloc_info, Qmax_init=0, first_alloc=None, first_Q=None):
 		# Find the most scarce gem type
 		best_case, scarce_gem, max_lack = defaultdict(lambda:False), None, 0
 		for i in range(9):
@@ -211,10 +244,10 @@ class TeamBuilder:
 				first_alloc, first_Q = [x[0] for x in sub_alloc_info], sum([x[0][1] for x in sub_alloc_info])
 				# If the best allocation in subproblem has larger strength, then it is worth exploring
 				if first_Q > Qmax:
-					x_sol, Qsol = self.find_optimal_gem_allocation(sub_alloc_info, Qmax, first_alloc, first_Q)
+					x_sol, Qsol = self.find_optimal_gem_allocation_DC(sub_alloc_info, Qmax, first_alloc, first_Q)
 					if Qsol > Qmax: x_opt, Qmax = x_sol, Qsol
 		return x_opt, Qmax
-	def build_team_fix_cskill(self, cskill, K=15, method='4-suboptimal'):
+	def build_team_fix_cskill(self, cskill, K=15, method='4-suboptimal', alloc_method='DP'):
 		def find_candidates(cskill, K):
 			# Compute rough strength
 			rough_strength_info = self.compute_rough_strength(cskill=cskill)
@@ -243,7 +276,10 @@ class TeamBuilder:
 			# If the best possible score is less than max score, drop this case
 			if team_base_score + best_gem_score < max_score: return None
 			# Solve for best gem allocation
-			alloc_info, alloc_score = self.find_optimal_gem_allocation([item['gem_alloc_list'] for item in team_info])
+			if alloc_method == 'DP':
+				alloc_info, alloc_score = self.find_optimal_gem_allocation_DP([item['gem_alloc_list'] for item in team_info])
+			elif alloc_method == 'DC':
+				alloc_info, alloc_score = self.find_optimal_gem_allocation_DC([item['gem_alloc_list'] for item in team_info])
 			# Compute total score
 			total_score = team_base_score + alloc_score
 			return team_info, alloc_info, total_score, CR
@@ -309,7 +345,7 @@ class TeamBuilder:
 			print('Unrecognized method {0}, only support brute and t-suboptimal'.format(method))
 			raise		
 		return max_score, best_team
-	def build_team(self, K=15, method='4-suboptimal'):
+	def build_team(self, K=15, method='4-suboptimal', alloc_method='DP'):
 		def find_candidate_cskill():
 			# Enumerate center skill of the highest rarity card that have same attribute with live
 			rarity_list = ['UR','SSR','SR','R']
@@ -331,7 +367,7 @@ class TeamBuilder:
 		max_score, best_team = 0, None
 		print('Consider center skill in', [str(cskill) for cskill in cskill_list])
 		for cskill in cskill_list:
-			score, team = self.build_team_fix_cskill(cskill=cskill, K=K, method=method)
+			score, team = self.build_team_fix_cskill(cskill=cskill, K=K, method=method, alloc_method=alloc_method)
 			result.append((score, team))
 			print('Best team has score {0:6d} for {1}'.format(score, cskill))
 			if score > max_score:

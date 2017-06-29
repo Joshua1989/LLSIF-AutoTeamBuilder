@@ -70,6 +70,7 @@ gem_skill_id_dict = { 1:'Smile Kiss',		 	 2:'Pure Kiss',				 3:'Cool Kiss',
 					 31:'Princess Charm',		32:'Princess Heal',			33:'Princess Trick',
 					 34:'Angel Charm',			35:'Angel Heal',			36:'Angel Trick',
 					 37:'Empress Charm',		38:'Empress Heal',			39:'Empress Trick'}
+gem_skill_id_rev_dict = {v:k for k,v in gem_skill_id_dict.items()}
 # Center Skill relevant
 muse = np.array(['Kosaka Honoka', 'Minami Kotori', 'Sonoda Umi', 
 			   'Koizumi Hanayo', 'Hoshizora Rin', 'Nishikino Maki', 
