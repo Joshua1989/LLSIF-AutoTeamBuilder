@@ -101,74 +101,96 @@ class TeamBuilder:
 			gem_alloc[i] += unique(temp)
 		gem_alloc_list = [ [alloc,0] for k,v in gem_alloc.items() for alloc in v if k <= card.slot_num ]
 		return gem_alloc_list
-	def update_gem_score(self, team_info):
+	def compute_card_stats(self, center, card):
+		res = dict()
+		# Compute same group & same color bonus
+		res['mu'] = attr_match_factor**(self.live.attr==card.main_attr) * group_match_factor**(self.live.group in card.tags)
+		# Compute judge cover rate
+		res['CR'] = 0 if card.skill is None or card.skill.effect_type not in ['Weak Judge', 'Strong Judge'] else card.skill.skill_gain(setting=self.setting)[0]
+		# Compute center skill bonus and card base score before same group & same color bonus
+		partial_boost = self.live.pts_per_strength * self.setting['score_up_rate']
+		res['base_bond_value'] = getattr(card, self.live.attr.lower()) + card.bond * (card.main_attr==self.live.attr) 
+		res['cskill_bonus'], res['base_score'] = 0, 0
+		if center.cskill is not None:
+			if center.cskill.main_attr == self.live.attr:
+				if center.cskill.base_attr == self.live.attr:
+					res['cskill_bonus'] += center.cskill.main_ratio/100
+				else:
+					res['base_score'] += getattr(card,center.cskill.base_attr.lower())*partial_boost*center.cskill.main_ratio/100
+				if center.cskill.bonus_ratio is not None:
+					res['cskill_bonus'] += (center.cskill.bonus_range in card.tags) * center.cskill.bonus_ratio/100
+		if self.guest_cskill is not None: 
+			if self.guest_cskill.main_attr == self.live.attr:
+				if self.guest_cskill.base_attr == self.live.attr:
+					res['cskill_bonus'] += self.guest_cskill.main_ratio/100
+				else:
+					res['base_score'] += getattr(card,self.guest_cskill.base_attr.lower())*partial_boost*self.guest_cskill.main_ratio/100
+				if self.guest_cskill.bonus_ratio is not None:
+					res['cskill_bonus'] += (self.guest_cskill.bonus_range in card.tags) * self.guest_cskill.bonus_ratio/100
+		res['base_score'] += res['base_bond_value']*partial_boost*(1+res['cskill_bonus'])
+		# For skills that are not Score or Perfect or Star Perfect triggered, we do not need to compute it again
+		if card.skill is not None and card.skill.effect_type in ['Score Up', 'Stamina Restore']:
+			if card.skill.trigger_type not in ['Score', 'Perfect', 'Star']:
+				skill_gain = card.skill.skill_gain(setting=self.setting)[0]
+				if card.skill.effect_type == 'Score Up':
+					res['skill_gain'] = skill_gain
+				elif card.skill.effect_type == 'Stamina Restore':
+					res['skill_gain'] = skill_gain
+		return res
+	def update_gem_score(self, team_info, sort=False):
 		# Compute Average Position Bonus
-		bonus = lambda card: attr_match_factor**(self.live.attr==card.main_attr) * group_match_factor**(self.live.group in card.tags)
-		mu = np.array([bonus(item['card']) for item in team_info[1:]])
+		mu = np.array([item['stats']['mu'] for item in team_info[1:]])
 		zeta = self.live.combo_weight_fraction.copy()[[0,1,2,3,5,6,7,8]]
 		mu.sort()
 		zeta.sort()
-		mu_bar = bonus(team_info[0]['card']) * self.live.combo_weight_fraction[4] + (mu*zeta).sum()
-
-		# Compute team total cover rate and base+bond attribute
-		temp, base_bond_value = np.ones(9), np.zeros(9)
-		for i, item in enumerate(team_info):
-			card = item['card']
-			base_bond_value[i] = getattr(card, self.live.attr.lower()) + card.bond * (card.main_attr==self.live.attr)
-			if card.skill is not None and card.skill.effect_type in ['Weak Judge', 'Strong Judge']:
-				temp[i] -= card.skill.skill_gain(setting=self.setting)[0]
-		CR, team_base_bond_value = 1 - temp.prod(), base_bond_value.sum()
-
+		mu_bar = team_info[0]['stats']['mu'] * self.live.combo_weight_fraction[4] + (mu*zeta).sum()
+		# Compute team total cover rate
+		CR = 1 - (1-np.array([item['stats']['CR'] for item in team_info])).prod()
 		# Update settings to compute skill gain of Skill Up and Stamina Restore skills
 		new_setting = self.setting.copy()
 		new_setting['attr_group_factor'] = mu_bar
 		new_setting['perfect_rate'] = 1 - (1-self.live.perfect_rate) * (1-CR)
+		# Compute strength per tap after amending perfect rate
+		for item in team_info:
+			if item['card'].skill is not None:
+				strength_per_pt_tap = item['card'].skill.skill_gain(setting=new_setting)[1]
 
+		cskill_bonus = np.array([item['stats']['cskill_bonus'] for item in team_info])
+		base_bond_value = np.array([item['stats']['base_bond_value'] for item in team_info])
+		team_base_bond_value = base_bond_value.sum()
 		# Compute gem score for each card
-		cskill = team_info[0]['card'].cskill
+		boost = self.live.pts_per_strength * mu_bar * self.setting['score_up_rate']
 		team_base_score, best_gem_score = 0, 0
 		for i, item in enumerate(team_info):
-			card = item['card']
-			# Compute center skill bonus of the live attribute
-			boost = self.live.pts_per_strength * mu_bar * self.setting['score_up_rate']
-			cskill_bonus = 0
-			if cskill is not None:
-				if cskill.main_attr == self.live.attr:
-					if cskill.base_attr == self.live.attr:
-						cskill_bonus += cskill.main_ratio/100
-					else:
-						team_base_score += math.ceil(getattr(card,cskill.base_attr.lower())*boost*cskill.main_ratio/100)
-					if cskill.bonus_ratio is not None:
-						cskill_bonus += (cskill.bonus_range in card.tags) * cskill.bonus_ratio/100
-			if self.guest_cskill is not None: 
-				if self.guest_cskill.main_attr == self.live.attr:
-					if self.guest_cskill.base_attr == self.live.attr:
-						cskill_bonus += self.guest_cskill.main_ratio/100
-					else:
-						team_base_score += math.ceil(getattr(card,self.guest_cskill.base_attr.lower())*boost*self.guest_cskill.main_ratio/100)
-					if self.guest_cskill.bonus_ratio is not None:
-						cskill_bonus += (self.guest_cskill.bonus_range in card.tags) * self.guest_cskill.bonus_ratio/100
-			team_base_score += math.ceil(base_bond_value[i]*boost*(1+cskill_bonus))
+			card, stats = item['card'], item['stats']
+			team_base_score += math.ceil(stats['base_score']*mu_bar)
 			# Compute the score of each gem
 			attr, attr2 = self.live.attr, ['Princess', 'Angel', 'Empress'][attr_list.index(card.main_attr)]
 			grade = ['('+x.replace('-year', ')') for x in card.tags if 'year' in x][0]
-			gem_score = {attr +' Kiss'			:math.ceil(200*boost*(1+cskill_bonus)), 
-						 attr +' Perfume'		:math.ceil(450*boost*(1+cskill_bonus)), 
-						 attr +' Ring ' + grade	:math.ceil(base_bond_value[i]*0.1*boost*(1+cskill_bonus)), 
-						 attr +' Cross '+ grade	:math.ceil(base_bond_value[i]*0.16*boost*(1+cskill_bonus)), 
-						 attr +' Aura'			:math.ceil(team_base_bond_value*0.018*boost*(1+cskill_bonus)),
-						 attr +' Veil'			:math.ceil(team_base_bond_value*0.024*boost*(1+cskill_bonus))}
+			gem_score = {attr +' Kiss'			:math.ceil(200*boost*(1+cskill_bonus[i])), 
+						 attr +' Perfume'		:math.ceil(450*boost*(1+cskill_bonus[i])), 
+						 attr +' Ring ' + grade	:math.ceil(base_bond_value[i]*0.1*boost*(1+cskill_bonus[i])), 
+						 attr +' Cross '+ grade	:math.ceil(base_bond_value[i]*0.16*boost*(1+cskill_bonus[i])), 
+						 attr +' Aura'			:math.ceil(team_base_bond_value*0.018*boost*(1+cskill_bonus[i])),
+						 attr +' Veil'			:math.ceil(team_base_bond_value*0.024*boost*(1+cskill_bonus[i]))}
 			if self.live.attr == card.main_attr:
 				gem_score[attr2+' Trick'] = math.ceil(0.33*CR*base_bond_value[i]*boost)
 			if card.skill is not None and card.skill.effect_type in ['Score Up', 'Stamina Restore']:
-				skill_gain, strength_per_pt_tap = card.skill.skill_gain(setting=new_setting)
-				if card.skill.effect_type == 'Score Up':
-					gem_score[attr2+' Charm'] = math.ceil(skill_gain*1.5*strength_per_pt_tap*self.live.pts_per_strength)
-					team_base_score += math.ceil(skill_gain*strength_per_pt_tap*self.live.pts_per_strength)
-				elif card.skill.effect_type == 'Stamina Restore':
-					gem_score[attr2+' Heal'] = math.ceil(skill_gain*480*strength_per_pt_tap*self.live.pts_per_strength)
+				if card.skill.trigger_type in ['Score', 'Perfect', 'Star']:
+					skill_gain = card.skill.skill_gain(setting=new_setting)[0]
+					if card.skill.effect_type == 'Score Up':
+						gem_score[attr2+' Charm'] = math.ceil(skill_gain*1.5*strength_per_pt_tap*self.live.pts_per_strength)
+						team_base_score += math.ceil(skill_gain*strength_per_pt_tap*self.live.pts_per_strength)
+					elif card.skill.effect_type == 'Stamina Restore':
+						gem_score[attr2+' Heal'] = math.ceil(skill_gain*480*strength_per_pt_tap*self.live.pts_per_strength)
+				else:
+					if card.skill.effect_type == 'Score Up':
+						gem_score[attr2+' Charm'] = math.ceil(stats['skill_gain']*1.5*strength_per_pt_tap*self.live.pts_per_strength)
+						team_base_score += math.ceil(stats['skill_gain']*strength_per_pt_tap*self.live.pts_per_strength)
+					elif card.skill.effect_type == 'Stamina Restore':
+						gem_score[attr2+' Heal'] = math.ceil(stats['skill_gain']*480*strength_per_pt_tap*self.live.pts_per_strength)
 			# Compute the score of each gem allocation and store
-			alloc_list = item['gem_alloc_list']
+			alloc_list, max_alloc_score = item['gem_alloc_list'], 0
 			for alloc in alloc_list:
 				alloc[1] = 0
 				# If allocation does not contain Trick gem, simply sum them up
@@ -177,42 +199,136 @@ class TeamBuilder:
 				if attr2+' Trick' in alloc[0]:
 					for gem in alloc[0]: 
 						if gem.split()[1] in ['Kiss', 'Perfume', 'Ring', 'Cross']:
-							alloc[1] += math.ceil(0.33*CR*gem_score[gem]/(1+cskill_bonus/100))
+							alloc[1] += math.ceil(0.33*CR*gem_score[gem]/(1+cskill_bonus[i]/100))
+				if alloc[1] > max_alloc_score:
+					max_alloc_score = alloc[1]
+			# Compute total gem score
+			best_gem_score += max_alloc_score
 			# Sort all possible allocation by score
-			alloc_list.sort(key=lambda x: x[1], reverse=True)
-			# Compute team base
-			best_gem_score += alloc_list[0][1]
-
+			if sort: alloc_list.sort(key=lambda x: x[1], reverse=True)
 		return team_info, team_base_score, best_gem_score, CR
-	def find_optimal_gem_allocation_DP(self, alloc_info):
-		def check_feasible(plan):
-			remain = self.owned_gem.copy()
-			for alloc in plan:
-				for gem in alloc:
-					remain[gem] -= 1
-					if remain[gem] < 0:
-						return False
-			return True
+	def find_candidates(self, cskill, K):
+		# Compute rough strength
+		rough_strength_info = self.compute_rough_strength(cskill=cskill)
+		# Find the best card and choose it to be the center, and find K best cards from the rest for candidates
+		center, candidates, k = None, [], 0
+		for index, card, rough_strength, same_cskill in rough_strength_info:
+			if same_cskill and center is None:
+				center = {'index':index, 'card':card, 
+						  'rough_strength':rough_strength[self.live.attr]['strength'],
+						  'gem_alloc_list':self.list_gem_allocation(card)}
+			elif k < K:
+				candidates.append({'index':index, 'card':card, 
+								   'rough_strength':rough_strength[self.live.attr]['strength'],
+								   'gem_alloc_list':self.list_gem_allocation(card)})
+				k += 1
+			if center is not None and k >= K: break
+		if center is None:
+			print('There is no card has center skill', cskill)
+			raise
+		else:
+			center['stats'] = self.compute_card_stats(center['card'], center['card'])
+			for card_info in candidates:
+				card_info['stats'] = self.compute_card_stats(center['card'], card_info['card'])
+		return center, candidates
+	def find_optimal_gem_allocation_DP(self, team_info):
+		alloc_info = [item['gem_alloc_list'] for item in team_info]
+		# Compute the highest possible gem score for each card to help to prune branch
+		max_single_alloc_score = np.zeros(9)
+		for i in range(9):
+			for alloc, score in alloc_info[i]:
+				if score > max_single_alloc_score[i]:
+					max_single_alloc_score[i] = score
+		remain_max = max_single_alloc_score.sum()
+
+		# Compute auxiliary info from card, grade, skill gem type
+		attr2_list, grade_append = ['Princess', 'Angel', 'Empress'], [('(1st)'), '(2nd)', '(3rd)']
+		card_aux = [{'grade':None, 'grade_idx':None, 'attr2':None, 'charm_idx':None, 'heal_idx':None} for i in range(9)]
+		# Count members in each grade and has each type of skills to help to merge branch
+		grade_count, charm_count, heal_count = np.zeros(3), np.zeros(3), np.zeros(3)
+		for i, item in enumerate(team_info):
+			card = item['card']
+			grade = [int(tag[0]) for tag in card.tags if '-year' in tag]
+			if len(grade) > 0: 
+				card_aux[i]['grade'], grade_str = grade[0]-1, grade_append[grade[0]-1]
+				card_aux[i]['grade_idx'] = [self.gem_rev_dict[self.live.attr+' Ring '+grade_str], 
+									 		self.gem_rev_dict[self.live.attr+' Cross '+grade_str]]
+				grade_count[card_aux[i]['grade']] += 1
+			if card.skill is not None and card.skill.effect_type in ['Score Up', 'Stamina Restore']:
+				card_aux[i]['attr2'] = attr_list.index(team_info[i]['card'].main_attr)
+				attr2 = attr2_list[card_aux[i]['attr2']]
+				if card.skill.effect_type == 'Score Up':
+					card_aux[i]['charm_idx'] = self.gem_rev_dict[attr2+' Charm']
+					charm_count[card_aux[i]['charm_idx']-self.gem_rev_dict['Princess Charm']] += 1
+				elif card.skill.effect_type == 'Stamina Restore':
+					card_aux[i]['heal_idx'] = self.gem_rev_dict[attr2+' Heal']
+					charm_count[card_aux[i]['heal_idx']-self.gem_rev_dict['Princess Heal']] += 1
+
+		# Mark a gem type as unlimited if
+		# * the gem number is at least 9
+		# * ring, cross of a grade is larger than number of team member in that grade
+		# * charm, heal of a color is larger than number of team member with same color and associated skill
+		gem_occupy = [np.Inf if x >= 9 else x for x in self.gem_occupy]
+		for i, grade in enumerate(grade_append):
+			idx = self.gem_rev_dict[self.live.attr+' Ring '+grade]
+			if gem_occupy[idx] >= grade_count[i]: gem_occupy[idx] = np.Inf
+			idx = self.gem_rev_dict[self.live.attr+' Cross '+grade]
+			if gem_occupy[idx] >= grade_count[i]: gem_occupy[idx] = np.Inf
+		for i, attr2 in enumerate(attr2_list):
+			idx = self.gem_rev_dict[attr2+' Charm']
+			if gem_occupy[idx] >= charm_count[i]: gem_occupy[idx] = np.Inf
+			idx = self.gem_rev_dict[attr2+' Heal']
+			if gem_occupy[idx] >= heal_count[i]: gem_occupy[idx] = np.Inf
 
 		# Initialize trellis
-		trellis = [[[[],[],0] for i in range(9)]]
+		trellis, current_max_score = [ {tuple(gem_occupy):[[],[],0]} ], 0
 		# Construct trellis
 		for i in range(9):
-			stage = []
-			for alloc, score in alloc_info[i]:
-				next_plan, next_score_list, next_cum_score = [], [], 0
-				# For each allocation in stage i, find the next feasible step with maximum score
-				for plan, score_list, cum_score in trellis[-1]:
-					temp_plan, temp_score_list, temp_cum_score = plan+[alloc], score_list+[score], cum_score+score
-					if temp_cum_score > next_cum_score and check_feasible(temp_plan):
-						next_plan, next_score_list, next_cum_score = temp_plan, temp_score_list, temp_cum_score
-				if len(next_plan) > 0:
-					stage.append([next_plan, next_score_list, next_cum_score])
+			stage, aux = dict(), card_aux[i]
+			# For each remain case in stage i-1 and each possible allocation in stage i
+			for remain, (plan, score_list, cum_score) in trellis[-1].items():
+				# If all remaining card uses highest score allocation and still get lower score than current max
+				# Then simply prune this unpromising branch
+				if cum_score+remain_max < current_max_score: continue
+				remain = list(remain)
+				for alloc, score in alloc_info[i]:
+					# Construct new remain vector and check if it is feasible
+					new_remain = remain.copy()
+					for gem in alloc: 
+						idx = self.gem_rev_dict[gem]
+						if new_remain[idx] != np.Inf and new_remain[idx] > 0: new_remain[idx] -= 1
+						else: continue
+					# Check if there are some gem become unlimited, if set the remain to Inf to merge branches
+					for j in range(len(new_remain)):
+						# Remaining gem number larger than number of remaining members
+						if new_remain[j] >= 9-i: new_remain[j] = np.Inf
+					if aux['grade'] is not None:
+						# When grade is None, the card rarity is N
+						grade_idx, (ring_idx, cross_idx) = aux['grade'], aux['grade_idx']
+						if new_remain[ring_idx]  > grade_count[grade_idx]: new_remain[ring_idx]  = np.Inf
+						if new_remain[cross_idx] > grade_count[grade_idx]: new_remain[cross_idx] = np.Inf
+						if aux['attr2'] is not None:
+							# When attr2 is not None, the card has Score Up or Stamina Restore skill
+							attr2_idx, charm_idx, heal_idx = aux['attr2'], aux['charm_idx'], aux['heal_idx']
+							if charm_idx is not None and new_remain[charm_idx] > charm_count[attr2_idx]: new_remain[charm_idx] = np.Inf
+							if heal_idx  is not None and new_remain[heal_idx]  > heal_count[attr2_idx]:  new_remain[heal_idx]  = np.Inf
+					# If the total score is larger than current max score, update it
+					new_remain = tuple(new_remain)
+					if stage.get(new_remain) is None or cum_score+score > stage[new_remain][2]:
+						stage[new_remain] = [plan+[alloc], score_list+[score], cum_score+score]
+						if cum_score+score > current_max_score: current_max_score = cum_score+score
+			# Update grade and skill count for remaining members
+			if aux['grade'] is not None:
+				grade_count[aux['grade']] -= 1
+				if aux['attr2'] is not None:
+					charm_count[aux['attr2']] -= aux['charm_idx'] is not None
+					heal_count[aux['attr2']] -= aux['heal_idx'] is not None
+			remain_max -= max_single_alloc_score[i]
 			trellis.append(stage)
 
 		# Find best allocation and its score
-		best_plan, best_score_list, Qmax = None, None, 0
-		for plan, score_list, cum_score in trellis[-1]:
+		best_plan, best_score_list, Qmax = [[]]*9, [0]*9, 0
+		for _, (plan, score_list, cum_score) in trellis[-1].items():
 			if cum_score > Qmax:
 				best_plan, best_score_list, Qmax = plan, score_list, cum_score
 		x_opt = [[best_plan[i], best_score_list[i]] for i in range(9)]
@@ -248,36 +364,16 @@ class TeamBuilder:
 					if Qsol > Qmax: x_opt, Qmax = x_sol, Qsol
 		return x_opt, Qmax
 	def build_team_fix_cskill(self, cskill, K=15, method='4-suboptimal', alloc_method='DP'):
-		def find_candidates(cskill, K):
-			# Compute rough strength
-			rough_strength_info = self.compute_rough_strength(cskill=cskill)
-			# Find the best card and choose it to be the center, and find K best cards from the rest for candidates
-			center, candidates, k = None, [], 0
-			for index, card, rough_strength, same_cskill in rough_strength_info:
-				if same_cskill and center is None:
-					center = {'index':index, 'card':card, 
-							  'rough_strength':rough_strength[self.live.attr]['strength'],
-							  'gem_alloc_list':self.list_gem_allocation(card)}
-				elif k < K:
-					candidates.append({'index':index, 'card':card, 
-									   'rough_strength':rough_strength[self.live.attr]['strength'],
-									   'gem_alloc_list':self.list_gem_allocation(card)})
-					k += 1
-				if center is not None and k >= K: break
-			if center is None:
-				print('There is no card has center skill', cskill)
-				raise
-			return center, candidates
 		def single_case(choice, center, candidates, max_score=0):
 			# Assemble a new team
 			team_info = ([center] + [candidates[i] for i in choice]).copy()
 			# Update score of gems
-			team_info, team_base_score, best_gem_score, CR = self.update_gem_score(team_info)
+			team_info, team_base_score, best_gem_score, CR = self.update_gem_score(team_info, sort=alloc_method=='DC')
 			# If the best possible score is less than max score, drop this case
 			if team_base_score + best_gem_score < max_score: return None
 			# Solve for best gem allocation
 			if alloc_method == 'DP':
-				alloc_info, alloc_score = self.find_optimal_gem_allocation_DP([item['gem_alloc_list'] for item in team_info])
+				alloc_info, alloc_score = self.find_optimal_gem_allocation_DP(team_info)
 			elif alloc_method == 'DC':
 				alloc_info, alloc_score = self.find_optimal_gem_allocation_DC([item['gem_alloc_list'] for item in team_info])
 			# Compute total score
@@ -296,7 +392,7 @@ class TeamBuilder:
 			for i in range(8): final_card_list[weight_list[i][1]] = card_list[bonus_list[i][1]]
 			return Team(final_card_list)
 		
-		center, candidates = find_candidates(cskill, K)
+		center, candidates = self.find_candidates(cskill, K)
 		if method == 'brute':
 			max_score, best_team = 0, None
 			for choice in itertools.combinations(list(range(K)), 8):
@@ -345,7 +441,17 @@ class TeamBuilder:
 			print('Unrecognized method {0}, only support brute and t-suboptimal'.format(method))
 			raise		
 		return max_score, best_team
-	def build_team(self, K=15, method='4-suboptimal', alloc_method='DP'):
+	def build_team(self, K=15, method='4-suboptimal', alloc_method='DC'):
+		def construct_gem_dicts():
+			attr2_list = ['Princess', 'Angel', 'Empress']
+			attr, attr2 = self.live.attr, attr2_list[attr_list.index(self.live.attr)]
+			gem_list  = [attr+x for x in [' Kiss', ' Perfume']]
+			gem_list += [attr+x+grade for x in [' Ring ', ' Cross '] for grade in ['(1st)', '(2nd)', '(3rd)']]
+			gem_list += [attr+x for x in [' Aura', ' Veil']]
+			gem_list += [attr2+x for x in [' Charm', ' Heal'] for attr2 in attr2_list] + [attr2+' Trick']
+			self.gem_dict = {k:v for k,v in enumerate(gem_list)}
+			self.gem_rev_dict = {v:k for k,v in enumerate(gem_list)}
+			self.gem_occupy = [self.owned_gem[gem] for gem in gem_list]
 		def find_candidate_cskill():
 			# Enumerate center skill of the highest rarity card that have same attribute with live
 			rarity_list = ['UR','SSR','SR','R']
@@ -363,13 +469,14 @@ class TeamBuilder:
 					break
 			return candidate_cskill
 
+		print('Team searching method: {0}. Gem allocation searching method: {1}'.format(method, alloc_method))
+		construct_gem_dicts()
 		cskill_list, result = find_candidate_cskill(), []
 		max_score, best_team = 0, None
-		print('Consider center skill in', [str(cskill) for cskill in cskill_list])
-		for cskill in cskill_list:
+		for i, cskill in enumerate(cskill_list,1):
 			score, team = self.build_team_fix_cskill(cskill=cskill, K=K, method=method, alloc_method=alloc_method)
 			result.append((score, team))
-			print('Best team has score {0:6d} for {1}'.format(score, cskill))
+			print('{0}/{1}: Best team has score {2:6d} for {3}'.format(i, len(cskill_list), score, cskill))
 			if score > max_score:
 				max_score, best_team = score, team
 
