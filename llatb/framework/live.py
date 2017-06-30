@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import json
+import json, urllib.request
 from llatb.common.config import live_archive_dir, live_path
 from llatb.common.global_var import *
 from IPython.display import HTML
@@ -27,7 +27,12 @@ class Live:
 			raise
 		self.name, self.difficulty = name, difficulty
 		self.group, self.attr = info.group, info.attr
-		temp = json.loads(open(live_path(info.file_dir)).read())
+		file_path = live_path(info.file_dir)
+		if 'http' in file_path:
+			req = urllib.request.Request(file_path, data=None, headers={'User-Agent': 'whatever'})
+			temp = json.loads(urllib.request.urlopen(req).read().decode('utf-8'))
+		else:
+			temp = json.loads(open(file_path).read())
 		df = pd.DataFrame(temp, index=list(range(1,len(temp)+1)))
 		df = df.assign(token=df.effect==2, long=df.effect.apply(lambda x: x == 3), 
 					   star=df.effect==4, swing=df.effect.apply(lambda x: x in [11,13]))

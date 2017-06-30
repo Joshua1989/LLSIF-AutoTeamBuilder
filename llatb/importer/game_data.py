@@ -10,7 +10,6 @@ from llatb.framework.team import Team
 from llatb.importer.formatter import *
 
 # Load basic stats from data_base.json
-raw_card_dict = {k:Card.fromJSON(v) for k,v in json.loads(open(card_archive_dir).read()).items()}
 try:
 	raw_card_dict = {k:Card.fromJSON(v) for k,v in json.loads(open(card_archive_dir).read()).items()}
 except:

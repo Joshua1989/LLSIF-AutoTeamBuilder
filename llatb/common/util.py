@@ -7,7 +7,7 @@ from llatb.common.global_var import attr_list, bonus_range_list
 from llatb.framework.card import Card
 from llatb.framework.team import Team
 
-def update_card_data(card_id_list=None, download=True):
+def update_card_data(card_id_list=None, download=False):
 	def parse_card_info_html(card_id):
 		card_url = card_info_url(card_id)
 		card_info = {'card_id':card_id, 'rarity':None, 'stats_list':None, 'skill':None, 'cskill':None}
@@ -134,7 +134,7 @@ def update_card_data(card_id_list=None, download=True):
 	with open(card_archive_dir, 'w') as fp:
 	    json.dump(card_basic_stat, fp)
 
-def update_live_data():
+def update_live_data(download=False):
 	print('Creating dictionary for basic live data')
 	text = urllib.request.urlopen('http://c.dash.moe/live').read().decode('utf-8')
 	for line in text.split('\n'):
@@ -159,17 +159,18 @@ def update_live_data():
 	with open(live_archive_dir, 'w') as fp:
 	    json.dump(live_data, fp)
 	print('Basic live data has been saved in', live_archive_dir)
-	for item in [dict(zip(live_data,t)) for t in zip(*live_data.values())]:
-		live_file_name = live_path(item['file_dir'])
-		live_url = live_download_url(item['file_dir'])
-		if not Path(live_file_name).is_file():
-			try:
-				print('Downloading', item['name'], item['diff_level'], item['attr'])
-				text = urllib.request.urlopen(live_url).read().decode('utf-8').split('\n')
-				for line in text:
-					if 'notes_list: ' in line:
-						notes_list = line[line.find('['):line.rfind(']')+1]	
-				with open(live_file_name, 'w') as fp:
-					fp.write(notes_list)
-			except:
-				print('Failed to download live json file from {0}'.format(live_url))
+	if download:
+		for item in [dict(zip(live_data,t)) for t in zip(*live_data.values())]:
+			live_file_name = live_path(item['file_dir'])
+			live_url = live_download_url(item['file_dir'])
+			if not Path(live_file_name).is_file():
+				try:
+					print('Downloading', item['name'], item['diff_level'], item['attr'])
+					text = urllib.request.urlopen(live_url).read().decode('utf-8').split('\n')
+					for line in text:
+						if 'notes_list: ' in line:
+							notes_list = line[line.find('['):line.rfind(']')+1]	
+					with open(live_file_name, 'w') as fp:
+						fp.write(notes_list)
+				except:
+					print('Failed to download live json file from {0}'.format(live_url))

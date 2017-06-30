@@ -1,19 +1,23 @@
 # Load sub-packages
 import numpy as np
 import pandas as pd
+from pathlib import Path
 
 import llatb.common
 from llatb.common import config, global_var
 from llatb import skill
 from llatb.framework import Card, Team, Live, DefaultLive
-from llatb.framework.live import live_basic_data
 from llatb.importer.game_data import GameData
 from llatb.simulator import Simulator
 from llatb.advanced import TeamBuilder
 
-def update_data():
-	llatb.common.util.update_card_data()
-	llatb.common.util.update_live_data()
+if Path(config.live_archive_dir).is_file():
+	print()
+	from llatb.framework.live import live_basic_data
+
+def update_data(download=False):
+	llatb.common.util.update_card_data(download=download)
+	llatb.common.util.update_live_data(download=download)
 
 def html_view(item_to_show, show_gem=False, extra_col=[]):
 	if isinstance(item_to_show, Card):
