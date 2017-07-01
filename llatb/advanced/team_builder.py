@@ -68,7 +68,7 @@ class TeamBuilder:
 		if head is not None:
 			df = df.iloc[:head+1]
 		return view_cards(df, extra_col=['Same CSkill']+[x+self.live.attr for x in ['Rough ', 'Use Gem ']])
-	def list_gem_allocation(self, card):
+	def list_gem_allocation(self, card, no_kiss=False):
 		def unique(l):
 			result, aux = list(), list()
 			for x in l:
@@ -79,7 +79,8 @@ class TeamBuilder:
 		# Find all possible gem allocation
 		attr, attr2 = self.live.attr, ['Princess', 'Angel', 'Empress'][attr_list.index(card.main_attr)]
 		grade = ['('+x.replace('-year', ')') for x in card.tags if 'year' in x][0]
-		gem_alloc = {0:[[]], 1:[[attr+' Kiss']], 2:[[attr+' Perfume'], [attr+' Ring '+grade]], 
+		gem_alloc = {0:[[]], 1:[[]] if no_kiss else [[attr+' Kiss']], 
+					 2:[[attr+' Perfume'], [attr+' Ring '+grade]], 
 					 3:[[attr+' Cross '+grade], [attr+' Aura']], 
 					 4:[[attr+' Veil']], 5:[], 6:[], 7:[], 8:[]}
 		if self.live.attr == card.main_attr:
@@ -93,6 +94,7 @@ class TeamBuilder:
 		for i in range(3,card.slot_num+1):
 			temp = []
 			for j in range(math.ceil(i/2),i):
+				if no_kiss and  i-j == 1: continue
 				alloc1, alloc2 = gem_alloc[j], gem_alloc[i-j]
 				for item1 in alloc1:
 					for item2 in alloc2:
@@ -190,6 +192,7 @@ class TeamBuilder:
 					elif card.skill.effect_type == 'Stamina Restore':
 						gem_score[attr2+' Heal'] = math.ceil(stats['skill_gain']*480*strength_per_pt_tap*self.live.pts_per_strength)
 			# Compute the score of each gem allocation and store
+			stats['gem_score'] = gem_score
 			alloc_list, max_alloc_score = item['gem_alloc_list'], 0
 			for alloc in alloc_list:
 				alloc[1] = 0
@@ -207,7 +210,7 @@ class TeamBuilder:
 			# Sort all possible allocation by score
 			if sort: alloc_list.sort(key=lambda x: x[1], reverse=True)
 		return team_info, team_base_score, best_gem_score, CR
-	def find_candidates(self, cskill, K):
+	def find_candidates(self, cskill, K, no_kiss=False):
 		# Compute rough strength
 		rough_strength_info = self.compute_rough_strength(cskill=cskill)
 		# Find the best card and choose it to be the center, and find K best cards from the rest for candidates
@@ -216,11 +219,11 @@ class TeamBuilder:
 			if same_cskill and center is None:
 				center = {'index':index, 'card':card, 
 						  'rough_strength':rough_strength[self.live.attr]['strength'],
-						  'gem_alloc_list':self.list_gem_allocation(card)}
+						  'gem_alloc_list':self.list_gem_allocation(card, no_kiss=no_kiss)}
 			elif k < K:
 				candidates.append({'index':index, 'card':card, 
 								   'rough_strength':rough_strength[self.live.attr]['strength'],
-								   'gem_alloc_list':self.list_gem_allocation(card)})
+								   'gem_alloc_list':self.list_gem_allocation(card, no_kiss=no_kiss)})
 				k += 1
 			if center is not None and k >= K: break
 		if center is None:
@@ -331,6 +334,25 @@ class TeamBuilder:
 		for _, (plan, score_list, cum_score) in trellis[-1].items():
 			if cum_score > Qmax:
 				best_plan, best_score_list, Qmax = plan, score_list, cum_score
+
+		# Since in DP we first exclude all Kiss gem, if there is any card with remaining slot, equip Kiss to it
+		for i in range(9):
+			item = team_info[i]
+			best_plan[i] = best_plan[i].copy()
+			slot_num = item['card'].slot_num
+			alloc_cost = sum([gem_skill_dict[gem]['cost'] for gem in best_plan[i]])
+			if alloc_cost < slot_num:
+				kiss_gem = self.live.attr+' Kiss'
+				best_plan[i].append(kiss_gem)
+				# Extra score induced by Kiss gem
+				kiss_score = item['stats']['gem_score'][kiss_gem]
+				# If the card has Trick gem
+				if any(['Trick' in gem for gem in best_plan[i]]):
+					stats = item['stats']
+					CR = 1 - (1-np.array([x['stats']['CR'] for x in team_info])).prod()
+					kiss_score += math.ceil(0.33*CR*stats['gem_score'][kiss_gem]/(1+stats['cskill_bonus']/100))
+				best_score_list[i] += kiss_score
+				Qmax += kiss_score
 		x_opt = [[best_plan[i], best_score_list[i]] for i in range(9)]
 		return x_opt, Qmax
 	def find_optimal_gem_allocation_DC(self, alloc_info, Qmax_init=0, first_alloc=None, first_Q=None):
@@ -363,7 +385,7 @@ class TeamBuilder:
 					x_sol, Qsol = self.find_optimal_gem_allocation_DC(sub_alloc_info, Qmax, first_alloc, first_Q)
 					if Qsol > Qmax: x_opt, Qmax = x_sol, Qsol
 		return x_opt, Qmax
-	def build_team_fix_cskill(self, cskill, K=15, method='4-suboptimal', alloc_method='DP'):
+	def build_team_fix_cskill(self, cskill, K, method, alloc_method):
 		def single_case(choice, center, candidates, max_score=0):
 			# Assemble a new team
 			team_info = ([center] + [candidates[i] for i in choice]).copy()
@@ -392,7 +414,7 @@ class TeamBuilder:
 			for i in range(8): final_card_list[weight_list[i][1]] = card_list[bonus_list[i][1]]
 			return Team(final_card_list)
 		
-		center, candidates = self.find_candidates(cskill, K)
+		center, candidates = self.find_candidates(cskill, K, no_kiss=alloc_method=='DP')
 		if method == 'brute':
 			max_score, best_team = 0, None
 			for choice in itertools.combinations(list(range(K)), 8):
@@ -441,11 +463,11 @@ class TeamBuilder:
 			print('Unrecognized method {0}, only support brute and t-suboptimal'.format(method))
 			raise		
 		return max_score, best_team
-	def build_team(self, K=15, method='4-suboptimal', alloc_method='DC'):
+	def build_team(self, K=15, method='4-suboptimal', alloc_method='DP'):
 		def construct_gem_dicts():
 			attr2_list = ['Princess', 'Angel', 'Empress']
 			attr, attr2 = self.live.attr, attr2_list[attr_list.index(self.live.attr)]
-			gem_list  = [attr+x for x in [' Kiss', ' Perfume']]
+			gem_list  = [attr+' Perfume']
 			gem_list += [attr+x+grade for x in [' Ring ', ' Cross '] for grade in ['(1st)', '(2nd)', '(3rd)']]
 			gem_list += [attr+x for x in [' Aura', ' Veil']]
 			gem_list += [attr2+x for x in [' Charm', ' Heal'] for attr2 in attr2_list] + [attr2+' Trick']
@@ -470,7 +492,7 @@ class TeamBuilder:
 			return candidate_cskill
 
 		print('Team searching method: {0}. Gem allocation searching method: {1}'.format(method, alloc_method))
-		construct_gem_dicts()
+		if alloc_method == 'DP': construct_gem_dicts()
 		cskill_list, result = find_candidate_cskill(), []
 		max_score, best_team = 0, None
 		for i, cskill in enumerate(cskill_list,1):
