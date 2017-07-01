@@ -3,6 +3,8 @@
 *.sd
 *.ieb
 test.ipynb
+packet.txt
+packet_zzy.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
