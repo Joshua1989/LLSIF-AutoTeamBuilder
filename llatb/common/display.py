@@ -249,8 +249,8 @@ def view_team(team, show_gem=False, extra_col=[], gem_size=25):
 	return HTML(header + df.to_html(escape=False))
 
 def view_live(live):
-	song_name = '<p style="color:{0};">{1}</p>'.format(attr_color[live.attr], live.name)
-	df_head = pd.DataFrame({'Song Name': [song_name]})
+	df_head = pd.DataFrame({'Cover': ['<img src="{0}" width=100 />'.format(live.cover)]})
+	df_head['Song Name'] = '<p style="color:{0};">{1}</p>'.format(attr_color[live.attr], live.name)
 	df_head['Group'] = live.group
 	df_head['Difficulty'] = live.difficulty
 	df_head['Total Note'] = live.note_number

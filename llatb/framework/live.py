@@ -3,7 +3,6 @@ import pandas as pd
 import json, urllib.request
 from llatb.common.config import live_archive_dir, live_path
 from llatb.common.global_var import *
-from IPython.display import HTML
 
 # Default presumption: A live contain 700 notes and lasts for 120 seconds
 # 10% notes are star note, 8% notes are long note, 4% notes are swing note
@@ -26,6 +25,7 @@ class Live:
 			print('Live data of {0} {1} not found!'.format(name, difficulty))
 			raise
 		self.name, self.difficulty = name, difficulty
+		self.cover = info.cover
 		self.group, self.attr = info.group, info.attr
 		file_path = live_path(info.file_dir)
 		if 'http' in file_path:
