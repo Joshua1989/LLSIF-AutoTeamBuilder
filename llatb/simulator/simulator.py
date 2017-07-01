@@ -240,12 +240,22 @@ class Simulator:
 			res.update({ x:row[x] for x in ext_cols })
 			
 			for i, card in enumerate(card_list,1):
-				col = '<img src="{0}" width={1} />'.format(icon_path(card.card_id, card.idolized), col_width)
-				bg = misc_path(row['note type '+str(i)])
+				note_type, content = row['note type '+str(i)], ''
+				if 'Note' in note_type:
+					content += '<img style="position: relative;" src="{0}" width={1} />'.format(misc_path(note_type), col_width)
+				elif 'Star' in note_type:
+				 	content += '<img style="position: relative;" src="{0}" width={1} />'.format(misc_path(note_type.replace('Star','Note')), col_width)
+				 	content += '<img style="position: absolute; top: 0px; left: 0px;" src="{0}" width={1} />'.format(misc_path('star'), col_width)
+				elif 'Swing' in note_type:
+					if 'left' in note_type:
+				 		content += '<img style="position: relative;transform: rotateZ(180deg)" src="{0}" width={1} />'.format(misc_path(note_type.replace(' left','')), col_width)
+					elif 'right' in note_type:
+				 		content += '<img style="position: relative;" src="{0}" width={1} />'.format(misc_path(note_type.replace(' right','')), col_width)
 				if row['card '+str(i)] > 0:
-					res[col] = '''<div style="position: relative;"><img style="position: relative;" src="{0}" width={1} /><img style="position: absolute; top: {2}px; left: {3}px;opacity:{6}" src="{4}" width={5} /></div>'''.format(bg, col_width, 0.15*col_width, 0.15*col_width, misc_path(card.skill.effect_type), 0.7*col_width, row['card '+str(i)]*0.7+0.3)
-				else:
-					res[col] = '''<div style="position: relative;"><img style="position: relative;" src="{0}" width={1} /><img style="position: absolute; top: {2}px; left: {3}px;" src="{4}" width={5} /></div>'''.format(bg, col_width, 0, 0.15*col_width, misc_path('empty'), 0.7*col_width)
+					top, left = -0.3*col_width if content=='' else 0.15*col_width, 0.15*col_width
+					content += '<img style="position: absolute; top: {0}px; left: {1}px;opacity:{4}" src="{2}" width={3} /></div>'''.format(top, left, misc_path(card.skill.effect_type), 0.7*col_width, row['card '+str(i)]*0.7+0.3)
+				col = '<img src="{0}" width={1} />'.format(icon_path(card.card_id, card.idolized), col_width)
+				res[col] = '<div style="position: relative;">{0}</div>'.format(content)
 			return res
 
 		columns = ['index', 'time', 'accuracy', 'accuracy*', 'hp', 'note', 'combo', 'perfect', 'cum_score', 'score']
@@ -256,6 +266,8 @@ class Simulator:
 		data = [format_row(row, self.team_hp, self.card_list) for _, row in df.iterrows()]
 		pd.set_option('display.max_colwidth', -1)
 		df = pd.DataFrame(data, columns=columns).set_index('index')
+		df.cum_score = df.cum_score.apply(lambda x:int(x))
+		df.score = df.score.apply(lambda x:int(x))
 		html_code = df.to_html(escape=False)
 		with open(filename, 'w') as fp:
 			fp.write(html_code)

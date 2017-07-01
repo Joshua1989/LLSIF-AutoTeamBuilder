@@ -97,16 +97,6 @@ def update_card_data(card_id_list=None, download=False):
 				card_info['cskill']['bonus_range'] = bonus_range
 				card_info['cskill']['bonus_ratio'] = int(ratio_data[1].string)
 		return card_info
-	def download_image(card_id, idolized):
-		icon_file_name = icon_path(card_id, idolized)
-		icon_url = icon_download_url(card_id, idolized)
-		if not Path(icon_file_name).is_file():
-			try:
-				opener = urllib.request.URLopener()
-				opener.addheader('User-Agent', 'whatever')
-				opener.retrieve(icon_url, icon_file_name)
-			except:
-				print('Failed to download icon image from {0}'.format(icon_url))
 	card_basic_stat = dict()
 	if Path(card_archive_dir).is_file():
 		card_basic_stat = json.loads(open(card_archive_dir).read())
@@ -126,30 +116,28 @@ def update_card_data(card_id_list=None, download=False):
 			temp = parse_card_info_html(card_id)
 			if temp is not None:
 				card_basic_stat[str(card_id)] = temp
-				if download:
-					download_image(card_id, idolized=True)
-					if not temp['promo']: download_image(card_id, idolized=False)
 			else:
 				print('Card {0} is a support member'.format(card_id))
 	with open(card_archive_dir, 'w') as fp:
 	    json.dump(card_basic_stat, fp)
+	print('Basic card data has been saved in', card_archive_dir)
 
 def update_live_data(download=False):
-	print('Creating dictionary for basic live data')
 	text = urllib.request.urlopen('http://c.dash.moe/live').read().decode('utf-8')
 	for line in text.split('\n'):
 		if 'lives:' in line:
 			live_json = json.loads(line[line.find('['):line.rfind(']')+1])
 	
-	live_data = {'group':[], 'attr':[], 'name':[], 'diff_level':[], 'diff_star':[], 'note_number':[], 'file_dir':[]}
+	live_data = {'group':[], 'attr':[], 'name':[], 'cover':[], 'diff_level':[], 'diff_star':[], 'note_number':[], 'file_dir':[]}
 	group_map, attr_map = {1:"μ's", 2:'Aqours'}, {1:'Smile', 2:'Pure', 3:'Cool'}
 	diff_map = {1:'Easy', 2:'Normal', 3:'Hard', 4:'Expert', 6:'Master', 7:'Challenge'}
 	for song in live_json:
-		name = song['name']
+		name, cover = song['name'], 'https://r.llsif.win/'+song['icon']
 		group = group_map[song['member_category']]
 		attr = attr_map[song['attribute']]
 		for live in song['difficulties']:
 			live_data['name'].append(name)
+			live_data['cover'].append(cover)
 			live_data['attr'].append(attr)
 			live_data['group'].append(group)
 			live_data['diff_level'].append(diff_map[live['difficulty']])
@@ -159,18 +147,3 @@ def update_live_data(download=False):
 	with open(live_archive_dir, 'w') as fp:
 	    json.dump(live_data, fp)
 	print('Basic live data has been saved in', live_archive_dir)
-	if download:
-		for item in [dict(zip(live_data,t)) for t in zip(*live_data.values())]:
-			live_file_name = live_path(item['file_dir'])
-			live_url = live_download_url(item['file_dir'])
-			if not Path(live_file_name).is_file():
-				try:
-					print('Downloading', item['name'], item['diff_level'], item['attr'])
-					text = urllib.request.urlopen(live_url).read().decode('utf-8').split('\n')
-					for line in text:
-						if 'notes_list: ' in line:
-							notes_list = line[line.find('['):line.rfind(']')+1]	
-					with open(live_file_name, 'w') as fp:
-						fp.write(notes_list)
-				except:
-					print('Failed to download live json file from {0}'.format(live_url))
