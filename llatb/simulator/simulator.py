@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 
-from bs4 import BeautifulSoup
 import json, urllib.request, llatb
 from llatb.common.global_var import *
 from llatb.simulator.skill_tracker import SkillTracker

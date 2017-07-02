@@ -8,15 +8,14 @@ card_archive_dir = 'assets/data_base.json'
 live_archive_dir = 'assets/live_data_base.json'
 # unit_id and unit_number correspondence
 unit_db_dir = 'assets/unit.db_'
+unit_db_download_url = 'https://r.llsif.win/db/unit/unit.db_'
+live_db_dir = 'assets/live.db_'
+live_db_download_url = 'https://r.llsif.win/db/live/live.db_'
 
-# URL for retrieving card information and downloading resource
-card_info_base_url = 'https://sif.kirara.ca/checklist'
-def card_info_url(card_id):
-	return 'https://sif.kirara.ca/card/{0}'.format(card_id)
 # Path function for saving downloaded resources and HTML image embedding
 def icon_path(card_id, idolized):
 	return 'http://gitcdn.xyz/repo/iebb/SIFStatic/master/icon/{0}/{1}.png'.format('rankup' if idolized else 'normal', card_id)
-def gem_path(name, local=False):
+def gem_path(name):
 	if name == 'empty':
 		return 'https://r.llsif.win/assets/image/ui/common/com_etc_66.png'
 	elif name == 'placeholder':
@@ -26,7 +25,7 @@ def gem_path(name, local=False):
 	else:
 		cost, idx = gem_skill_dict[name]['cost'], gem_skill_id_rev_dict[name]
 		return 'http://my.llsif.win/images/sis/sis{0}_{1}.png'.format(str(idx).zfill(3), str(cost).zfill(2))
-def misc_path(name, local=False):
+def misc_path(name):
 	url_dict = {
 		'smile':'http://c.dash.moe/static/images/smile.png',
 		'pure':'http://c.dash.moe/static/images/pure.png',
@@ -50,7 +49,9 @@ def misc_path(name, local=False):
 		'star':'http://c.dash.moe/asset/assets/flash/ui/live/img/ef_315_effect_0004.png'
 	}
 	return url_dict.get(name,name)
-def live_path(sub_dir, local=False):
+def cover_path(sub_dir):
+	return 'https://r.llsif.win/{0}'.format(sub_dir)
+def live_path(sub_dir):
 	return 'https://r.llsif.win/livejson/{0}'.format(sub_dir)
 
 if not Path(card_archive_dir).exists():

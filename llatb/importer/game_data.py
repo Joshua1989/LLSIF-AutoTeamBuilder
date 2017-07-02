@@ -10,6 +10,7 @@ from llatb.framework.team import Team
 from llatb.importer.formatter import *
 
 # Load basic stats from data_base.json
+raw_card_dict = {k:Card.fromJSON(v) for k,v in json.loads(open(card_archive_dir).read()).items()}
 try:
 	raw_card_dict = {k:Card.fromJSON(v) for k,v in json.loads(open(card_archive_dir).read()).items()}
 except:
@@ -18,7 +19,7 @@ except:
 try:
 	uid_cid_dict = {str(k):str(v) for k,v in sqlite3.connect(unit_db_dir).cursor().execute("SELECT unit_id, unit_number FROM unit_m").fetchall()}
 except:
-	print('Please copy the latest decrypted JP unit.db_ to this directory and rename it as {0}'.format(unit_db_dir))
+	print('Please update the data base')
 
 class GameData:
 	def __init__(self, filename=None, file_type='packet'):
@@ -187,7 +188,7 @@ class GameData:
 			card.idolize(c['idolized'])
 			card.level_up(skill_level=c['skill'].level, slot_num=c['slot_num'])
 			# name = str(index)+':'+card.card_name if card.card_name != ' ' else 'NOTSET'
-			name = str(index)+':'+card.member_name.split()[1] if card.card_name != ' ' else 'NOTSET'
+			name = str(index)+':'+card.member_name if card.card_name != ' ' else 'NOTSET'
 			info = [TB_member_dict[card.member_name], name] + adjusted_card_stat(card) + \
 					get_skill_stat(card.skill, card.skill.level) + get_cskill_stat(card.cskill) + [card.slot_num]
 			return '\t'.join([str(x) for x in info])+'\t'

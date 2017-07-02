@@ -1,6 +1,5 @@
-TB_member_dict = {	'Kosaka Honoka':0, 'Ayase Eli':1, 'Minami Kotori':2, 'Sonoda Umi':3, 'Hoshizora Rin':4, 'Nishikino Maki':5, 
-				'Tojo Nozomi':6, 'Koizumi Hanayo':7, 'Yazawa Nico':8, 'Takami Chika':9, 'Sakurauchi Riko':10, 'Matsuura Kanan':11, 
-				'Kurosawa Dia':12, 'Watanabe You':13, 'Tsushima Yoshiko':14, 'Kunikida Hanamaru':15, 'Ohara Mari':16, 'Kurosawa Ruby':17}
+TB_member_dict = {	'高坂穂乃果':0, '絢瀬絵里':1, '南ことり':2, '園田海未':3, '星空凛':4, '西木野真姫':5, '東條希':6, '小泉花陽':7, '矢澤にこ':8, 
+					'高海千歌':9, '桜内梨子':10, '松浦果南':11, '黒澤ダイヤ':12, '渡辺曜':13, '津島善子':14, '国木田花丸':15, '小原鞠莉':16, '黒澤ルビィ':17}
 TB_skill_dict = { 	None:0, ('Note', 'Score Up'):1, ('Combo', 'Score Up'):1, ('Perfect', 'Score Up'):2, ('Time', 'Score Up'):3, 
 				('Score', 'Score Up'):4, ('Star', 'Score Up'):5, ('Note', 'Stamina Restore'):6, ('Combo', 'Stamina Restore'):6, 
 				('Time', 'Stamina Restore'):7, ('Perfect', 'Stamina Restore'):8, ('Note', 'Strong Judge'):9, ('Combo', 'Strong Judge'):9, 

@@ -1,149 +1,142 @@
 import numpy as np
-import urllib.request, json
+import pandas as pd
+import urllib.request, sqlite3, json
 from bs4 import BeautifulSoup
 from pathlib import Path
 from llatb.common.config import *
-from llatb.common.global_var import attr_list, bonus_range_list
 from llatb.framework.card import Card
 from llatb.framework.team import Team
 
-def update_card_data(card_id_list=None, download=False):
-	def parse_card_info_html(card_id):
-		card_url = card_info_url(card_id)
-		card_info = {'card_id':card_id, 'rarity':None, 'stats_list':None, 'skill':None, 'cskill':None}
-		if 'http' in card_url:
-			soup = BeautifulSoup(urllib.request.urlopen(card_url).read().decode('UTF-8'), "html.parser")
-			card_info['member_name'] = soup.find_all('a', {'href':'/card/'+str(card_id)})[0].string.replace('Yohane', 'Yoshiko')
+def update_card_data():
+	def card_summary(unit_id):
+		unit_info = df_unit.loc[unit_id]
+		attr_dict = {1:'Smile', 2:'Pure', 3:'Cool'}
+		# Generate stats list
+		level_up_info = df_level_up.loc[unit_info['unit_level_up_pattern_id']]
+		stats_list = np.array([
+			unit_info['smile_max'] - level_up_info['smile_diff'],
+			unit_info['pure_max'] - level_up_info['pure_diff'],
+			unit_info['cool_max'] - level_up_info['cool_diff'],
+			level_up_info['sale_price'],
+			level_up_info['merge_exp'],
+			unit_info['hp_max'] - level_up_info['hp_diff']
+		]).T.tolist()
+		# Generate skill info
+		if np.isnan(unit_info['default_unit_skill_id']):
+			skill = None
 		else:
-			soup = BeautifulSoup(open(card_url).read(), "html.parser")
-			card_info['member_name'] = soup.find_all('a', {'href':str(card_id)+''})[0].string
-		card_info['promo'] = len(soup.find_all('div', {'id':'iswitch'})) == 0
-		try:
-			s = soup.find_all('script', {'id':'iv'})[0].string
-			stats_dict = json.loads(s[s.find('{'):s.rfind('}')+1])[str(card_id)]
-			card_info['rarity'] = {40:'N', 60:'R', 80:'SR', 90:'SSR', 100:'UR'}[stats_dict['level_max']]
-			card_info['card_name'] = ' ' if card_info['rarity'] in ['N','R'] or card_info['promo'] else soup.h2.small.string
-			card_info['stats_list'] = stats_dict['stats']
-			card_info['main_attr'] = attr_list[np.argmax(stats_dict['stats'][0][:3])]
-		except:
-			print('Did not find stats dict')
-			return None
-		card_info['skill'], card_info['cskill'] = None, None
-		if stats_dict['skill'] is not None:
-			# Skill name
-			card_info['skill'], skill_info = dict(), soup.find_all('div', {'class':'skill box'})[0]
-			card_info['skill']['name'] = skill_info.find_all('span', {'class':'content'})[0].string
-			# Skill level data
-			temp = np.array(stats_dict['skill'], dtype=int).T
-			card_info['skill']['odds_list'], card_info['skill']['rewards_list'] = temp[0].tolist(), temp[1].tolist()
-			# Skill effect type
-			skill_info = skill_info.find_all('div', {'class':'description'})[0].find_all('span', class_=lambda x: x != 'varying')
-			temp = skill_info[1].contents[0] 
-			if temp == '\nto raise the accuracy of great notes for ':
-				card_info['skill']['effect_type'] = 'Weak Judge'
-			elif temp == '\nto add ':
-				card_info['skill']['effect_type'] = 'Score Up'
-			elif temp == '\nto restore ':
-				card_info['skill']['effect_type'] = 'Stamina Restore'
-			elif temp == '\nto raise the accuracy of all notes for ':
-				card_info['skill']['effect_type'] = 'Strong Judge'
+			skill_info = df_skill.loc[unit_info['default_unit_skill_id']]
+			skill_level_info = df_skill_level.loc[unit_info['default_unit_skill_id']]
+			trigger_type_dict = {1:'Time', 3:'Note', 4:'Combo', 5:'Score', 6:'Perfect', 12:'Star'}
+			effect_type_dict = {4:'Weak Judge', 5:'Strong Judge', 9:'Stamina Restore', 11:'Score Up'}
+			skill = {
+				'name': skill_info['name'],
+				'trigger_type': trigger_type_dict[skill_info['trigger_type']],
+				'trigger_count': int(skill_level_info['trigger_value'].values[0]),
+				'effect_type': effect_type_dict[skill_info['skill_effect_type']],
+				'odds_list': skill_level_info['activation_rate'].values.tolist(),
+			}
+			if skill['effect_type'] in ['Weak Judge', 'Strong Judge']:
+				skill['rewards_list'] = skill_level_info['discharge_time'].values.tolist()
 			else:
-				print('Incorrect skill effect type!')
-				raise
-			# Skill trigger type and trigger count
-			temp = skill_info[2].contents[-1]
-			if temp == ' seconds.\n':
-				card_info['skill']['trigger_type'] = 'Time'
-				card_info['skill']['trigger_count'] = int(skill_info[2].span.string)
-			elif temp == ' notes.\n':
-				card_info['skill']['trigger_type'] = 'Note'
-				card_info['skill']['trigger_count'] = int(skill_info[2].span.string)
-			elif temp == ' notes are hit in a row.\n':
-				card_info['skill']['trigger_type'] = 'Combo'
-				card_info['skill']['trigger_count'] = int(skill_info[2].span.string)
-			elif temp == '.\n':
-				card_info['skill']['trigger_type'] = 'Score'
-				card_info['skill']['trigger_count'] = int(skill_info[2].span.string)
-			elif temp == ' perfect notes are hit.\n':
-				card_info['skill']['trigger_type'] = 'Perfect'
-				card_info['skill']['trigger_count'] = int(skill_info[2].span.string)
-			elif temp == '\nTriggers when a perfect star icon is hit.\n':
-				card_info['skill']['trigger_type'] = 'Star'
-				card_info['skill']['trigger_count'] = 1
+				skill['rewards_list'] = skill_level_info['effect_value'].values.tolist()
+		# Generate center skill info
+		if np.isnan(unit_info['default_leader_skill_id']):
+			cskill = None
+		else:
+			cskill1_info = df_cskill1.loc[unit_info['default_leader_skill_id']]
+			temp = cskill1_info['leader_skill_effect_type']
+			if len(str(temp)) == 1:
+				main_attr, base_attr = attr_dict[temp], attr_dict[temp]
 			else:
-				print('Incorrect skill trigger type!')
-				raise
-			# Center Skill name and main attribute
-			card_info['cskill'], cskill_info = dict(), soup.find_all('div', {'class':'skill box'})[1]
-			card_info['cskill']['name'] = cskill_info.find_all('span', {'class':'content'})[0].string
-			card_info['cskill']['main_attr'] = card_info['main_attr']
-			# Center Skill base_attr, main_ratio
-			ratio_data = cskill_info.find_all('span', {'class':'varying'})
-			temp = list(cskill_info.find_all('div', {'class':'description'})[0])[2]
-			if '%.' in temp:
-				card_info['cskill']['base_attr'] = card_info['cskill']['main_attr']
+				main_attr, base_attr = attr_dict[temp%10], attr_dict[int((temp-100)/10)]
+			if unit_info['default_leader_skill_id'] not in df_cskill2.index:
+				bonus_range, bonus_ratio = None, None
 			else:
-				card_info['cskill']['base_attr'] = temp.split('.')[0].split(' ')[-1]
-			card_info['cskill']['main_ratio'] = int(ratio_data[0].string)
-			# Center Skill bonus_range, bonus_ratio
-			if card_info['rarity'] not in ['SSR', 'UR'] or card_info['promo'] == True:
-				card_info['cskill']['bonus_range'], card_info['cskill']['bonus_ratio'] = None, None
-			else:
-				bonus_range = temp.split('contribution of ')[-1].split(' member')[0]
-				bonus_range = bonus_range.replace('first','1st').replace('second','2nd').replace('third','3rd')
-				if bonus_range not in bonus_range_list:
-					print('Invalid member group: ' + bonus_range)
-					raise
-				card_info['cskill']['bonus_range'] = bonus_range
-				card_info['cskill']['bonus_ratio'] = int(ratio_data[1].string)
-		return card_info
+				cskill2_info = df_cskill2.loc[unit_info['default_leader_skill_id']]
+				tag_dict = {1:'1st-year', 2:'2nd-year', 3:'3rd-year', 4:"μ's", 5:'Aqours',
+							6:'Printemps', 7:'lily white', 8:'BiBi',
+							9:'CYaRon！', 10:'AZALEA',  11:'Guilty Kiss'}
+				bonus_range, bonus_ratio = tag_dict[cskill2_info['member_tag_id']], int(cskill2_info['effect_value'])
+			cskill = {
+				'name': cskill1_info['name'],
+				'main_attr': main_attr,
+				'base_attr': base_attr,
+				'main_ratio': int(cskill1_info['effect_value']),
+				'bonus_range': bonus_range,
+				'bonus_ratio': bonus_ratio
+			}
+		# Generate whole summary
+		rarity_dict = {1:'N', 2:'R', 3:'SR', 4:'UR', 5:'SSR'}
+		card_info = {
+			'promo': bool(unit_info['is_promo']),
+			'card_name': ' ' if unit_info['eponym'] is None else unit_info['eponym'],
+			'card_id': int(unit_info['unit_number']),
+			'main_attr': attr_dict[unit_info['attribute_id']],
+			'member_name': unit_info['name'],
+			'stats_list': stats_list,
+			'cskill': cskill,
+			'skill': skill,
+			'rarity': rarity_dict[unit_info['rarity']]
+		}
+		return unit_info['unit_number'], card_info
+
+	print('Downloading latest unit.db_')
+	opener = urllib.request.URLopener()
+	opener.addheader('User-Agent', 'whatever')
+	opener.retrieve(unit_db_download_url, unit_db_dir)
+
+	print('Generating basic card stats')
+	conn = sqlite3.connect(unit_db_dir)
+	df_level_up = pd.read_sql('SELECT * FROM unit_level_up_pattern_m', con=conn, index_col='unit_level_up_pattern_id')
+	df_skill = pd.read_sql('SELECT * FROM unit_skill_m', con=conn, index_col='unit_skill_id')
+	df_skill_level = pd.read_sql('SELECT * FROM unit_skill_level_m', con=conn, index_col='unit_skill_id')
+	df_cskill1 = pd.read_sql('SELECT * FROM unit_leader_skill_m', con=conn, index_col='unit_leader_skill_id')
+	df_cskill2 = pd.read_sql('SELECT * FROM unit_leader_skill_extra_m', con=conn, index_col='unit_leader_skill_id')
+	df_unit = pd.read_sql('SELECT * FROM unit_m', con=conn, index_col='unit_id')
+	df_unit['is_support'] = df_unit['smile_max'] == 1
+	df_unit['is_promo'] = df_unit.apply(lambda x: x['smile_max'] > 1 and
+										x['normal_icon_asset'] == x['rank_max_icon_asset'], axis=1)
+	# Generate card basic stat and save it to JSON
 	card_basic_stat = dict()
-	if Path(card_archive_dir).is_file():
-		card_basic_stat = json.loads(open(card_archive_dir).read())
-	key_list = list(card_basic_stat.keys())
-	last_card_id = 0 if len(key_list) == 0 else max([int(x) for x in key_list])
-
-	if card_id_list is None:
-		soup = BeautifulSoup(urllib.request.urlopen(card_info_base_url).read().decode('UTF-8'), "html.parser")
-		items = soup.find_all(lambda tag: tag.name == 'td' and tag.get('class') == ['ar'] and tag.string.replace('#','').isdigit())
-		card_id_list = list(range(1,len(items)+1))
-
-	card_id_list = [x for x in card_id_list if x > last_card_id]
-	for card_id in card_id_list:
-		print('Processing card {0}'.format(card_id))
-		if str(card_id) not in key_list:
-			print('Discover unarchived card {0}'.format(card_id))
-			temp = parse_card_info_html(card_id)
-			if temp is not None:
-				card_basic_stat[str(card_id)] = temp
-			else:
-				print('Card {0} is a support member'.format(card_id))
+	for unit_id, row in df_unit.iterrows():
+		if not row['is_support']:
+			card_id, card_info = card_summary(unit_id)
+			card_basic_stat[str(card_id)] = card_info
 	with open(card_archive_dir, 'w') as fp:
 	    json.dump(card_basic_stat, fp)
 	print('Basic card data has been saved in', card_archive_dir)
 
 def update_live_data(download=False):
-	text = urllib.request.urlopen('http://c.dash.moe/live').read().decode('utf-8')
-	for line in text.split('\n'):
-		if 'lives:' in line:
-			live_json = json.loads(line[line.find('['):line.rfind(']')+1])
-	
-	live_data = {'group':[], 'attr':[], 'name':[], 'cover':[], 'diff_level':[], 'diff_star':[], 'note_number':[], 'file_dir':[]}
-	group_map, attr_map = {1:"μ's", 2:'Aqours'}, {1:'Smile', 2:'Pure', 3:'Cool'}
-	diff_map = {1:'Easy', 2:'Normal', 3:'Hard', 4:'Expert', 6:'Master', 7:'Challenge'}
-	for song in live_json:
-		name, cover = song['name'], 'https://r.llsif.win/'+song['icon']
-		group = group_map[song['member_category']]
-		attr = attr_map[song['attribute']]
-		for live in song['difficulties']:
-			live_data['name'].append(name)
-			live_data['cover'].append(cover)
-			live_data['attr'].append(attr)
-			live_data['group'].append(group)
-			live_data['diff_level'].append(diff_map[live['difficulty']])
-			live_data['diff_star'].append(live['stage_level'])
-			live_data['note_number'].append(live['s_rank_combo'])
-			live_data['file_dir'].append(live['asset'])
+	def live_summary(live_setting_id):
+		group_dict = {1:"μ's", 2:'Aqours'}
+		attr_dict = {1:'Smile', 2:'Pure', 3:'Cool'}
+		diff_dict = {1:'Easy', 2:'Normal', 3:'Hard', 4:'Expert', 6:'Master'}
+		setting = df_live_setting.loc[live_setting_id]
+		track_info = df_live_track.loc[setting['live_track_id']]
+		live_info = {
+			'cover': cover_path(setting['live_icon_asset']),
+			'name': track_info['name'],
+			'group': group_dict[track_info['member_category']],
+			'attr': attr_dict[setting['attribute_icon_id']],
+			'note_number': int(setting['s_rank_combo']),
+			'diff_level': diff_dict[setting['difficulty']],
+			'diff_star': int(setting['stage_level']),
+			'file_dir': live_path(setting['notes_setting_asset'])
+		}
+		return live_info
+
+	print('Downloading latest live.db_')
+	opener = urllib.request.URLopener()
+	opener.addheader('User-Agent', 'whatever')
+	opener.retrieve(live_db_download_url, live_db_dir)
+
+	print('Generating basic live stats')
+	conn = sqlite3.connect(live_db_dir)
+	df_live_track = pd.read_sql('SELECT * FROM live_track_m', con=conn, index_col='live_track_id')
+	df_live_setting = pd.read_sql('SELECT * FROM live_setting_m', con=conn, index_col='live_setting_id')
+	live_data = [live_summary(live_setting_id) for live_setting_id, row in df_live_setting.iterrows() if row['difficulty']!=5]
+
 	with open(live_archive_dir, 'w') as fp:
 	    json.dump(live_data, fp)
 	print('Basic live data has been saved in', live_archive_dir)

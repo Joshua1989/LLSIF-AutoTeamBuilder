@@ -72,12 +72,8 @@ gem_skill_id_dict = { 1:'Smile Kiss',		 	 2:'Pure Kiss',				 3:'Cool Kiss',
 					 37:'Empress Charm',		38:'Empress Heal',			39:'Empress Trick'}
 gem_skill_id_rev_dict = {v:k for k,v in gem_skill_id_dict.items()}
 # Center Skill relevant
-muse = np.array(['Kosaka Honoka', 'Minami Kotori', 'Sonoda Umi', 
-			   'Koizumi Hanayo', 'Hoshizora Rin', 'Nishikino Maki', 
-			   'Ayase Eli', 'Tojo Nozomi', 'Yazawa Nico'])
-Aqours = np.array(['Takami Chika', 'Sakurauchi Riko', 'Watanabe You', 
-			   'Kurosawa Ruby', 'Tsushima Yoshiko', 'Kunikida Hanamaru', 
-			   'Ohara Mari', 'Matsuura Kanan', 'Kurosawa Dia'])
+muse = np.array(['高坂穂乃果', '南ことり', '園田海未', '小泉花陽', '星空凛', '西木野真姫', '絢瀬絵里', '東條希', '矢澤にこ'])
+Aqours = np.array(['高海千歌', '桜内梨子', '渡辺曜', '黒澤ルビィ', '津島善子', '国木田花丸', '小原鞠莉', '松浦果南', '黒澤ダイヤ'])
 groups = {"μ's":muse, 'Aqours':Aqours,
 		  '1st-year':np.concatenate((muse[[3,4,5]], Aqours[[3,4,5]])),
 		  '2nd-year':np.concatenate((muse[[0,1,2]], Aqours[[0,1,2]])),

@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import json, sqlite3
-from bs4 import BeautifulSoup
 from llatb.common.config import unit_db_dir
 from llatb.common.global_var import *
 from llatb.framework.card import Card

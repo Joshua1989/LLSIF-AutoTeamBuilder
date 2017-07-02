@@ -27,12 +27,11 @@ class Live:
 		self.name, self.difficulty = name, difficulty
 		self.cover = info.cover
 		self.group, self.attr = info.group, info.attr
-		file_path = live_path(info.file_dir)
-		if 'http' in file_path:
-			req = urllib.request.Request(file_path, data=None, headers={'User-Agent': 'whatever'})
+		if 'http' in info.file_dir:
+			req = urllib.request.Request(info.file_dir, data=None, headers={'User-Agent': 'whatever'})
 			temp = json.loads(urllib.request.urlopen(req).read().decode('utf-8'))
 		else:
-			temp = json.loads(open(file_path).read())
+			temp = json.loads(open(info.file_dir).read())
 		df = pd.DataFrame(temp, index=list(range(1,len(temp)+1)))
 		df = df.assign(token=df.effect==2, long=df.effect.apply(lambda x: x == 3), 
 					   star=df.effect==4, swing=df.effect.apply(lambda x: x in [11,13]))
