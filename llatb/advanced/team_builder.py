@@ -296,11 +296,12 @@ class TeamBuilder:
 				remain = list(remain)
 				for alloc, score in alloc_info[i]:
 					# Construct new remain vector and check if it is feasible
-					new_remain = remain.copy()
+					new_remain, violate = remain.copy(), False
 					for gem in alloc: 
 						idx = self.gem_rev_dict[gem]
-						if new_remain[idx] != np.Inf and new_remain[idx] > 0: new_remain[idx] -= 1
-						else: continue
+						if new_remain[idx] > 0: new_remain[idx] -= 1
+						else: violate = True; break
+					if violate: continue
 					# Check if there are some gem become unlimited, if set the remain to Inf to merge branches
 					for j in range(len(new_remain)):
 						# Remaining gem number larger than number of remaining members
@@ -331,28 +332,32 @@ class TeamBuilder:
 
 		# Find best allocation and its score
 		best_plan, best_score_list, Qmax = [[]]*9, [0]*9, 0
-		for _, (plan, score_list, cum_score) in trellis[-1].items():
+		for remain, (plan, score_list, cum_score) in trellis[-1].items():
 			if cum_score > Qmax:
+				best_remain = remain
 				best_plan, best_score_list, Qmax = plan, score_list, cum_score
 
 		# Since in DP we first exclude all Kiss gem, if there is any card with remaining slot, equip Kiss to it
+		kiss_gem = self.live.attr+' Kiss'
+		remain_kiss = self.owned_gem[kiss_gem]
 		for i in range(9):
-			item = team_info[i]
+			item, stats = team_info[i], team_info[i]['stats']
 			best_plan[i] = best_plan[i].copy()
 			slot_num = item['card'].slot_num
 			alloc_cost = sum([gem_skill_dict[gem]['cost'] for gem in best_plan[i]])
-			if alloc_cost < slot_num:
-				kiss_gem = self.live.attr+' Kiss'
+			if alloc_cost < slot_num and remain_kiss > 0:
+				remain_kiss -= 1
 				best_plan[i].append(kiss_gem)
 				# Extra score induced by Kiss gem
-				kiss_score = item['stats']['gem_score'][kiss_gem]
-				# If the card has Trick gem
+				kiss_score = stats['gem_score'][kiss_gem]
+				# If the card has Trick gem, the Kiss gem will have extra score
 				if any(['Trick' in gem for gem in best_plan[i]]):
-					stats = item['stats']
 					CR = 1 - (1-np.array([x['stats']['CR'] for x in team_info])).prod()
+					print(kiss_score, CR, math.ceil(0.33*CR*stats['gem_score'][kiss_gem]/(1+stats['cskill_bonus']/100)))
 					kiss_score += math.ceil(0.33*CR*stats['gem_score'][kiss_gem]/(1+stats['cskill_bonus']/100))
 				best_score_list[i] += kiss_score
 				Qmax += kiss_score
+
 		x_opt = [[best_plan[i], best_score_list[i]] for i in range(9)]
 		return x_opt, Qmax
 	def find_optimal_gem_allocation_DC(self, alloc_info, Qmax_init=0, first_alloc=None, first_Q=None):
@@ -391,7 +396,7 @@ class TeamBuilder:
 			team_info = ([center] + [candidates[i] for i in choice]).copy()
 			# Update score of gems
 			team_info, team_base_score, best_gem_score, CR = self.update_gem_score(team_info, sort=alloc_method=='DC')
-			# If the best possible score is less than max score, drop this case
+			# # If for unlimited gem the choice is worse than max_score, drop it
 			if team_base_score + best_gem_score < max_score: return None
 			# Solve for best gem allocation
 			if alloc_method == 'DP':
@@ -431,7 +436,7 @@ class TeamBuilder:
 
 			max_score, best_team, best_alloc = 0, None, None
 			# Use a map to keep track of computed team to avoid duplicated computation
-			score_map = defaultdict(lambda:0)
+			score_map, eliminate = defaultdict(lambda:0), defaultdict(lambda:False)
 			# Initialize queue
 			choice = tuple(list(range(8)))
 			team_info, alloc_info, total_score, CR = single_case(choice, center, candidates)
@@ -441,13 +446,15 @@ class TeamBuilder:
 
 			while len(queue) > 0:
 				choice = queue.pop(0)
+				eliminate[choice] = True
 				rest = [x for x in range(K) if x not in choice]
-				for tt in range(t):
+				for tt in range(1,t+1):
 					for pos in itertools.combinations(list(range(8)), tt):
 						neighbor = list(choice)
 						for new_idx in itertools.combinations(rest, tt):
 							for i in range(tt): neighbor[pos[i]] = new_idx[i]
-							new_choice = tuple(neighbor)
+							new_choice = tuple(sorted(neighbor))
+							# If this team combination has not been computed, compute it
 							if score_map[new_choice] == 0:
 								res = single_case(new_choice, center, candidates, score_map[choice])
 								if res is None: 
@@ -457,8 +464,12 @@ class TeamBuilder:
 								score_map[new_choice] = total_score
 								if total_score > max_score:
 									max_score, best_team = total_score, construct_team(team_info, alloc_info, CR)
-							elif score_map[new_choice] > score_map[choice] and new_choice not in queue:
+							# If the new choice is better, add it to the queue to examine later
+							# otherwise the new choice is not promising, eliminate it
+							if not eliminate[new_choice] and score_map[new_choice] >= score_map[choice]:
 								queue.append(new_choice)
+							else:
+								eliminate[new_choice] = True
 		else:
 			print('Unrecognized method {0}, only support brute and t-suboptimal'.format(method))
 			raise		
@@ -499,14 +510,13 @@ class TeamBuilder:
 			score, team = self.build_team_fix_cskill(cskill=cskill, K=K, method=method, alloc_method=alloc_method)
 			result.append((score, team))
 			print('{0}/{1}: Best team has score {2:6d} for {3}'.format(i, len(cskill_list), score, cskill))
-			if score > max_score:
-				max_score, best_team = score, team
+			if score > max_score: max_score, best_team = score, team
 
-		opt = {'skill_up_bonus':self.skill_up_bonus, 'score_up_bonus':self.score_up_bonus, 'guest_cskill':self.guest_cskill}
 		self.best_team = best_team
+		# self.best_team = result[-1][1]
 		return self.show_best_team_stats()
 
-	def show_best_team_stats(self):
+	def show_best_team_stats(self, show_cost=False):
 		if self.best_team is None:
 			print('The best team has not been formed yet')
 			return
@@ -520,7 +530,7 @@ class TeamBuilder:
 
 		# Extract all team gems
 		team_gems = [gem for card in self.best_team.card_list for gem in card.equipped_gems \
-					 	if card.main_attr in gem.name and gem.effect == 'team_boost']
+					 	if self.live.attr in gem.name and gem.effect == 'team_boost']
 		# Find team center skill and cover rate
 		cskill = self.best_team[4].cskill
 		temp = np.ones(9)
@@ -539,7 +549,7 @@ class TeamBuilder:
 		def get_summary(index, card):
 			res = { 'CID':'<p>{0}</p>'.format(card.card_id), 
 					'Icon': '<img src="{0}" width=75 />'.format(icon_path(card.card_id, card.idolized)),
-					'Gem':gem_slot_pic(card, show_cost=False, gem_size=25)}
+					'Gem':gem_slot_pic(card, show_cost=show_cost, gem_size=25-5*show_cost)}
 
 			# Skill gain information
 			if card.skill is not None:

@@ -5,6 +5,7 @@
 test.ipynb
 packet.txt
 packet_zzy.txt
+assets/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
