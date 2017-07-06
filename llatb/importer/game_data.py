@@ -40,6 +40,8 @@ class GameData:
 					card_info, gem_owning_info, deck_info = self.get_user_packet_info(filename)
 				elif file_type == 'ieb':
 					card_info, gem_owning_info, deck_info = self.get_ieb_info(filename)
+				elif file_type == 'sokka':
+					card_info, gem_owning_info, deck_info = self.get_sokka_info(filename)
 				else:
 					print('Incorrect file type {0}. Please choose packet or ieb'.format(file_type))
 					raise
@@ -156,6 +158,46 @@ class GameData:
 			except:
 				print('{0} is not in uid_cid_dict, please update {1}'.format(card['unit_id'], unit_db_dir))
 		for key, value in ieb_info['removable_info']['equipment_info'].items():
+			card_info[owning_id_dict[key]]['equipped_gems'] = [gem_skill_id_dict[x] for x in value]
+		# Generate user gem information
+		gem_owning_info = { skill_name:0 for skill_name in list(gem_skill_id_dict.values()) }
+		for x in ieb_info['removable_info']['owning_info']:
+			skill_name = gem_skill_id_dict[x['unit_removable_skill_id']]
+			gem_owning_info[skill_name] = x['total_amount']
+		# Generate user team information
+		deck_info = []
+		for i, deck in enumerate(ieb_info['deck_info'],1):
+			ids = [card_info[owning_id_dict[str(x['unit_owning_user_id'])]] for x in deck['unit_owning_user_ids']]
+			if len(ids) == 9:
+				deck_info.append(ids)
+			else:
+				print('Invalid team: {0}-th team only has {1} members placed'.format(i, len(ids)))
+				deck_info.append(None)
+		return card_info, gem_owning_info, deck_info
+	def get_sokka_info(self, sokka_file):
+		def get_card_levelup_info(card_info):
+			res = {
+				'unit_id':str(card_info['unit_id']),
+				'card_id':uid_cid_dict[str(card_info['unit_id'])],
+				'idolized':card_info['rank'] == 2,
+				'level':card_info['level'],
+				'bond':card_info['love'],
+				'skill_level':card_info['unit_skill_level'],
+				'slot_num':card_info['unit_removable_skill_capacity'],
+				'equipped_gems':[]
+			}
+			return res
+		ieb_info = json.loads(open(sokka_file).read())
+		# Generate user card information
+		card_info, owning_id_dict = dict(), dict()
+		for i, card in enumerate(ieb_info['unit_info'], 1):
+			try:
+				card_info[str(i)] = get_card_levelup_info(card)
+				owning_id_dict[str(card['unit_owning_user_id'])] = str(i)
+			except:
+				print('{0} is not in uid_cid_dict, please update {1}'.format(card['unit_id'], unit_db_dir))
+		for key, equip_info in ieb_info['removable_info']['equipment_info'].items():
+			value = [x['unit_removable_skill_id'] for x in equip_info['detail']]
 			card_info[owning_id_dict[key]]['equipped_gems'] = [gem_skill_id_dict[x] for x in value]
 		# Generate user gem information
 		gem_owning_info = { skill_name:0 for skill_name in list(gem_skill_id_dict.values()) }
