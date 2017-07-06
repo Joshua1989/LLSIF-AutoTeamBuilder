@@ -6,6 +6,10 @@ test.ipynb
 packet.txt
 packet_zzy.txt
 assets/
+assets/data_base.json
+assets/live.db_
+assets/live_data_base.json
+assets/unit.db_
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -69,7 +73,7 @@ instance/
 # Scrapy stuff:
 .scrapy
 
-# Sphinx documentation... 
+# Sphinx documentation...
 # We want to retain the hand-written upper-level files, but we don't want to
 # commit the auto-generated *.rst files.
 docs/_build/
