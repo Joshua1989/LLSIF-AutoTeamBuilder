@@ -13,6 +13,7 @@ effect_str_dict = {'Weak Judge': 'slightly raise the accuracy judge for {0} seco
 				   'Stamina Restore': 'restore {0} stamina points. ',
 				   'Strong Judge': 'raise the accuracy judge for {0} seconds. '}
 attr_list = ['Smile', 'Pure', 'Cool']
+attr2_list = ['Princess', 'Angel', 'Empress']
 attr_color = {'Smile':'red', 'Pure':'green', 'Cool':'blue'}
 bonus_range_list = ["μ's", 'Aqours', '1st-year', '2nd-year', '3rd-year',
 					'Printemps', 'lily white', 'BiBi', 'CYaRon！', 'AZALEA', 'Guilty Kiss']
