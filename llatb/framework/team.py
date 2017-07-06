@@ -186,17 +186,17 @@ class Team:
 			gem_field_list = ['gemnum', 'gemsinglepercent', 'gemallpercent', 'gemskill', 'gemacc', 'maxcost']
 			gem_data = {k:0 for k in gem_field_list}
 			for gem in card.equipped_gems:
-				if 'Kiss' in gem.name and gem.attribute == card.main_attr:
+				if 'Kiss' in gem.name and gem.attribute == self.card_list[4].main_attr:
 					gem_data['gemnum'] += 200
-				if 'Perfume' in gem.name and gem.attribute == card.main_attr:
+				if 'Perfume' in gem.name and gem.attribute == self.card_list[4].main_attr:
 					gem_data['gemnum'] += 450
-				if 'Ring' in gem.name and gem.attribute == card.main_attr:
+				if 'Ring' in gem.name and gem.attribute == self.card_list[4].main_attr:
 					gem_data['gemsinglepercent'] += 0.1
-				if 'Cross' in gem.name and gem.attribute == card.main_attr:
+				if 'Cross' in gem.name and gem.attribute == self.card_list[4].main_attr:
 					gem_data['gemsinglepercent'] += 0.16
-				if 'Aura' in gem.name and gem.attribute == card.main_attr:
+				if 'Aura' in gem.name and gem.attribute == self.card_list[4].main_attr:
 					gem_data['gemallpercent'] += 0.018
-				if 'Veil' in gem.name and gem.attribute == card.main_attr:
+				if 'Veil' in gem.name and gem.attribute == self.card_list[4].main_attr:
 					gem_data['gemallpercent'] += 0.024
 				if 'Charm' in gem.name or 'Heal' in gem.name:
 					gem_data['gemskill'] = 1
@@ -208,6 +208,7 @@ class Team:
 							card.pure + card.bond * (card.main_attr=='Pure'), 
 							card.cool + card.bond * (card.main_attr=='Cool'), 
 							0 if card.skill is None else card.skill.level, card.card_id, card.idolized]
+			gem_data['gemallpercent'] = round(gem_data['gemallpercent']*1000)/1000
 			field_val += [gem_data[x] for x in gem_field_list]
 			temp = ['%22{0}%22:%22{1}%22'.format(k,v if type(v) != bool else int(v)) for k,v in zip(field_name, field_val)]
 			return '%7B'+','.join(temp)+'%7D'

@@ -4,7 +4,7 @@ from llatb.common.global_var import gem_skill_dict, gem_skill_id_dict
 class GemSkill:
 	def __init__(self, name):
 		if gem_skill_dict.get(name) is None:
-			print('Invalid skill gem: name!'.format(name))
+			print('Invalid skill gem: {0}!'.format(name))
 			raise
 		self.id = {v:k for k,v in gem_skill_id_dict.items()}[name]
 		skill = gem_skill_dict[name]

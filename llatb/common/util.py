@@ -94,6 +94,7 @@ def update_card_data():
 	df_cskill1 = pd.read_sql('SELECT * FROM unit_leader_skill_m', con=conn, index_col='unit_leader_skill_id')
 	df_cskill2 = pd.read_sql('SELECT * FROM unit_leader_skill_extra_m', con=conn, index_col='unit_leader_skill_id')
 	df_unit = pd.read_sql('SELECT * FROM unit_m', con=conn, index_col='unit_id')
+	df_unit = df_unit[df_unit['unit_number']>0]
 	df_unit['is_support'] = df_unit['smile_max'] == 1
 	df_unit['is_promo'] = df_unit.apply(lambda x: x['smile_max'] > 1 and
 										x['normal_icon_asset'] == x['rank_max_icon_asset'], axis=1)
