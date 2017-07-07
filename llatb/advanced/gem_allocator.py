@@ -1,9 +1,9 @@
 from collections import defaultdict
-import math, itertools, copy
+import math, itertools, copy, json
 from llatb.advanced.advanced_card import *
 from llatb.framework import Team
 from llatb.common.display import gem_slot_pic, view_cards
-from llatb.common.config import misc_path, icon_path, gem_path
+from llatb.common.config import card_archive_dir, misc_path, icon_path, gem_path
 from IPython.display import HTML
 
 class GemAllocator:
@@ -356,4 +356,35 @@ class GemAllocator:
 		df.index = ['<p>{0}</p>'.format(x) for x in ['L1', 'L2', 'L3', 'L4', 'C', 'R4', 'R3', 'R2', 'R1']]
 		html_main = df.transpose().to_html(escape=False)
 
-		return HTML(html_live+html_team+html_main)
+		html_recommend_guest = ''
+		if self.guest_cskill is None:
+			# find all UR center skill with same color as the live
+			raw_card_dict = {int(k):Card.fromJSON(v) for k,v in json.loads(open(card_archive_dir).read()).items()}
+			guest_candidate, cskill_list = defaultdict(lambda:[]), []
+			is_new = lambda cskill: all([not x.is_equal(cskill) for x in cskill_list])
+			for index, card in raw_card_dict.items():
+				if card.main_attr == self.live.attr and card.rarity == 'UR' and not card.promo:
+					guest_candidate[(card.cskill.base_attr, card.cskill.bonus_range)].append(card.card_id)
+					if is_new(card.cskill):
+						cskill_list.append(card.cskill)
+			# find the center skill that increases the team strength most
+			best_guest_cskill, max_strength = None, 0
+			for cskill in cskill_list:
+				strength = team.team_strength(guest_cskill=cskill)['team_total'][attr_list.index(self.live.attr)]
+				if strength > max_strength:
+					best_guest_cskill, max_strength = cskill, strength
+			recommend_guest = guest_candidate[(best_guest_cskill.base_attr, best_guest_cskill.bonus_range)]
+			# construct data frame to demonstrate best guest center skill information
+			df_guest = pd.DataFrame()
+			df_guest['Recommend Guest Center Skill'] = [str(best_guest_cskill)]
+			# list the cards that has the best guest center skill
+			guest_size, fmt = 50, '<div style="float:left;*padding-left:0;"><img src="{0}" width={1}></div>'
+			divs = [fmt.format(icon_path(card_id,idolized), guest_size) for card_id in recommend_guest for idolized in [False,True] ]
+			df_guest['Recommend Guest Icon'] = '<div style="width:{0}px;">{1}<div>'.format(len(divs)*guest_size, ''.join(divs))
+			# compute the expected score if the best guest center skill is present
+			setting = self.setting.copy()
+			setting['guest_cskill'] = best_guest_cskill
+			df_guest['Expected Score'] = team.compute_expected_total_score(self.live, setting)
+			html_recommend_guest = df_guest.to_html(escape=False, index=False)
+
+		return HTML(html_live+html_team+html_recommend_guest+html_main)
