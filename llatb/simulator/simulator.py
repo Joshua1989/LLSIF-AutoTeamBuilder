@@ -4,7 +4,7 @@ import pandas as pd
 import json, urllib.request, llatb
 from llatb.common.global_var import *
 from llatb.simulator.skill_tracker import SkillTracker
-from llatb.common.config import live_archive_dir, misc_path, icon_path
+from llatb.common.config import live_archive_dir, misc_path, icon_path, html_template
 from llatb.framework import Live
 from IPython.display import HTML
 
@@ -280,58 +280,7 @@ class Simulator:
 		html_code = df.to_html(escape=False)
 
 		if filename is not None:
-			template = '''
-<!DOCTYPE html>
-<html>
-
-<head>
-    <style>
-    table {
-        margin-left: 0px;
-        margin-right: auto;
-        border: none;
-        border-collapse: collapse;
-        border-spacing: 0;
-        color: @rendered_html_border_color;
-        font-size: 12px;
-        table-layout: fixed;
-    }
-    
-    th {
-	    white-space: nowrap;
-	}
-    
-    th {
-        font-weight: bold;
-    }
-    
-    tbody tr:nth-child(odd) {
-        background: #f5f5f5;
-    }
-    
-    * + table {
-        margin-top: 1em;
-    }
-    
-    p {
-        text-align: center;
-    }
-    
-    img {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    </style>
-</head>
-<body>
-    {0} 
-</body>
-
-</html>
-'''
 			html_head = self._gen_summary().data
-			template = template.replace('{\n','{{\n').replace('}\n','}}\n')
 			with open(filename, 'w') as fp:
-				fp.write(template.format((html_head+html_code).replace('\n','')))
+				fp.write(html_template.format(html_head+html_code))
 			print('File saved to', filename)

@@ -3,7 +3,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from IPython.display import HTML
 from llatb.common.global_var import *
-from llatb.common.config import misc_path, icon_path, gem_path
+from llatb.common.config import misc_path, icon_path, gem_path, html_template
 pd.set_option('display.max_colwidth', -1)
 
 def gem_slot_pic(card, total_slot_num=8, show_cost=True, gem_size=35):
@@ -90,7 +90,7 @@ def view_card(card, show_gem=False, extra_col=[], gem_size=25):
 	df = pd.DataFrame([get_summary(0, card, show_gem=show_gem, ext_col=extra_col)], columns=columns)
 	df = df.set_index('index')
 	df.index.name = ''
-	return HTML(df.to_html(escape=False, index=False))
+	return HTML(html_template(df.to_html(escape=False, index=False)))
 
 def view_cards(cards, show_gem=False, extra_col=[], gem_size=25):
 	def get_summary(index, card, show_gem=False, ext_col=[]):
@@ -159,7 +159,7 @@ def view_cards(cards, show_gem=False, extra_col=[], gem_size=25):
 	df = pd.DataFrame(data, columns=columns)
 	df = df.set_index('index')
 	df.index.name = ''
-	return HTML(df.to_html(escape=False))
+	return HTML(html_template(df.to_html(escape=False)))
 
 def view_team(team, show_gem=False, extra_col=[], gem_size=25):
 	def get_summary(index, card, show_gem=False, ext_col=[]):
@@ -246,7 +246,7 @@ def view_team(team, show_gem=False, extra_col=[], gem_size=25):
 				df.loc[index, 'CID'] = df.loc[index, 'CID'].replace('<span>',start_str)
 	# Place center card first
 	df = df.loc[['C', 'L1', 'L2', 'L3', 'L4', 'R4', 'R3', 'R2', 'R1']]
-	return HTML(header + df.to_html(escape=False))
+	return HTML(html_template(header + df.to_html(escape=False)))
 
 def view_live(live):
 	df_head = pd.DataFrame({'Cover': ['<img src="{0}" width=100 />'.format(live.cover)]})
@@ -260,4 +260,4 @@ def view_live(live):
 	df.index = [pos_name[9-x] if type(x)==int else x for x in list(df.index)]
 	df = df.loc[pos_name+['total']]
 	df = df.applymap(lambda x: str(int(x)) if np.isclose(x,round(x)) else '{0:.3f}'.format(x)).transpose()
-	return HTML(df_head.to_html(escape=False, index=False) + df.to_html())
+	return HTML(html_template(df_head.to_html(escape=False, index=False) + df.to_html()))

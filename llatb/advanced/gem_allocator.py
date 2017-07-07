@@ -3,7 +3,7 @@ import math, itertools, copy, json
 from llatb.advanced.advanced_card import *
 from llatb.framework import Team
 from llatb.common.display import gem_slot_pic, view_cards
-from llatb.common.config import card_archive_dir, misc_path, icon_path, gem_path
+from llatb.common.config import card_archive_dir, misc_path, icon_path, gem_path, html_template
 from IPython.display import HTML
 
 class GemAllocator:
@@ -398,57 +398,6 @@ class GemAllocator:
 		return HTML(html_live+html_team+html_recommend_guest+html_main)
 
 	def to_html(self, file_name, show_cost=True):
-		template = '''
-<!DOCTYPE html>
-<html>
-
-<head>
-    <style>
-    table {
-        margin-left: 0px;
-        margin-right: auto;
-        border: none;
-        border-collapse: collapse;
-        border-spacing: 0;
-        color: @rendered_html_border_color;
-        font-size: 12px;
-        table-layout: fixed;
-    }
-    
-    th {
-	    white-space: nowrap;
-	}
-    
-    th {
-        font-weight: bold;
-    }
-    
-    tbody tr:nth-child(odd) {
-        background: #f5f5f5;
-    }
-    
-    * + table {
-        margin-top: 1em;
-    }
-    
-    p {
-        text-align: center;
-    }
-    
-    img {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    </style>
-</head>
-<body>
-    {0} 
-</body>
-
-</html>
-'''
 		html = self.view_optimal_details(show_cost=show_cost)
-		template = template.replace('{\n','{{\n').replace('}\n','}}\n')
 		with open(file_name, 'w') as fp:
-			fp.write(template.format(html.data.replace('\n','')))
+			fp.write(html_template.format(html.data.replace('\n','')))

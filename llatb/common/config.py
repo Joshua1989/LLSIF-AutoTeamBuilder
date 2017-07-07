@@ -60,3 +60,54 @@ if not Path(live_archive_dir).exists():
 	print('{0} does not exist'.format(live_archive_dir))
 if not Path(unit_db_dir).exists():
 	print('{0} does not exist'.format(unit_db_dir))
+
+html_template = '''
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+    table {{
+        margin-left: 0px;
+        margin-right: auto;
+        border: none;
+        border-collapse: collapse;
+        border-spacing: 0;
+        color: @rendered_html_border_color;
+        font-size: 12px;
+        table-layout: fixed;
+    }}
+    
+    th {{
+	    white-space: nowrap;
+	}}
+    
+    th {{
+        font-weight: bold;
+    }}
+    
+    tbody tr:nth-child(odd) {{
+        background: #f5f5f5;
+    }}
+    
+    * + table {{
+        margin-top: 1em;
+    }}
+    
+    p {{
+        text-align: center;
+    }}
+    
+    img {{
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }}
+    </style>
+</head>
+<body>
+    {0} 
+</body>
+
+</html>
+'''
