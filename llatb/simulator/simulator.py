@@ -15,15 +15,19 @@ class Simulator:
 		# Compute team total attribute when judge skill is not active and active
 		res = team.team_strength(guest_cskill)
 		temp = np.array(res['displayed_card_attr'])
-		total = np.zeros((2,3))
+		single, total = np.concatenate((temp[None,:,:],temp[None,:,:])), np.zeros((2,3))
 		for i,card in enumerate(self.card_list):
 			total += temp[i,:]
 			for gem in card.equipped_gems:
 				if gem.effect == 'judge_boost':
 					attr_idx = attr_list.index(gem.attribute)
 					total[1,attr_idx] += gem.value/100*temp[i,attr_idx]
-		total += np.array(res['center_skill_bonus']) + np.array(res['center_SIS_bonus'])
-		self.team_attr = total
+					single[1,i,attr_idx] += gem.value/100*temp[i,attr_idx]
+		single += np.array(res['center_SIS_bonus_detail'])[None,:,:] 
+		single += np.array(res['team_center_skill_bonus_detail'])[None,:,:]
+		single += np.array(res['guest_center_skill_bonus_detail'])[None,:,:]
+		total  += np.array(res['center_SIS_bonus']) + np.array(res['center_skill_bonus'])
+		self.single_attr, self.team_attr = single, total
 		self.team_hp = np.array([card.hp for card in self.card_list]).sum()
 		# Compute purchase boosts
 		self.boosts = {'Perfect Support':0, 'Tap Score Up':0, 'Skill Up':0, 'Stamina Restore':0}
@@ -107,15 +111,14 @@ class Simulator:
 		judge_active = int(note['timing_sec'] < self.global_status['judge_end_time'])
 		attr_idx = attr_list.index(self.live.attr)
 		team_value = base_score_factor * self.team_attr[judge_active, attr_idx]
-
 		# Compute base card scoring
 		combo_coeff = combo_factor(self.global_status['combo'])
 		type_coeff = (1+(long_factor-1)*note['long']) * (1+(swing_factor-1)*note['swing'])
 		pos = 9 - note['position'] # Position in note are ordered clockwise
 		score = team_value * type_coeff * judge_coeff * combo_coeff * attr_coeff[pos] * group_coeff[pos]
-		# print(team_value, type_coeff, judge_coeff, combo_coeff, attr_coeff[pos], group_coeff[pos])
 		score = int( score * (1+self.boosts['Tap Score Up']) )
-		self.skill_tracker[pos].cum_base_score += score
+		for i in range(9):
+			self.skill_tracker[i].cum_base_score += int(round(score * self.single_attr[judge_active, i, attr_idx] / self.team_attr[judge_active, attr_idx]))
 		return score
 	def _add_skill_reward(self, note, reward):
 		self.global_status['cum_score'] += reward['score']
@@ -139,13 +142,16 @@ class Simulator:
 			temp['card'] = card[i]
 			summary.append(temp)
 		df = pd.DataFrame(summary, columns=['card']+keys)
-		df['score'] = df['score'].apply(lambda x: int(x))
 		df = df.append(pd.DataFrame(df.sum()).transpose())
-		df.index = ['L1', 'L2', 'L3', 'L4', 'C', 'R4', 'R3', 'R2', 'R1', 'Total']
-		df.loc['Total', 'card'] = ''
+		df['base_score'] = df['base_score'].apply(lambda x: '<p>{0}</p>'.format(int(x)))
+		df['score'] = df['score'].apply(lambda x: '<p>{0}</p>'.format(int(x)))
+		df['hp'] = df['hp'].apply(lambda x: '<p>{0}</p>'.format(int(x)))
+		df['judge'] = df['judge'].apply(lambda x: '<p>{0}</p>'.format(round(x,1)))
+		df['weak_judge'] = df['weak_judge'].apply(lambda x: '<p>{0}</p>'.format(round(x,1)))
+		df.index = ['<p>{0}</p>'.format(x) for x in ['L1', 'L2', 'L3', 'L4', 'C', 'R4', 'R3', 'R2', 'R1', 'Total']]
+		df.loc['<p>Total</p>', 'card'] = ''
 		html_code = df_head.to_html(escape=False, index=False) + df.transpose().to_html(escape=False)
 		return HTML(html_code)
-
 	def simulate(self, name, difficulty, prob, save_to=None):
 		self._load_live(name, difficulty)
 		self._init_simul(prob)
@@ -187,12 +193,15 @@ class Simulator:
 			self.show_simul(filename=save_to)
 		return self._gen_summary()
 
-	def show_simul(self, col_width=30, ext_cols=[], filename='test.html'):
+	def show_simul(self, col_width=30, ext_cols=[], filename=None):
 		def determine_note_type(df):
 			df = df.assign(direction=0)
 			cal_dir = lambda x: np.concatenate((np.diff(x),[np.diff(x)[-1]]))
 			for i in range(2,df['notes_level'].max()+1):
-				df.loc[df.notes_level==i,'direction'] = cal_dir(df[df.notes_level==i]['position'].values)
+				try:
+					df.loc[df.notes_level==i,'direction'] = cal_dir(df[df.notes_level==i]['position'].values)
+				except:
+					df.loc[df.notes_level==i,'direction'] = 1
 			attr = self.live.attr
 			notes = {'note type '+str(l+1):[] for l in range(len(self.card_list))}
 			swing_dir = df.direction.apply(lambda x: 'left' if x>0 else 'right')
@@ -240,6 +249,8 @@ class Simulator:
 			
 			for i, card in enumerate(card_list,1):
 				note_type, content = row['note type '+str(i)], ''
+				if 'long' in note_type:
+					content += '<img style="position: relative;" src="{0}" width={1} />'.format(misc_path(note_type), col_width)
 				if 'Note' in note_type:
 					content += '<img style="position: relative;" src="{0}" width={1} />'.format(misc_path(note_type), col_width)
 				elif 'Star' in note_type:
@@ -260,7 +271,6 @@ class Simulator:
 		columns = ['index', 'time', 'accuracy', 'accuracy*', 'hp', 'note', 'combo', 'perfect', 'cum_score', 'score']
 		columns += ['<img src="{0}" width={1} />'.format(icon_path(card.card_id, card.idolized), col_width) for card in self.card_list]
 		columns += ext_cols
-
 		df = pd.concat((self.simul_result, determine_note_type(self.simul_result)), axis=1)
 		data = [format_row(row, self.team_hp, self.card_list) for _, row in df.iterrows()]
 		pd.set_option('display.max_colwidth', -1)
@@ -268,6 +278,60 @@ class Simulator:
 		df.cum_score = df.cum_score.apply(lambda x:int(x))
 		df.score = df.score.apply(lambda x:int(x))
 		html_code = df.to_html(escape=False)
-		with open(filename, 'w') as fp:
-			fp.write(html_code)
-		print('File saved to', filename)
+
+		if filename is not None:
+			template = '''
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+    table {
+        margin-left: 0px;
+        margin-right: auto;
+        border: none;
+        border-collapse: collapse;
+        border-spacing: 0;
+        color: @rendered_html_border_color;
+        font-size: 12px;
+        table-layout: fixed;
+    }
+    
+    th {
+	    white-space: nowrap;
+	}
+    
+    th {
+        font-weight: bold;
+    }
+    
+    tbody tr:nth-child(odd) {
+        background: #f5f5f5;
+    }
+    
+    * + table {
+        margin-top: 1em;
+    }
+    
+    p {
+        text-align: center;
+    }
+    
+    img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    </style>
+</head>
+<body>
+    {0} 
+</body>
+
+</html>
+'''
+			html_head = self._gen_summary().data
+			template = template.replace('{\n','{{\n').replace('}\n','}}\n')
+			with open(filename, 'w') as fp:
+				fp.write(template.format((html_head+html_code).replace('\n','')))
+			print('File saved to', filename)

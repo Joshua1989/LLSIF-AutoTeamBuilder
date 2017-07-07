@@ -33,7 +33,7 @@ class SkillTracker:
 		self.cum_hp = 0
 		self.cum_judge = 0
 		self.cum_weak_judge = 0
-	def update(self,note, max_hp):
+	def update(self, note, max_hp):
 		# Return: score bonus, hp restore, strong judge time, weak judge time
 		reward = {'score':0, 'hp':0, 'weak_judge':0, 'judge':0}
 		if self.trigger_type is None: return reward
@@ -68,7 +68,7 @@ class SkillTracker:
 				self.cum_weak_judge += self.duration
 			elif self.effect_type == 'Strong Judge':
 				reward = {'score':0, 'hp':0, 'weak_judge':0, 'judge':self.remain}
-				self.cum_judge += self.duration
+				self.cum_judge += self.duration * active
 			else:
 				print('Unknown effect type: {0}'.format(self.effect_type))
 				raise
@@ -92,7 +92,7 @@ class SkillTracker:
 				if not self.inherit and self.remain == 0:
 					self.remain = self.duration * active
 					reward = {'score':0, 'hp':0, 'weak_judge':0, 'judge':self.remain}
-					self.cum_judge += self.duration
+					self.cum_judge += self.duration * active
 				# If no inherit and skill is active, set inherit to True
 				elif not self.inherit and self.remain > 0:
 					self.inherit = True

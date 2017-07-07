@@ -97,8 +97,11 @@ class Team:
 		res = {'team_total':np.array(final_attr, dtype=int).sum(axis=0).tolist(),
 		       'center_skill_bonus':int_list(team_cskill_bonus+guest_cskill_bonus),
 		       'team_center_skill_bonus':int_list(team_cskill_bonus),
+		       'team_center_skill_bonus_detail':int_list(team_cskill_bonus_detail),
 		       'guest_center_skill_bonus':int_list(guest_cskill_bonus),
+		       'guest_center_skill_bonus_detail':int_list(guest_cskill_bonus_detail),
 		       'center_SIS_bonus':int_list(SIS_bonus),
+		       'center_SIS_bonus_detail':int_list(team_boost_bonus_detail),
 		       'displayed_card_attr':int_list(displayed_card_attr),
 		       'before_C_attr':int_list(card_gem_attr),
 		       'final_card_attr':int_list(final_attr)}
