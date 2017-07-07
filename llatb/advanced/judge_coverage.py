@@ -73,7 +73,7 @@ class CoverageCalculator:
 		return 1-TimeAxis
 
 	def C_calc(self, c, p, td):
-		TimeAxis = np.ones(int(self.Map_beat[-1])+2*td*1000)
+		TimeAxis = np.ones(int(self.Map_beat[-1]+2*td*1000))
 		num_period = math.floor(self.live.note_number/c)
 		intervals = []
 		for i in range(num_period):

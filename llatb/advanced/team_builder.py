@@ -85,11 +85,11 @@ class TeamBuilder:
 		for card in self.cards:
 			if card.has_same_cskill and center is None:
 				card.compute_card_stats(cskill, self.guest_cskill, self.live, self.setting)
-				card.CR = CC.compute_coverage(card)
+				if card.CR is None: card.CR = CC.compute_coverage(card)
 				center = card
 			elif k < K:
 				card.compute_card_stats(cskill, self.guest_cskill, self.live, self.setting)
-				card.CR = CC.compute_coverage(card)
+				if card.CR is None: card.CR = CC.compute_coverage(card)
 				candidates.append(card)
 				k += 1
 			if center is not None and k >= K: break
@@ -106,26 +106,25 @@ class TeamBuilder:
 
 		center, candidates = self.find_candidates(cskill, K)
 		if method == 'brute':
-			max_score, best_team = 0, None
+			best_gem_allocator = single_case(tuple(list(range(8))), center, candidates, 0)
 			for choice in itertools.combinations(list(range(K)), 8):
-				gem_allocator = single_case(choice, center, candidates, max_score)
+				gem_allocator = single_case(choice, center, candidates, best_gem_allocator.total_score)
 				if gem_allocator is None: continue
-				if gem_allocator.total_score > max_score:
-					max_score, best_team = gem_allocator.total_score, gem_allocator.construct_team()
+				if gem_allocator.total_score > best_gem_allocator.total_score:
+					best_gem_allocator = gem_allocator
 		elif '-suboptimal' in method:
 			t = int(method.replace('-suboptimal', ''))
 			if t not in list(range(1,9)): 
 				print('Suboptimal step must be in {1,...,8}')
 				raise
 
-			max_score, best_team = 0, None
 			# Use a map to keep track of computed team to avoid duplicated computation
 			score_map, eliminate = defaultdict(lambda:0), defaultdict(lambda:False)
 			# Initialize queue
 			choice = tuple(list(range(8)))
 			gem_allocator = single_case(choice, center, candidates)
+			best_gem_allocator = gem_allocator
 			score_map[choice] = gem_allocator.total_score
-			max_score, best_team = gem_allocator.total_score, gem_allocator.construct_team()
 			queue = [choice]
 
 			while len(queue) > 0:
@@ -140,13 +139,13 @@ class TeamBuilder:
 							new_choice = tuple(sorted(neighbor))
 							# If this team combination has not been computed, compute it
 							if score_map[new_choice] == 0:
-								gem_allocator = single_case(new_choice, center, candidates, max_score)
+								gem_allocator = single_case(new_choice, center, candidates, best_gem_allocator.total_score)
 								if gem_allocator is None: 
 									score_map[new_choice] = 1
 									continue
 								score_map[new_choice] = gem_allocator.total_score
-								if gem_allocator.total_score > max_score:
-									max_score, best_team = gem_allocator.total_score, gem_allocator.construct_team()
+								if gem_allocator.total_score > best_gem_allocator.total_score:
+									best_gem_allocator = gem_allocator
 							# If the new choice is better, add it to the queue to examine later
 							# otherwise the new choice is not promising, eliminate it
 							if not eliminate[new_choice] and score_map[new_choice] >= score_map[choice]:
@@ -156,7 +155,7 @@ class TeamBuilder:
 		else:
 			print('Unrecognized method {0}, only support brute and t-suboptimal'.format(method))
 			raise		
-		return max_score, best_team
+		return best_gem_allocator
 
 	def build_team(self, K=15, method='4-suboptimal', alloc_method='DC', show_cost=False):
 		def find_candidate_cskill():
@@ -182,14 +181,15 @@ class TeamBuilder:
 		max_score, best_team = 0, None
 		opt = {'score_up_bonus':self.score_up_bonus, 'skill_up_bonus':self.skill_up_bonus, 'guest_cskill':self.guest_cskill}
 		for i, cskill in enumerate(cskill_list,1):
-			score, team = self.build_team_fix_cskill(cskill=cskill, K=K, method=method, alloc_method=alloc_method)
-			exp_score = team.compute_expected_total_score(self.live, opt=opt)
-			result.append((exp_score, team))
-			print('{0}/{1}: Best team has score {2:6d} for {3}'.format(i, len(cskill_list), score, cskill))
-			if exp_score > max_score: max_score, best_team = exp_score, team
+			gem_allocator = self.build_team_fix_cskill(cskill=cskill, K=K, method=method, alloc_method=alloc_method)
+			exp_score = gem_allocator.construct_team().compute_expected_total_score(self.live, opt=opt)
+			result.append((exp_score, gem_allocator))
+			print('{0}/{1}: Best team has score {2:6d} for {3}'.format(i, len(cskill_list), exp_score, cskill))
+			if exp_score > max_score: max_score, best_gem_allocator = gem_allocator.total_score, gem_allocator
 
-		self.best_team = best_team
-		return self.team_alloc(best_team, alloc_method=alloc_method, show_cost=show_cost)
+		self.best_gem_allocator = best_gem_allocator
+		self.best_team = best_gem_allocator.construct_team()
+		return self.view_result()
 
 	def simulate(self, boosts={}, save_to=None):
 		if type(self.live) == DefaultLive:
@@ -204,6 +204,12 @@ class TeamBuilder:
 		sim = Simulator(self.best_team, guest_cskill=self.guest_cskill, boosts=param)
 		song_name, difficulty, PR = self.live.name, self.live.difficulty, self.live.perfect_rate
 		return sim.simulate(song_name, difficulty, prob=[PR,1-PR,0,0,0], save_to=save_to)
+
+	def view_result(self, show_cost=False):
+		try:
+			return self.best_gem_allocator.view_optimal_details()
+		except:
+			print('The best team has not been formed yet')
 
 	def team_alloc(self, team, alloc_method='DC', show_cost=False):
 		candidates, CC = [], CoverageCalculator(self.live)

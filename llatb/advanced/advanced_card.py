@@ -25,6 +25,7 @@ class AdvancedCard(Card):
 		self.is_charm = self.skill is not None and self.skill.effect_type == 'Score Up'
 		self.is_heal = self.skill is not None and self.skill.effect_type == 'Stamina Restore'
 		self.is_trick = self.skill is not None and self.skill.effect_type in ['Weak Judge', 'Strong Judge']
+		self.CR = None
 	def compute_rough_strength(self, cskill, guest_cskill, live, setting):
 		# Compute rough strength and sort them by live attribute
 		setting = setting.copy()
@@ -63,7 +64,7 @@ class AdvancedCard(Card):
 		# Compute same group & same color bonus
 		self.mu = attr_match_factor**(live.attr==self.main_attr) * group_match_factor**(live.group in self.tags)
 		# Compute the single card judge cover rate
-		self.CR = 0 if not self.is_trick else self.skill.skill_gain(setting=setting)[0]
+		# self.CR = 0 if not self.is_trick else self.skill.skill_gain(setting=setting)[0]
 		# Compute center skill bonus and card base score before same group & same color bonus
 		partial_boost = live.pts_per_strength * setting['score_up_rate']
 		self.base_bond_value = getattr(self, live.attr.lower()) + self.bond * (self.main_attr==live.attr) 
