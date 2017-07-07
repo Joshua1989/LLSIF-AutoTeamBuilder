@@ -240,7 +240,7 @@ class GemAllocator:
 		def get_summary(index, card):
 			res = { 'CID':'<p>{0}</p>'.format(card.card_id), 
 					'Icon': '<img src="{0}" width=75 />'.format(icon_path(card.card_id, card.idolized)),
-					'Gem':gem_slot_pic(card, show_cost=show_cost, gem_size=25-5*show_cost)}
+					'Gem':gem_slot_pic(card, show_cost=show_cost, gem_size=25-8*show_cost)}
 
 			# Skill gain information
 			if card.skill is not None:
@@ -338,6 +338,8 @@ class GemAllocator:
 		df_live['Skill Up Rate'] = self.setting['skill_up_rate']
 		df_live['Avg Pos Bonus'] = mu_bar
 		df_live.index = ['Live Stats']
+		df_live.columns = ['<p>{0}</p>'.format(x) for x in list(df_live.columns)]
+		df_live = df_live.applymap(lambda x: x if type(x)==str and x[0]=='<' else '<p>{0}</p>'.format(round(x,3) if type(x)==float else ('-' if str(x)=='0' else x)))
 		html_live = df_live.to_html(escape=False)
 
 		# Data frame for brief team total stats
@@ -349,6 +351,8 @@ class GemAllocator:
 		df_team['Expected Score']  = math.floor(df_team['Amend Team STR'] * self.live.pts_per_strength * mu_bar * self.setting['score_up_rate']) 
 		df_team['Expected Score'] += math.floor(df_team['Total Skill STR'] * self.live.pts_per_strength)
 		df_team.index = ['Total Stats']
+		df_team.columns = ['<p>{0}</p>'.format(x) for x in list(df_team.columns)]
+		df_team = df_team.applymap(lambda x: x if type(x)==str and x[0]=='<' else '<p>{0}</p>'.format(round(x,3) if type(x)==float else ('-' if str(x)=='0' else x)))
 		html_team = df_team.to_html(escape=False)
 
 		df.columns = ['<p>{0}</p>'.format(x) if '<p>' not in x else x for x in columns]		
@@ -379,12 +383,72 @@ class GemAllocator:
 			df_guest['Recommend Guest Center Skill'] = [str(best_guest_cskill)]
 			# list the cards that has the best guest center skill
 			guest_size, fmt = 50, '<div style="float:left;*padding-left:0;"><img src="{0}" width={1}></div>'
-			divs = [fmt.format(icon_path(card_id,idolized), guest_size) for card_id in recommend_guest for idolized in [False,True] ]
-			df_guest['Recommend Guest Icon'] = '<div style="width:{0}px;">{1}<div>'.format(len(divs)*guest_size, ''.join(divs))
+			# divs = [fmt.format(icon_path(card_id,idolized), guest_size) for card_id in recommend_guest for idolized in [False,True] ]
+			divs1 = [fmt.format(icon_path(card_id,False), guest_size) for card_id in recommend_guest]
+			divs2 = [fmt.format(icon_path(card_id,True), guest_size) for card_id in recommend_guest]
+			df_guest['Recommend Guest Icon'] = '<div style="width:{0}px;">{1}<div>'.format(len(divs1)*guest_size, ''.join(divs1)+''.join(divs2))
 			# compute the expected score if the best guest center skill is present
 			setting = self.setting.copy()
 			setting['guest_cskill'] = best_guest_cskill
 			df_guest['Expected Score'] = team.compute_expected_total_score(self.live, setting)
+			df_guest.columns = ['<p>{0}</p>'.format(x) for x in list(df_guest.columns)]
+			df_guest = df_guest.applymap(lambda x: x if type(x)==str and x[0]=='<' else '<p>{0}</p>'.format(round(x,3) if type(x)==float else ('-' if str(x)=='0' else x)))
 			html_recommend_guest = df_guest.to_html(escape=False, index=False)
 
 		return HTML(html_live+html_team+html_recommend_guest+html_main)
+
+	def to_html(self, file_name, show_cost=True):
+		template = '''
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+    table {
+        margin-left: 0px;
+        margin-right: auto;
+        border: none;
+        border-collapse: collapse;
+        border-spacing: 0;
+        color: @rendered_html_border_color;
+        font-size: 12px;
+        table-layout: fixed;
+    }
+    
+    th {
+	    white-space: nowrap;
+	}
+    
+    th {
+        font-weight: bold;
+    }
+    
+    tbody tr:nth-child(odd) {
+        background: #f5f5f5;
+    }
+    
+    * + table {
+        margin-top: 1em;
+    }
+    
+    p {
+        text-align: center;
+    }
+    
+    img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    </style>
+</head>
+<body>
+    {0} 
+</body>
+
+</html>
+'''
+		html = self.view_optimal_details(show_cost=show_cost)
+		template = template.replace('{\n','{{\n').replace('}\n','}}\n')
+		with open(file_name, 'w') as fp:
+			fp.write(template.format(html.data.replace('\n','')))

@@ -207,7 +207,7 @@ class TeamBuilder:
 
 	def view_result(self, show_cost=False):
 		try:
-			return self.best_gem_allocator.view_optimal_details()
+			return self.best_gem_allocator.view_optimal_details(show_cost=show_cost)
 		except:
 			print('The best team has not been formed yet')
 
