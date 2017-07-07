@@ -244,9 +244,9 @@ class GemAllocator:
 
 			# Skill gain information
 			if card.skill is not None:
-				gain = card.skill.skill_gain()[0]
+				gain = card.skill.skill_gain(setting=self.setting)[0]
 				if card.skill.effect_type in ['Strong Judge', 'Weak Judge']:
-					skill_gain_str = '{0:.2f}% covered '.format(100*gain)
+					skill_gain_str = '{0:.2f}% covered '.format(100*card.CR)
 				elif card.skill.effect_type == 'Stamina Restore':
 					skill_gain_str = '{0:.3f} hp/note'.format(gain)
 				elif card.skill.effect_type == 'Score Up':

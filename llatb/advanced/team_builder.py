@@ -10,6 +10,8 @@ from llatb.common.config import misc_path, icon_path, gem_path
 from llatb.simulator import Simulator
 from IPython.display import HTML
 from llatb.advanced.gem_allocator import GemAllocator, AdvancedCard
+from llatb.advanced.judge_coverage import CoverageCalculator
+
 
 
 class TeamBuilder:
@@ -79,13 +81,15 @@ class TeamBuilder:
 			card.compute_rough_strength(cskill, self.guest_cskill, self.live, self.setting)
 		self.cards.sort(key=lambda x: x.rough_strength[self.live.attr]['strength'], reverse=True)
 		# Find the best card and choose it to be the center, and find K best cards from the rest for candidates
-		center, candidates, k = None, [], 0
+		center, candidates, k, CC = None, [], 0, CoverageCalculator(self.live)
 		for card in self.cards:
 			if card.has_same_cskill and center is None:
 				card.compute_card_stats(cskill, self.guest_cskill, self.live, self.setting)
+				card.CR = CC.compute_coverage(card)
 				center = card
 			elif k < K:
 				card.compute_card_stats(cskill, self.guest_cskill, self.live, self.setting)
+				card.CR = CC.compute_coverage(card)
 				candidates.append(card)
 				k += 1
 			if center is not None and k >= K: break
@@ -202,11 +206,12 @@ class TeamBuilder:
 		return sim.simulate(song_name, difficulty, prob=[PR,1-PR,0,0,0], save_to=save_to)
 
 	def team_alloc(self, team, alloc_method='DC', show_cost=False):
-		candidates = []
+		candidates, CC = [], CoverageCalculator(self.live)
 		for index, card in enumerate(team.card_list):
 			adv_card = AdvancedCard(index, card)
 			adv_card.list_gem_allocation(self.live)
 			adv_card.compute_card_stats(team.center().cskill, self.guest_cskill, self.live, self.setting)
+			adv_card.CR = CC.compute_coverage(card)
 			if index == 4:
 				center = adv_card
 			else:
