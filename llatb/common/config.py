@@ -1,15 +1,18 @@
 import os
+import os 
 from pathlib import Path
 from llatb.common.global_var import gem_skill_dict, gem_skill_id_rev_dict
 
+root = os.path.dirname(os.path.realpath(__file__)).split('llatb')[0]
+
 # Comprehensive card information
-card_archive_dir = 'assets/data_base.json'
+card_archive_dir = root+'assets/data_base.json'
 # Comprehensive live basic information
-live_archive_dir = 'assets/live_data_base.json'
+live_archive_dir = root+'assets/live_data_base.json'
 # unit_id and unit_number correspondence
-unit_db_dir = 'assets/unit.db_'
+unit_db_dir = root+'assets/unit.db_'
 unit_db_download_url = 'https://r.llsif.win/db/unit/unit.db_'
-live_db_dir = 'assets/live.db_'
+live_db_dir = root+'assets/live.db_'
 live_db_download_url = 'https://r.llsif.win/db/live/live.db_'
 
 # Path function for saving downloaded resources and HTML image embedding
