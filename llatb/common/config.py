@@ -84,6 +84,10 @@ html_template = '''
     th {{
 	    white-space: nowrap;
 	}}
+
+	td {{
+	    white-space: nowrap;
+	}}
     
     th {{
         font-weight: bold;

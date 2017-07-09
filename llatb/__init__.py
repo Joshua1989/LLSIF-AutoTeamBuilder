@@ -16,7 +16,7 @@ def update_data():
 	llatb.common.util.update_card_data()
 	llatb.common.util.update_live_data()
 
-def html_view(item_to_show, show_gem=False, extra_col=[]):
+def html_view(item_to_show, show_gem=False, extra_col=[], lang='EN'):
 	if isinstance(item_to_show, Card):
 		return llatb.common.display.view_card(item_to_show, show_gem=show_gem, extra_col=extra_col)
 	elif isinstance(item_to_show, Team):
@@ -26,7 +26,7 @@ def html_view(item_to_show, show_gem=False, extra_col=[]):
 	elif type(item_to_show) in [dict, list]:
 		return llatb.common.display.view_cards(item_to_show, show_gem=show_gem, extra_col=extra_col)
 	elif isinstance(item_to_show, Live):
-		return llatb.common.display.view_live(item_to_show)
+		return llatb.common.display.view_live(item_to_show, lang=lang)
 
 def skill_type_table():
 	user_profile = GameData()

@@ -25,6 +25,7 @@ class TeamBuilder:
 		self.cards = [AdvancedCard(index, card) for index, card in game_data.raw_card.items()]
 		for card in self.cards: card.list_gem_allocation(self.live)
 		self.best_team = None
+		self.log = ''
 
 	def generate_setting(self, opt={}):
 		res = { key:getattr(self.live, key) for key in ['note_number', 'duration', 'star_density', 'note_type_dist', 'perfect_rate'] }
@@ -53,6 +54,7 @@ class TeamBuilder:
 				break
 		if center_card is None:
 			print('Did not find center card with index', center_idx)
+			self.log += 'Did not find center card with index {0}\n'.format(center_idx)
 			raise
 		for card in self.cards:
 			res = {k:getattr(card,k) for k in keys}
@@ -81,7 +83,7 @@ class TeamBuilder:
 			card.compute_rough_strength(cskill, self.guest_cskill, self.live, self.setting)
 		self.cards.sort(key=lambda x: x.rough_strength[self.live.attr]['strength'], reverse=True)
 		# Find the best card and choose it to be the center, and find K best cards from the rest for candidates
-		center, candidates, k, CC = None, [], 0, CoverageCalculator(self.live)
+		center, candidates, k, CC = None, [], 0, CoverageCalculator(self.live, self.setting)
 		for card in self.cards:
 			if card.has_same_cskill and center is None:
 				card.compute_card_stats(cskill, self.guest_cskill, self.live, self.setting)
@@ -95,6 +97,7 @@ class TeamBuilder:
 			if center is not None and k >= K: break
 		if center is None:
 			print('There is no card has center skill', cskill)
+			self.log += 'There is no card has center skill {0}\n'.format(cskill)
 			raise
 		return center, candidates
 
@@ -116,6 +119,7 @@ class TeamBuilder:
 			t = int(method.replace('-suboptimal', ''))
 			if t not in list(range(1,9)): 
 				print('Suboptimal step must be in {1,...,8}')
+				self.log += 'Suboptimal step must be in {1,...,8}\n'
 				raise
 
 			# Use a map to keep track of computed team to avoid duplicated computation
@@ -154,6 +158,7 @@ class TeamBuilder:
 								eliminate[new_choice] = True
 		else:
 			print('Unrecognized method {0}, only support brute and t-suboptimal'.format(method))
+			self.log += 'Unrecognized method {0}, only support brute and t-suboptimal\n'.format(method)
 			raise		
 		return best_gem_allocator
 
@@ -176,7 +181,8 @@ class TeamBuilder:
 			candidate_cskill.sort(key=lambda x: str(x))
 			return candidate_cskill
 
-		print('Team searching method: {0}. Gem allocation searching method: {1}'.format(method, alloc_method))
+		print('{2} {3}: Team searching method: {0}. Gem allocation searching method: {1}'.format(method, alloc_method, self.live.name, self.live.difficulty))
+		self.log += 'Team searching method: {0}. Gem allocation searching method: {1}\n'.format(method, alloc_method)
 		cskill_list, result = find_candidate_cskill(), []
 		max_score, best_team = 0, None
 		opt = {'score_up_bonus':self.score_up_bonus, 'skill_up_bonus':self.skill_up_bonus, 'guest_cskill':self.guest_cskill}
@@ -185,6 +191,7 @@ class TeamBuilder:
 			exp_score = gem_allocator.construct_team().compute_expected_total_score(self.live, opt=opt)
 			result.append((exp_score, gem_allocator))
 			print('{0}/{1}: Best team has score {2:6d} for {3}'.format(i, len(cskill_list), exp_score, cskill))
+			self.log += '{0}/{1}: Best team has score {2:6d} for {3}\n'.format(i, len(cskill_list), exp_score, cskill)
 			if exp_score > max_score: max_score, best_gem_allocator = gem_allocator.total_score, gem_allocator
 
 		self.best_gem_allocator = best_gem_allocator
@@ -205,14 +212,14 @@ class TeamBuilder:
 		song_name, difficulty, PR = self.live.name, self.live.difficulty, self.live.perfect_rate
 		return sim.simulate(song_name, difficulty, prob=[PR,1-PR,0,0,0], save_to=save_to)
 
-	def view_result(self, show_cost=False):
+	def view_result(self, show_cost=False, lang='EN'):
 		try:
-			return self.best_gem_allocator.view_optimal_details(show_cost=show_cost)
+			return self.best_gem_allocator.view_optimal_details(show_cost=show_cost, lang=lang)
 		except:
 			print('The best team has not been formed yet')
 
 	def team_alloc(self, team, alloc_method='DC', show_cost=False):
-		candidates, CC = [], CoverageCalculator(self.live)
+		candidates, CC = [], CoverageCalculator(self.live, self.setting)
 		for index, card in enumerate(team.card_list):
 			adv_card = AdvancedCard(index, card)
 			adv_card.list_gem_allocation(self.live)

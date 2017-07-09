@@ -22,7 +22,7 @@ except:
 	print('Please update the data base')
 
 class GameData:
-	def __init__(self, filename=None, file_type='packet'):
+	def __init__(self, filename=None, file_type='packet', string_input=False):
 		def gen_card(c, equip=True):
 			card = raw_card_dict[c['card_id']].copy()
 			card.idolize(c['idolized'])
@@ -39,9 +39,9 @@ class GameData:
 				if file_type == 'packet':
 					card_info, gem_owning_info, deck_info = self.get_user_packet_info(filename)
 				elif file_type == 'ieb':
-					card_info, gem_owning_info, deck_info = self.get_ieb_info(filename)
+					card_info, gem_owning_info, deck_info = self.get_ieb_info(filename, string_input)
 				elif file_type == 'sokka':
-					card_info, gem_owning_info, deck_info = self.get_sokka_info(filename)
+					card_info, gem_owning_info, deck_info = self.get_sokka_info(filename, string_input)
 				else:
 					print('Incorrect file type {0}. Please choose packet or ieb'.format(file_type))
 					raise
@@ -135,7 +135,7 @@ class GameData:
 			ids = [card_info[owning_id_dict[str(x['unit_owning_user_id'])]] for x in deck['unit_owning_user_ids']]
 			deck_info.append(ids)
 		return card_info, gem_owning_info, deck_info
-	def get_ieb_info(self, ieb_file):
+	def get_ieb_info(self, ieb_file, string_input=False):
 		def get_card_levelup_info(card_info):
 			res = {
 				'unit_id':str(card_info['unit_id']),
@@ -148,7 +148,7 @@ class GameData:
 				'equipped_gems':[]
 			}
 			return res
-		ieb_info = json.loads(open(ieb_file).read())
+		ieb_info = json.loads(ieb_file if string_input else open(ieb_file).read())
 		# Generate user card information
 		card_info, owning_id_dict = dict(), dict()
 		for i, card in enumerate(ieb_info['unit_info'], 1):
@@ -174,7 +174,7 @@ class GameData:
 				print('Invalid team: {0}-th team only has {1} members placed'.format(i, len(ids)))
 				deck_info.append(None)
 		return card_info, gem_owning_info, deck_info
-	def get_sokka_info(self, sokka_file):
+	def get_sokka_info(self, sokka_file, string_input=False):
 		def get_card_levelup_info(card_info):
 			res = {
 				'unit_id':str(card_info['unit_id']),
@@ -187,7 +187,7 @@ class GameData:
 				'equipped_gems':[]
 			}
 			return res
-		ieb_info = json.loads(open(sokka_file).read())
+		ieb_info = json.loads(sokka_file if string_input else open(sokka_file).read())
 		# Generate user card information
 		card_info, owning_id_dict = dict(), dict()
 		for i, card in enumerate(ieb_info['unit_info'], 1):

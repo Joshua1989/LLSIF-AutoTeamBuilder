@@ -208,7 +208,7 @@ class GemAllocator:
 			final_card_list[weight_list[i][1]] = self.card_list[1:][bonus_list[i][1]]
 		return Team(final_card_list)
 
-	def view_optimal_details(self, show_cost=False):
+	def view_optimal_details(self, show_cost=False, lang='EN'):
 		team = self.construct_team()		
 
 		col_name = { x:'<img src="{0}" width=25/>'.format(misc_path(x)) for x in ['level','bond','smile','pure','cool'] }
@@ -340,10 +340,19 @@ class GemAllocator:
 		df_live.index = ['Live Stats']
 		df_live.columns = ['<p>{0}</p>'.format(x) for x in list(df_live.columns)]
 		df_live = df_live.applymap(lambda x: x if type(x)==str and x[0]=='<' else '<p>{0}</p>'.format(round(x,3) if type(x)==float else ('-' if str(x)=='0' else x)))
+		if lang=='CN':
+			df_live.columns = ['<p>{0}</p>'.format(x) for x in ['曲名', '难度', 'Note个数' ,'时长', '每点强度对应得分', '预设P率', '应援得分加成', '应援技能加成', '平均位置加成']]
 		html_live = df_live.to_html(escape=False)
 
 		# Data frame for brief team total stats
-		df_team = pd.DataFrame({'Center Skill':[str(team[4].cskill)], 'Guest Center Skill': [str(self.guest_cskill)]})
+		def format_cskill(cskill):
+			cskill_str = str(cskill)
+			cskill_str = cskill_str.replace('Smile','<span style="color:red;">Smile</span>')
+			cskill_str = cskill_str.replace('Pure','<span style="color:green;">Pure</span>')
+			cskill_str = cskill_str.replace('Cool','<span style="color:blue;">Cool</span>')
+			return cskill_str
+
+		df_team = pd.DataFrame({'Center Skill':[format_cskill(team[4].cskill)], 'Guest Center Skill': [format_cskill(self.guest_cskill)]})
 		df_team['Cover Rate'] = '{0:.2f}%'.format(self.team_CR*100)
 		df_team['Team STR'] = df['Team STR'].sum()
 		df_team['Amend Team STR'] = df['Amend STR'].sum()
@@ -353,11 +362,18 @@ class GemAllocator:
 		df_team.index = ['Total Stats']
 		df_team.columns = ['<p>{0}</p>'.format(x) for x in list(df_team.columns)]
 		df_team = df_team.applymap(lambda x: x if type(x)==str and x[0]=='<' else '<p>{0}</p>'.format(round(x,3) if type(x)==float else ('-' if str(x)=='0' else x)))
+		if lang=='CN':
+			df_team.columns = ['<p>{0}</p>'.format(x) for x in ['Center技', '好友Center技', '判定覆盖率' ,'队伍强度', '判定修正队伍强度', '总技能强度', '期望得分']]
 		html_team = df_team.to_html(escape=False)
 
 		df.columns = ['<p>{0}</p>'.format(x) if '<p>' not in x else x for x in columns]		
 		df = df.applymap(lambda x: x if type(x)==str and x[0]=='<' else '<p>{0}</p>'.format('-' if type(x)==int and x==0 else x))
 		df.index = ['<p>{0}</p>'.format(x) for x in ['L1', 'L2', 'L3', 'L4', 'C', 'R4', 'R3', 'R2', 'R1']]
+		if lang=='CN':
+			columns  = ['<p>{0}</p>'.format(x) for x in ['卡牌编号', '卡牌图标', '装配宝石' ,'技能收益']] + list(df.columns)[4:9]
+			columns += ['<p>{0}</p>'.format(x) for x in ['单体增加宝石', '单体加成宝石', '团队加成宝石' ,'单卡界面强度', '队伍主C', '队伍副C', '好友主C', '好友副C', '单卡队中强度', 
+						'单卡队中强度(判)', '得分技能强度', '回复技能强度', '判定技能强度', '单卡修正强度', '单卡技能强度', '同色同团加成', '连击权重占比', '真实强度']] 
+			df.columns = columns
 		html_main = df.transpose().to_html(escape=False)
 
 		html_recommend_guest = ''
@@ -380,7 +396,7 @@ class GemAllocator:
 			recommend_guest = guest_candidate[(best_guest_cskill.base_attr, best_guest_cskill.bonus_range)]
 			# construct data frame to demonstrate best guest center skill information
 			df_guest = pd.DataFrame()
-			df_guest['Recommend Guest Center Skill'] = [str(best_guest_cskill)]
+			df_guest['Recommend Guest Center Skill'] = [format_cskill(best_guest_cskill)]
 			# list the cards that has the best guest center skill
 			guest_size, fmt = 50, '<div style="float:left;*padding-left:0;"><img src="{0}" width={1}></div>'
 			# divs = [fmt.format(icon_path(card_id,idolized), guest_size) for card_id in recommend_guest for idolized in [False,True] ]
@@ -389,13 +405,15 @@ class GemAllocator:
 			df_guest['Recommend Guest Icon'] = '<div style="width:{0}px;">{1}<div>'.format(len(divs1)*guest_size, ''.join(divs1)+''.join(divs2))
 			# compute the expected score if the best guest center skill is present
 			setting = self.setting.copy()
-			setting['guest_cskill'] = best_guest_cskill
+			setting.update({'score_up_bonus':setting['score_up_rate']-1, 'skill_up_bonus':setting['skill_up_rate']-1, 'guest_cskill':best_guest_cskill})
 			df_guest['Expected Score'] = team.compute_expected_total_score(self.live, setting)
 			df_guest.columns = ['<p>{0}</p>'.format(x) for x in list(df_guest.columns)]
 			df_guest = df_guest.applymap(lambda x: x if type(x)==str and x[0]=='<' else '<p>{0}</p>'.format(round(x,3) if type(x)==float else ('-' if str(x)=='0' else x)))
+			if lang=='CN':
+				df_guest.columns = ['<p>{0}</p>'.format(x) for x in ['推荐好友Center技', '拥有该技能的卡牌图标' ,'应援后期望得分']]
 			html_recommend_guest = df_guest.to_html(escape=False, index=False)
 
-		return HTML(html_live+html_team+html_recommend_guest+html_main)
+		return HTML(html_template.format(html_live+html_team+html_recommend_guest+html_main))
 
 	def to_html(self, file_name, show_cost=True):
 		html = self.view_optimal_details(show_cost=show_cost)

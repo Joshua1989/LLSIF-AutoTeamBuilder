@@ -18,7 +18,7 @@ except:
 	print('Live data base json file {0} does not exist!'.format(live_archive_dir))
 
 class Live:
-	def __init__(self, name, difficulty, perfect_rate=0.95):
+	def __init__(self, name, difficulty, perfect_rate=0.95, local_dir=None):
 		try:
 			info = live_basic_data[live_basic_data.apply(lambda x: x['name']==name and x['diff_level']==difficulty, axis=1)].iloc[0]
 		except:
@@ -27,11 +27,12 @@ class Live:
 		self.name, self.difficulty = name, difficulty
 		self.cover = info.cover
 		self.group, self.attr = info.group, info.attr
-		if 'http' in info.file_dir:
+		if local_dir is None:
 			req = urllib.request.Request(info.file_dir, data=None, headers={'User-Agent': 'whatever'})
 			temp = json.loads(urllib.request.urlopen(req).read().decode('utf-8'))
 		else:
-			temp = json.loads(open(info.file_dir).read())
+			print(local_dir+info.file_dir.split('/')[-1])
+			temp = json.loads(open(local_dir+info.file_dir.split('/')[-1]).read())
 		df = pd.DataFrame(temp, index=list(range(1,len(temp)+1)))
 		df = df.assign(token=df.effect==2, long=df.effect.apply(lambda x: x == 3), 
 					   star=df.effect==4, swing=df.effect.apply(lambda x: x in [11,13]))
@@ -59,6 +60,11 @@ class Live:
 		note_stat = df.groupby(by='position')[['tap', 'long', 'swing', 'star', 'token']].sum().applymap(int)
 		note_stat['note_factor'] = df.groupby(by='position')['note_factor'].sum()
 		note_stat['total_factor'] = df.groupby(by='position')['total_factor'].sum()
+		if len(note_stat) < 9:
+			missing_pos = [x for x in range(1,10) if x not in note_stat.index]
+			for pos in missing_pos:
+				note_stat = note_stat.append(pd.DataFrame(0*note_stat.sum(), columns=[pos]).transpose())
+			note_stat = note_stat.sort_index()
 		note_stat = note_stat.append(pd.DataFrame(note_stat.sum(), columns=['total']).transpose())
 		note_stat['weight'] = note_stat['total_factor'] / note_stat.loc['total','total_factor']
 		# Save useful statistics as member variables

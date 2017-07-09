@@ -248,16 +248,23 @@ def view_team(team, show_gem=False, extra_col=[], gem_size=25):
 	df = df.loc[['C', 'L1', 'L2', 'L3', 'L4', 'R4', 'R3', 'R2', 'R1']]
 	return HTML(html_template.format(header + df.to_html(escape=False)))
 
-def view_live(live):
+def view_live(live, lang='EN'):
 	df_head = pd.DataFrame({'Cover': ['<img src="{0}" width=100 />'.format(live.cover)]})
 	df_head['Song Name'] = '<p style="color:{0};">{1}</p>'.format(attr_color[live.attr], live.name)
 	df_head['Group'] = live.group
 	df_head['Difficulty'] = live.difficulty
 	df_head['Total Note'] = live.note_number
 	df_head['Duration'] = live.duration
+	df_head.columns = ['<p>{0}</p>'.format(x) for x in list(df_head.columns)]
+
 	df = live.summary.copy()
-	pos_name = ['L1', 'L2', 'L3', 'L4', 'C', 'R4', 'R3', 'R2', 'R1']
+	pos_name = ['<p>{0}</p>'.format(x) for x in ['L1', 'L2', 'L3', 'L4', 'C', 'R4', 'R3', 'R2', 'R1']]
 	df.index = [pos_name[9-x] if type(x)==int else x for x in list(df.index)]
 	df = df.loc[pos_name+['total']]
 	df = df.applymap(lambda x: str(int(x)) if np.isclose(x,round(x)) else '{0:.3f}'.format(x)).transpose()
-	return HTML(html_template.format(df_head.to_html(escape=False, index=False) + df.to_html()))
+
+	if lang=='CN':
+		df_head.columns = ['<p>{0}</p>'.format(x) for x in ['曲目封面', '歌曲名称', '歌手', '难度', 'Note个数', '时长']]
+		df.columns = list(df.columns)[:-1] + ['<p>总计</p>']
+		df.index = ['<p>{0}</p>'.format(x) for x in ['单点', '长按', '滑键', '星标', '道具', '按键权重', '连击权重', '连击权重占比']]
+	return HTML(html_template.format(df_head.to_html(escape=False, index=False) + df.to_html(escape=False)))

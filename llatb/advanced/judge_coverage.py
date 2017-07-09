@@ -1,6 +1,6 @@
 import math
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from llatb.common.global_var import combo_factor
 
 Offset = [4.5, 4, 3.625, 3.25, 2.875, 2.5, 2.25, 2, 1.75, 1.5]
@@ -17,13 +17,14 @@ for s, item in enumerate(zip(Offset, Speed, Perfect, Great, Good, Bad), 1):
 		Speed_info[s][field] = item[i]
 
 class CoverageCalculator:
-	def __init__(self, live, offset=0, speed=None):
-		self.live = live
+	def __init__(self, live, setting, offset=0, speed=None):
+		self.live, self.setting = live, setting
 		self.speed = speed if speed is not None else diff_speed_dict[live.difficulty]
 		self.SI = Speed_info[self.speed]
-		self.Map_note = live.note_list.apply(lambda x: round(1000*(x.timing_sec-self.SI['speed'])), axis=1).values
-		self.Map_beat = live.note_list.apply(lambda x: round(1000*(x.timing_sec+x.long*x.effect_value+self.SI['bad'])-offset*self.SI['offset']), axis=1).values
-		self.Map_CTrigger = live.note_list.apply(lambda x: round(1000*(x.timing_sec+x.long*x.effect_value)-offset*self.SI['offset']), axis=1).values
+		if hasattr(self.live, 'note_list'):
+			self.Map_note = live.note_list.apply(lambda x: round(1000*(x.timing_sec-self.SI['speed'])), axis=1).values
+			self.Map_beat = live.note_list.apply(lambda x: round(1000*(x.timing_sec+x.long*x.effect_value+self.SI['bad'])-offset*self.SI['offset']), axis=1).values
+			self.Map_CTrigger = live.note_list.apply(lambda x: round(1000*(x.timing_sec+x.long*x.effect_value)-offset*self.SI['offset']), axis=1).values
 	def N_calc(self, n, p, td):
 		TimeAxis = np.ones(int(self.Map_beat[-1]+2*td*1000))
 		num_period = math.floor(self.live.note_number/n)
@@ -108,26 +109,28 @@ class CoverageCalculator:
 
 	def compute_coverage(self, card, plot=False):
 		if card.skill is None or card.skill.effect_type not in ['Strong Judge', 'Weak Judge']: return 0
-		skill = card.skill
-		if skill.trigger_type == 'Note':
-			TimeAxis = self.N_calc(skill.trigger_count, skill.odds/100, skill.reward)
-		elif skill.trigger_type == 'Time':
-			TimeAxis = self.T_calc(skill.trigger_count, skill.odds/100, skill.reward)
-		elif skill.trigger_type == 'Combo':
-			TimeAxis = self.C_calc(skill.trigger_count, skill.odds/100, skill.reward)
+		CR = card.skill.skill_gain(setting=self.setting)[0]
+		if hasattr(self.live, 'note_list'):
+			skill = card.skill
+			if skill.trigger_type == 'Note':
+				TimeAxis = self.N_calc(skill.trigger_count, skill.odds/100, skill.reward)
+			elif skill.trigger_type == 'Time':
+				TimeAxis = self.T_calc(skill.trigger_count, skill.odds/100, skill.reward)
+			elif skill.trigger_type == 'Combo':
+				TimeAxis = self.C_calc(skill.trigger_count, skill.odds/100, skill.reward)
 
-		TempCoverage = np.zeros(self.live.note_number)
-		for i in range(self.live.note_number):
-			if self.live.note_list.iloc[i]['long']:
-				a1, a2 = self.Map_CTrigger[i] - 1000*self.SI['bad'], self.Map_CTrigger[i] + 1000*self.SI['bad']
-			else:
-				a1, a2 = self.Map_CTrigger[i] - 1000*self.SI['good'], self.Map_CTrigger[i] + 1000*self.SI['good']
-			TempCoverage[i] = TimeAxis[int(a1):int(a2)].sum() / (a2-a1)
+			TempCoverage = np.zeros(self.live.note_number)
+			for i in range(self.live.note_number):
+				if self.live.note_list.iloc[i]['long']:
+					a1, a2 = self.Map_CTrigger[i] - 1000*self.SI['bad'], self.Map_CTrigger[i] + 1000*self.SI['bad']
+				else:
+					a1, a2 = self.Map_CTrigger[i] - 1000*self.SI['good'], self.Map_CTrigger[i] + 1000*self.SI['good']
+				TempCoverage[i] = TimeAxis[int(a1):int(a2)].sum() / (a2-a1)
 
-		CR = TempCoverage.mean()
-		if plot:
-			plt.figure(figsize=(12,4))
-			t = np.arange(self.Map_beat[-1]) / 1000
-			plt.plot(t, TimeAxis[:len(t)])
-			plt.title('{0} triggered, ({1},{2}%,{3}), total note coverage {4:.2f}%'.format(skill.trigger_type, skill.trigger_count, skill.odds, skill.reward, 100*CR))
+			CR = TempCoverage.mean()
+			# if plot:
+			# 	plt.figure(figsize=(12,4))
+			# 	t = np.arange(self.Map_beat[-1]) / 1000
+			# 	plt.plot(t, TimeAxis[:len(t)])
+			# 	plt.title('{0} triggered, ({1},{2}%,{3}), total note coverage {4:.2f}%'.format(skill.trigger_type, skill.trigger_count, skill.odds, skill.reward, 100*CR))
 		return CR
