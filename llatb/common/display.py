@@ -261,7 +261,7 @@ def view_live(live, lang='EN'):
 	pos_name = ['<p>{0}</p>'.format(x) for x in ['L1', 'L2', 'L3', 'L4', 'C', 'R4', 'R3', 'R2', 'R1']]
 	df.index = [pos_name[9-x] if type(x)==int else x for x in list(df.index)]
 	df = df.loc[pos_name+['total']]
-	df = df.applymap(lambda x: str(int(x)) if np.isclose(x,round(x)) else '{0:.3f}'.format(x)).transpose()
+	df = df.applymap(lambda x: '<p>{0}</p>'.format(str(int(x)) if np.isclose(2*x,round(2*x)) else '{0:.3f}'.format(x))).transpose()
 
 	if lang=='CN':
 		df_head.columns = ['<p>{0}</p>'.format(x) for x in ['曲目封面', '歌曲名称', '歌手', '难度', 'Note个数', '时长']]

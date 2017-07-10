@@ -92,7 +92,7 @@ promo_slot_num_dict = {'R':[1,1], 'SR':[1,1], 'UR':[2,2]}
 # Game Scoring relevant
 accuracy_list = ['Perfect', 'Great', 'Good', 'Bad', 'Miss']
 base_score_factor = 0.01
-accuracy_factor = {'Perfect':1.25, 'Great':1.00, 'Good':1.00, 'Bad':0.50, 'Miss':0.00}
+accuracy_factor = {'Perfect':1.25, 'Great':1.10, 'Good':1.00, 'Bad':0.50, 'Miss':0.00}
 combo_factor_aux = { 0:1.00,	 1:1.10,	 2:1.15,	 3:1.15,
 					 4:1.20,	 5:1.20,	 6:1.20,	 7:1.20,
 					 8:1.25,	 9:1.25,	10:1.25,	11:1.25,

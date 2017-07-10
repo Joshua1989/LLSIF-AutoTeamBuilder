@@ -82,7 +82,7 @@ class Live:
 		self.combo_weight_fraction = self.summary.weight.values[-2::-1]
 
 class DefaultLive:
-	def __init__(self, name, difficulty='Master', setting=default_setting):
+	def __init__(self, name, difficulty='Master', perfect_rate=0.95, setting=default_setting):
 		self.name = name
 		self.difficulty = difficulty
 		# Set parameter for live and player performance
@@ -100,7 +100,7 @@ class DefaultLive:
 		self.note_type_dist = param['note_type_dist']
 
 		# Presumed player parameter
-		self.perfect_rate = param['perfect_rate']
+		self.perfect_rate = perfect_rate
 		# Average combo factor if achieve FC
 		combo_weight = np.array([combo_factor(i+1) for i in range(self.note_number)]).mean()
 		# Average accuracy factor under presumed player perfect rate and live note type fractions

@@ -75,16 +75,17 @@ class Card:
 		if self.skill is not None and skill_level in list(range(1,9)): 
 			self.skill.set_level(skill_level)
 		self.smile, self.pure, self.cool, self.hp = [self.stats_list[self.level-1][i] for i in [0,1,2,5]]
-	def idolize(self, idolized=True):
+	def idolize(self, idolized=True, reset_slot=True):
 		self.idolized = idolized or self.promo
 		self.max_level, self.max_bond = max_level_dict[self.idolized][self.rarity], max_bond_dict[self.idolized][self.rarity]
-		if self.promo:
-			self.min_slot_num, self.max_slot_num = promo_slot_num_dict[self.rarity]
-		else:
-			self.min_slot_num, self.max_slot_num = slot_num_dict[self.rarity]
 		self.level, self.bond = self.max_level, self.max_bond
-		self.slot_num, self.equipped_gems = self.min_slot_num, []
 		self.smile, self.pure, self.cool, self.hp = [self.stats_list[self.level-1][i] for i in [0,1,2,5]]
+		if reset_slot:
+			if self.promo:
+				self.min_slot_num, self.max_slot_num = promo_slot_num_dict[self.rarity]
+			else:
+				self.min_slot_num, self.max_slot_num = slot_num_dict[self.rarity]
+			self.slot_num, self.equipped_gems = self.min_slot_num, []
 	def equip_gem(self, gem_list):
 		if len(set(gem_list)) < len(gem_list):
 			print('Duplicated skill gems are not allowed!')

@@ -49,7 +49,18 @@ def misc_path(name):
 		'Pure Swing':'http://c.dash.moe/asset/assets/flash/ui/live/img/ef_315_notes_0112.png',
 		'Cool Swing':'http://c.dash.moe/asset/assets/flash/ui/live/img/ef_315_notes_0113.png',
 		'long':'http://c.dash.moe/asset/assets/flash/ui/live/img/ef_326_002.png',
-		'star':'http://c.dash.moe/asset/assets/flash/ui/live/img/ef_315_effect_0004.png'
+		'star':'http://c.dash.moe/asset/assets/flash/ui/live/img/ef_315_effect_0004.png',
+		'1st-year':'https://r.llsif.win/assets/image/event/mission/ms_m_type_01.png',
+		'2nd-year':'https://r.llsif.win/assets/image/event/mission/ms_m_type_02.png',
+		'3rd-year':'https://r.llsif.win/assets/image/event/mission/ms_m_type_03.png',
+		'Printemps':'https://r.llsif.win/assets/image/event/mission/ms_m_type_04.png',
+		'lily white':'https://r.llsif.win/assets/image/event/mission/ms_m_type_05.png',
+		'BiBi':'https://r.llsif.win/assets/image/event/mission/ms_m_type_06.png',
+		'CYaRon！':'https://r.llsif.win/assets/image/event/mission/ms_m_type_07.png',
+		'AZALEA':'https://r.llsif.win/assets/image/event/mission/ms_m_type_08.png',
+		'Guilty Kiss':'https://r.llsif.win/assets/image/event/mission/ms_m_type_09.png',
+		"μ's":'https://r.llsif.win/assets/image/event/mission/ms_m_type_10.png',
+		'Aqours':'https://r.llsif.win/assets/image/event/mission/ms_m_type_11.png'
 	}
 	return url_dict.get(name,name)
 def cover_path(sub_dir):

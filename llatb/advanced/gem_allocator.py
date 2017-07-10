@@ -217,7 +217,7 @@ class GemAllocator:
 		columns += [col_name[x] for x in ['level', 'bond', 'smile', 'pure', 'cool']]
 		columns += ['Single +', 'Single ×', 'Team ×', 'Card STR', 
 					'Main-C', 'Vice-C', 'Main-C2', 'Vice-C2', 'Team STR', 'Judge STR',
-					'Charm', 'Heal', 'Trick', 'Amend STR', 'Skill STR', 'Live Bonus', 'Cmb WT%', 'True STR']
+					'Charm', 'Heal', 'Trick', 'Amend STR', 'Skill STR', 'Live Bonus', 'Cmb WT%']
 
 		# Extract all team gems
 		team_gems = [gem for card in team.card_list for gem in card.equipped_gems \
@@ -316,10 +316,6 @@ class GemAllocator:
 			# Compute same group and same color bonus
 			res['Live Bonus'] = '{0:.2f}'.format(bonus(card))
 			res['Cmb WT%'] = '{0:.2f}%'.format(self.live.combo_weight_fraction[index]*100)
-
-			# Compute true score including all multipliers
-			res['True STR']  = math.ceil((res['Charm'] + res['Heal']) * self.live.average_bonus)
-			res['True STR'] += math.ceil((res['Team STR']+res['Trick']) * mu_bar * self.live.average_bonus * self.setting['score_up_rate'])
 			return res
 
 		# Data frame for detailed stats
@@ -346,11 +342,14 @@ class GemAllocator:
 
 		# Data frame for brief team total stats
 		def format_cskill(cskill):
-			cskill_str = str(cskill)
-			cskill_str = cskill_str.replace('Smile','<span style="color:red;">Smile</span>')
-			cskill_str = cskill_str.replace('Pure','<span style="color:green;">Pure</span>')
-			cskill_str = cskill_str.replace('Cool','<span style="color:blue;">Cool</span>')
-			return cskill_str
+			if cskill is None: return '<p>{0}</p>'.format('NA')
+			fmt ='<img src="{0}" height=22 style="display:inline;vertical-align: middle;">'
+			cskill_str  = fmt.format(misc_path(cskill.main_attr.lower())) + ' + '
+			cskill_str += fmt.format(misc_path(cskill.base_attr.lower())) + ' x {0}%'.format(cskill.main_ratio)
+			if cskill.bonus_range is not None:
+				cskill_str += ' + ' + fmt.format(misc_path(cskill.bonus_range))
+				cskill_str += fmt.format(misc_path(cskill.main_attr.lower())) + ' x {0}%'.format(cskill.bonus_ratio)
+			return '<div>{0}</div>'.format(cskill_str)
 
 		df_team = pd.DataFrame({'Center Skill':[format_cskill(team[4].cskill)], 'Guest Center Skill': [format_cskill(self.guest_cskill)]})
 		df_team['Cover Rate'] = '{0:.2f}%'.format(self.team_CR*100)
@@ -372,7 +371,7 @@ class GemAllocator:
 		if lang=='CN':
 			columns  = ['<p>{0}</p>'.format(x) for x in ['卡牌编号', '卡牌图标', '装配宝石' ,'技能收益']] + list(df.columns)[4:9]
 			columns += ['<p>{0}</p>'.format(x) for x in ['单体增加宝石', '单体加成宝石', '团队加成宝石' ,'单卡界面强度', '队伍主C', '队伍副C', '好友主C', '好友副C', '单卡队中强度', 
-						'单卡队中强度(判)', '得分技能强度', '回复技能强度', '判定技能强度', '单卡修正强度', '单卡技能强度', '同色同团加成', '连击权重占比', '真实强度']] 
+						'单卡队中强度(判)', '得分技能强度', '回复技能强度', '判定技能强度', '单卡修正强度', '单卡技能强度', '同色同团加成', '连击权重占比']] 
 			df.columns = columns
 		html_main = df.transpose().to_html(escape=False)
 
