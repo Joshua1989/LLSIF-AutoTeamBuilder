@@ -7,7 +7,7 @@ default_setting = {	'note_number':700, 'duration':120, 'star_density':0.1, 'attr
 					'note_type_dist':{'normal_density':0.88, 'long_density':0.08, 'swing_density':0.04}, 
 					'perfect_rate':0.95, 'team_strength':80000, 'score_up_rate':1, 'skill_up_rate':1}
 # Pre-calculate combo factor
-pre_calc_combo_factor = np.array([combo_factor(i) for i in range(1,2001)]).cumsum() / np.arange(1,2001)
+pre_calc_combo_factor = np.array([combo_factor(i) for i in range(1,10000)]).cumsum() / np.arange(1,10000)
 
 class Skill:
 	def __init__(self, name=None, trigger_type=None, trigger_count=None, 

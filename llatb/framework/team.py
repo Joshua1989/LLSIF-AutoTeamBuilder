@@ -217,9 +217,12 @@ class Team:
 			return '%7B'+','.join(temp)+'%7D'
 		card_strings = [card_string(card) for card in self.card_list]
 		content = '[{0}]'.format(','.join(card_strings))
-		with open(filename, 'w') as fp:
-			fp.write(content)
-		print('File saved to', filename)
+		if filename is not None:
+			with open(filename, 'w') as fp:
+				fp.write(content)
+			print('File saved to', filename)
+		else:
+			return content
 	def to_ieb(self, filename):
 		gem_id_dict = {v:k for k,v in gem_skill_id_dict.items()}
 		cid_uid_dict = {v:k for k,v in sqlite3.connect(unit_db_dir).cursor().execute("SELECT unit_id, unit_number FROM unit_m").fetchall()}
@@ -228,6 +231,9 @@ class Team:
 				   'unit_id':cid_uid_dict[card.card_id], 'removable':[gem_id_dict[gem.name] for gem in card.equipped_gems]}
 			return res
 		content = [0] + [card_dict(card) for card in self.card_list]
-		with open(filename, 'w') as fp:
-			fp.write(json.dumps(content))
-		print('File saved to', filename)
+		if filename is not None:
+			with open(filename, 'w') as fp:
+				fp.write(json.dumps(content))
+			print('File saved to', filename)
+		else:
+			return json.dumps(content)

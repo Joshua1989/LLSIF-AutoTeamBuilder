@@ -73,14 +73,14 @@ gem_skill_id_dict = { 1:'Smile Kiss',		 	 2:'Pure Kiss',				 3:'Cool Kiss',
 					 37:'Empress Charm',		38:'Empress Heal',			39:'Empress Trick'}
 gem_skill_id_rev_dict = {v:k for k,v in gem_skill_id_dict.items()}
 # Center Skill relevant
-muse = np.array(['高坂穂乃果', '南ことり', '園田海未', '小泉花陽', '星空凛', '西木野真姫', '絢瀬絵里', '東條希', '矢澤にこ'])
-Aqours = np.array(['高海千歌', '桜内梨子', '渡辺曜', '黒澤ルビィ', '津島善子', '国木田花丸', '小原鞠莉', '松浦果南', '黒澤ダイヤ'])
+muse = np.array(['高坂穂乃果', '絢瀬絵里', '南ことり', '園田海未', '星空凛', '西木野真姫', '東條希', '小泉花陽', '矢澤にこ'])
+Aqours = np.array(['高海千歌', '桜内梨子', '松浦果南', '黒澤ダイヤ', '渡辺曜', '津島善子', '国木田花丸', '小原鞠莉', '黒澤ルビィ'])
 groups = {"μ's":muse, 'Aqours':Aqours,
-		  '1st-year':np.concatenate((muse[[3,4,5]], Aqours[[3,4,5]])),
-		  '2nd-year':np.concatenate((muse[[0,1,2]], Aqours[[0,1,2]])),
-		  '3rd-year':np.concatenate((muse[[6,7,8]], Aqours[[6,7,8]])),
-		  'Printemps':muse[[0,1,3]],  'lily white':muse[[2,4,7]], 'BiBi':muse[[5,6,8]],
-		  'CYaRon！':Aqours[[0,2,3]], 'AZALEA':Aqours[[5,7,8]],    'Guilty Kiss':Aqours[[1,3,6]]}
+		  '1st-year':np.concatenate((muse[[4,5,7]], Aqours[[5,6,8]])),
+		  '2nd-year':np.concatenate((muse[[0,2,3]], Aqours[[0,1,4]])),
+		  '3rd-year':np.concatenate((muse[[1,6,8]], Aqours[[2,3,7]])),
+		  'Printemps':muse[[0,2,7]],  'lily white':muse[[3,4,6]], 'BiBi':muse[[1,5,8]],
+		  'CYaRon！':Aqours[[0,4,8]], 'AZALEA':Aqours[[2,3,6]],    'Guilty Kiss':Aqours[[1,5,7]]}
 # Card relevant
 rarity_list = ['N', 'R', 'SR', 'SSR', 'UR']
 max_level_dict = {False:{'N':30, 'R':40, 'SR':60, 'SSR':70, 'UR':80},

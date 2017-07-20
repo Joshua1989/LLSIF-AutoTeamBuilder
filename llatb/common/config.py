@@ -1,4 +1,3 @@
-import os
 import os 
 from pathlib import Path
 from llatb.common.global_var import gem_skill_dict, gem_skill_id_rev_dict
@@ -14,6 +13,7 @@ unit_db_dir = root+'assets/unit.db_'
 unit_db_download_url = 'https://r.llsif.win/db/unit/unit.db_'
 live_db_dir = root+'assets/live.db_'
 live_db_download_url = 'https://r.llsif.win/db/live/live.db_'
+minaraishi_json_url = 'https://designedfor.sakura.ne.jp/nikuma-n/school-idol-festival/members.json'
 
 # Path function for saving downloaded resources and HTML image embedding
 def icon_path(card_id, idolized):
@@ -75,10 +75,54 @@ if not Path(live_archive_dir).exists():
 if not Path(unit_db_dir).exists():
 	print('{0} does not exist'.format(unit_db_dir))
 
-html_template = '''
-<!DOCTYPE html>
-<html>
+# html_template = '''
+# <head>
+#     <style>
+#     table {{
+#         margin-left: 0px;
+#         margin-right: auto;
+#         border: none;
+#         border-collapse: collapse;
+#         border-spacing: 0;
+#         font-size: 12px;
+#         table-layout: fixed;
+#     }}
+    
+#     th {{
+# 	    white-space: nowrap;
+# 	}}
 
+# 	td {{
+# 	    white-space: nowrap;
+# 	}}
+    
+#     th {{
+#         font-weight: bold;
+#     }}
+    
+#     tbody tr:nth-child(odd) {{
+#         background-color: #f5f5f5;
+#     }}
+    
+#     * + table {{
+#         margin-top: 1em;
+#     }}
+    
+#     p {{
+#         text-align: center;
+#     }}
+    
+#     img {{
+#         display: block;
+#         margin-left: auto;
+#         margin-right: auto;
+#     }}
+#     </style>
+# </head>
+# {0} 
+# '''
+
+html_template = '''
 <head>
     <style>
     table {{
@@ -87,45 +131,10 @@ html_template = '''
         border: none;
         border-collapse: collapse;
         border-spacing: 0;
-        color: @rendered_html_border_color;
         font-size: 12px;
         table-layout: fixed;
     }}
-    
-    th {{
-	    white-space: nowrap;
-	}}
-
-	td {{
-	    white-space: nowrap;
-	}}
-    
-    th {{
-        font-weight: bold;
-    }}
-    
-    tbody tr:nth-child(odd) {{
-        background: #f5f5f5;
-    }}
-    
-    * + table {{
-        margin-top: 1em;
-    }}
-    
-    p {{
-        text-align: center;
-    }}
-    
-    img {{
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-    }}
     </style>
 </head>
-<body>
-    {0} 
-</body>
-
-</html>
+{0} 
 '''

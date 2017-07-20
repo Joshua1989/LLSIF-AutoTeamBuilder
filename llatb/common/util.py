@@ -68,9 +68,13 @@ def update_card_data():
 			}
 		# Generate whole summary
 		rarity_dict = {1:'N', 2:'R', 3:'SR', 4:'UR', 5:'SSR'}
+		if id_crown_dict.get(unit_info['unit_number']) is None:
+			card_name = ' ' if unit_info['eponym'] is None else unit_info['eponym']
+		else:
+			card_name = id_crown_dict.get(unit_info['unit_number'])
 		card_info = {
 			'promo': bool(unit_info['is_promo']),
-			'card_name': ' ' if unit_info['eponym'] is None else unit_info['eponym'],
+			'card_name': card_name,
 			'card_id': int(unit_info['unit_number']),
 			'main_attr': attr_dict[unit_info['attribute_id']],
 			'member_name': unit_info['name'],
@@ -80,6 +84,15 @@ def update_card_data():
 			'rarity': rarity_dict[unit_info['rarity']]
 		}
 		return unit_info['unit_number'], card_info
+
+	print('Downloading minaraishi\'s member.json')
+	minaraishi = json.loads(urllib.request.urlopen(minaraishi_json_url).read().decode('utf-8'))
+	id_crown_dict = dict()
+	for member, d1 in minaraishi.items():
+		for attribute, d2 in d1.items():
+			for rarity, d3 in d2.items():
+				for crown, d4 in d3.items():
+					id_crown_dict[d4['id']] = crown
 
 	print('Downloading latest unit.db_')
 	opener = urllib.request.URLopener()

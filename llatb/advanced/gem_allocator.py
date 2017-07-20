@@ -323,7 +323,7 @@ class GemAllocator:
 		df = pd.DataFrame(data, columns=columns)
 
 		# Data frame for live song
-		song_name = '<p style="color:{0};">{1}</p>'.format(attr_color[self.live.attr], self.live.name)
+		song_name = '<p style="color:{0};">{1}</p>'.format(attr_color[self.live.attr], '<br/>'.join(self.live.name.split(', ')))
 		df_live = pd.DataFrame({'Song Name': [song_name]})
 		df_live['Difficulty'] = self.live.difficulty
 		df_live['Total Note'] = self.live.note_number
@@ -343,13 +343,13 @@ class GemAllocator:
 		# Data frame for brief team total stats
 		def format_cskill(cskill):
 			if cskill is None: return '<p>{0}</p>'.format('NA')
-			fmt ='<img src="{0}" height=22 style="display:inline;vertical-align: middle;">'
-			cskill_str  = fmt.format(misc_path(cskill.main_attr.lower())) + ' + '
-			cskill_str += fmt.format(misc_path(cskill.base_attr.lower())) + ' x {0}%'.format(cskill.main_ratio)
+			fmt ='<img src="{0}" height=25 style="display:inline;vertical-align: middle;">'
+			cskill_str  = '<div style="padding:5px">' + fmt.format(misc_path(cskill.main_attr.lower())) + '<span> + </span>'
+			cskill_str += fmt.format(misc_path(cskill.base_attr.lower())) + '<span> x {0}% </span>'.format(cskill.main_ratio) + '</div>'
 			if cskill.bonus_range is not None:
-				cskill_str += ' + ' + fmt.format(misc_path(cskill.bonus_range))
-				cskill_str += fmt.format(misc_path(cskill.main_attr.lower())) + ' x {0}%'.format(cskill.bonus_ratio)
-			return '<div>{0}</div>'.format(cskill_str)
+				cskill_str += '<div style="padding:5px">' + fmt.format(misc_path(cskill.bonus_range))
+				cskill_str += fmt.format(misc_path(cskill.main_attr.lower())) + '<span> x {0}% </span>'.format(cskill.bonus_ratio) + '</div>'
+			return cskill_str
 
 		df_team = pd.DataFrame({'Center Skill':[format_cskill(team[4].cskill)], 'Guest Center Skill': [format_cskill(self.guest_cskill)]})
 		df_team['Cover Rate'] = '{0:.2f}%'.format(self.team_CR*100)

@@ -114,3 +114,9 @@ ENV/
 
 # OSX stuff
 .DS_Store
+card_data_base.json
+m_profile.json
+minaraishi.json
+packet_to_json.json
+static/
+uid_cid_dict.json
