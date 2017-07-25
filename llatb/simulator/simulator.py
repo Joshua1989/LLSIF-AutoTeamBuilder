@@ -264,12 +264,12 @@ class Simulator:
 				if row['card '+str(i)] > 0:
 					top, left = -0.3*col_width if content=='' else 0.15*col_width, 0.15*col_width
 					content += '<img style="position: absolute; top: {0}px; left: {1}px;opacity:{4}" src="{2}" width={3} /></div>'''.format(top, left, misc_path(card.skill.effect_type), 0.7*col_width, row['card '+str(i)]*0.7+0.3)
-				col = '<img src="{0}" width={1} />'.format(icon_path(card.card_id, card.idolized), col_width)
+				col = '<img src="{0}" width={1} class="{2}" />'.format(icon_path(card.card_id, card.idolized), col_width, i)
 				res[col] = '<div style="position: relative;">{0}</div>'.format(content)
 			return res
 
 		columns = ['index', 'time', 'accuracy', 'accuracy*', 'hp', 'note', 'combo', 'perfect', 'cum_score', 'score']
-		columns += ['<img src="{0}" width={1} />'.format(icon_path(card.card_id, card.idolized), col_width) for card in self.card_list]
+		columns += ['<img src="{0}" width={1} class="{2}" />'.format(icon_path(card.card_id, card.idolized), col_width, i) for i,card in enumerate(self.card_list,1)]
 		columns += ext_cols
 		df = pd.concat((self.simul_result, determine_note_type(self.simul_result)), axis=1)
 		data = [format_row(row, self.team_hp, self.card_list) for _, row in df.iterrows()]

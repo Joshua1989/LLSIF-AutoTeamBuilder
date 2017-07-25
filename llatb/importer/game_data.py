@@ -355,3 +355,18 @@ class GameData:
 		else:
 			with open(filename, 'w') as fp:
 				fp.write(json.dumps(user_json))
+	def to_LLHelper(self, filename='submembers.sd'):
+		def gen_item(card):
+			return {
+				"cardid": str(card.card_id),
+			    "maxcost": str(card.slot_num),
+			    "mezame": str(int(card.idolized)),
+			    "skilllevel": "0" if card.skill is None else str(card.skill.level)
+			}
+		user_json = [gen_item(card) for index, card in self.raw_card.items() if card.rarity in ['SR', 'SSR', 'UR']]
+		if filename is None:
+			return json.dumps(user_json)
+		else:
+			with open(filename, 'w') as fp:
+				fp.write(json.dumps(user_json))
+			print('file saved to', filename)

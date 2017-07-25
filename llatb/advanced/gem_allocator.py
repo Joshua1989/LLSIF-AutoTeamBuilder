@@ -102,7 +102,7 @@ class GemAllocator:
 		trellis, current_max_score = [ {tuple(gem_occupy):[[],0]} ], 0
 		# Construct trellis
 		for i in range(9):
-			stage, aux = dict(), card_aux[i]
+			stage, card, aux = dict(), self.card_list[i], card_aux[i]
 			# For each remain case in stage i-1 and each possible allocation in stage i
 			for remain, (plan, cum_score) in trellis[-1].items():
 				# If all remaining card uses highest score allocation and still get lower score than current max
