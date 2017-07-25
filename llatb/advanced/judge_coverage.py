@@ -108,16 +108,17 @@ class CoverageCalculator:
 		return 1-TimeAxis
 
 	def compute_coverage(self, card, plot=False):
-		if card.skill is None or card.skill.effect_type not in ['Strong Judge', 'Weak Judge']: return 0
-		CR = card.skill.skill_gain(setting=self.setting)[0]
+		if card.skill is None or card.skill.effect_type not in ['Strong Judge', 'Weak Judge']: 
+			return 0, np.zeros(self.live.note_number)
+		CR, CR_list = card.skill.skill_gain(setting=self.setting)[0], np.zeros(self.live.note_number)
 		if hasattr(self.live, 'note_list'):
-			skill = card.skill
+			skill, skillup = card.skill, self.setting.get('skill_up_rate', 1)
 			if skill.trigger_type == 'Note':
-				TimeAxis = self.N_calc(skill.trigger_count, skill.odds/100, skill.reward)
+				TimeAxis = self.N_calc(skill.trigger_count, skillup * skill.odds/100, skill.reward)
 			elif skill.trigger_type == 'Time':
-				TimeAxis = self.T_calc(skill.trigger_count, skill.odds/100, skill.reward)
+				TimeAxis = self.T_calc(skill.trigger_count, skillup * skill.odds/100, skill.reward)
 			elif skill.trigger_type == 'Combo':
-				TimeAxis = self.C_calc(skill.trigger_count, skill.odds/100, skill.reward)
+				TimeAxis = self.C_calc(skill.trigger_count, skillup * skill.odds/100, skill.reward)
 
 			TempCoverage = np.zeros(self.live.note_number)
 			for i in range(self.live.note_number):
@@ -126,11 +127,11 @@ class CoverageCalculator:
 				else:
 					a1, a2 = self.Map_CTrigger[i] - 1000*self.SI['good'], self.Map_CTrigger[i] + 1000*self.SI['good']
 				TempCoverage[i] = TimeAxis[int(a1):int(a2)].sum() / (a2-a1)
-
-			CR = TempCoverage.mean()
+			CR_list = TempCoverage
+			CR = CR_list.mean()
 			# if plot:
 			# 	plt.figure(figsize=(12,4))
 			# 	t = np.arange(self.Map_beat[-1]) / 1000
 			# 	plt.plot(t, TimeAxis[:len(t)])
 			# 	plt.title('{0} triggered, ({1},{2}%,{3}), total note coverage {4:.2f}%'.format(skill.trigger_type, skill.trigger_count, skill.odds, skill.reward, 100*CR))
-		return CR
+		return CR, CR_list

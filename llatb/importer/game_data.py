@@ -45,6 +45,8 @@ class GameData:
 					card_info, gem_owning_info, deck_info = self.get_pll_info(filename, string_input)
 				elif file_type == 'minaraishi':
 					card_info, gem_owning_info, deck_info = self.get_minaraishi_info(filename, string_input)
+				elif file_type == 'SIT':
+					card_info, gem_owning_info, deck_info = self.get_SIT_info(filename, string_input)
 				else:
 					print('Incorrect file type {0}. Please choose packet or ieb'.format(file_type))
 					raise
@@ -159,12 +161,15 @@ class GameData:
 		ieb_info = json.loads(ieb_file if string_input else open(ieb_file).read())
 		# Generate user card information
 		card_info, owning_id_dict = dict(), dict()
+		error_capture = ''
 		for i, card in enumerate(ieb_info['unit_info'], 1):
 			try:
 				card_info[str(i)] = get_card_levelup_info(card)
 				owning_id_dict[str(card['unit_owning_user_id'])] = str(i)
 			except:
+				if error_capture == '': error_capture += ieb_file
 				print('{0} is not in uid_cid_dict, please update {1}'.format(card['unit_id'], unit_db_dir))
+		print(error_capture)
 		for key, value in ieb_info['removable_info']['equipment_info'].items():
 			card_info[owning_id_dict[key]]['equipped_gems'] = [gem_skill_id_dict[x] for x in value]
 		# Generate user gem information
@@ -198,12 +203,15 @@ class GameData:
 		pll_info = json.loads(pll_file if string_input else open(pll_file).read())
 		# Generate user card information
 		card_info, owning_id_dict = dict(), dict()
+		error_capture = ''
 		for i, card in enumerate(pll_info['unit_info'], 1):
 			try:
 				card_info[str(i)] = get_card_levelup_info(card)
 				owning_id_dict[str(card['unit_owning_user_id'])] = str(i)
 			except:
+				if error_capture == '': error_capture += pll_file
 				print('{0} is not in uid_cid_dict, please update {1}'.format(card['unit_id'], unit_db_dir))
+		print(error_capture)
 		for key, equip_info in pll_info['removable_info']['equipment_info'].items():
 			value = [x['unit_removable_skill_id'] for x in equip_info['detail']]
 			card_info[owning_id_dict[key]]['equipped_gems'] = [gem_skill_id_dict[x] for x in value]
@@ -246,11 +254,11 @@ class GameData:
 		for card_id, card in raw_card_dict.items():
 			member_card_name_to_id[(card.member_name, card.card_name)] = card_id
 		# Generate user card information
-		card_info, owning_id_dict = dict(), dict()
-		for i, card in enumerate(minaraishi_info['members'], 1):
-			card_info[str(i)] = get_card_levelup_info(card)
+		card_info, owning_id_dict, index = dict(), dict(), 1
+		for card in minaraishi_info['members']:
 			try:
-				card_info[str(i)] = get_card_levelup_info(card)
+				card_info[str(index)] = get_card_levelup_info(card)
+				index += 1
 			except:
 				print('Cannot generate card level-up info from', card)
 		# Generate user gem information
@@ -263,6 +271,34 @@ class GameData:
 				gem_owning_info[skill_name] = value
 		# Generate user gem information
 		deck_info = []
+		return card_info, gem_owning_info, deck_info
+	def get_SIT_info(self, SIT_file, string_input=False):
+		def get_card_levelup_info(card_info):
+			card_id = str(card_info['card']['id'])
+			card = raw_card_dict[card_id].copy()
+			card.idolize(card_info['idolized'])
+			res = {
+				'unit_id': card_info['card']['game_id'],
+				'card_id': card_id,
+				'idolized': card.idolized,
+				'level': card.level,
+				'bond': card.bond,
+				'skill_level': card_info['skill'],
+				'slot_num': card_info['skill_slots'],
+				'equipped_gems':[]
+			}
+			return res
+		SIT_info = json.loads(SIT_file if string_input else open(SIT_file).read())
+		# Generate user card information
+		card_info, index = dict(), 1
+		for item in SIT_info:
+			card_id = item['card']['id']
+			try:
+				card_info[str(index)] = get_card_levelup_info(item)
+				index += 1
+			except:
+				print('Cannot generate card level-up info from card id, maybe it is a promo card', card_id)
+		gem_owning_info, deck_info = {gem:9 for gem in list(gem_skill_id_dict.values())}, []
 		return card_info, gem_owning_info, deck_info
 	def filter(self, sel_func=None, sort_func=None, ascend=False):
 		df = self.owned_card

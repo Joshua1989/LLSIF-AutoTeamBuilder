@@ -87,11 +87,11 @@ class TeamBuilder:
 		for card in self.cards:
 			if card.has_same_cskill and center is None:
 				card.compute_card_stats(cskill, self.guest_cskill, self.live, self.setting)
-				if card.CR is None: card.CR = CC.compute_coverage(card)
+				if card.CR is None: card.CR, card.CR_list = CC.compute_coverage(card)
 				center = card
 			elif k < K:
 				card.compute_card_stats(cskill, self.guest_cskill, self.live, self.setting)
-				if card.CR is None: card.CR = CC.compute_coverage(card)
+				if card.CR is None: card.CR, card.CR_list = CC.compute_coverage(card)
 				candidates.append(card)
 				k += 1
 			if center is not None and k >= K: break
@@ -212,9 +212,9 @@ class TeamBuilder:
 		song_name, difficulty, PR = self.live.name, self.live.difficulty, self.live.perfect_rate
 		return sim.simulate(song_name, difficulty, prob=[PR,1-PR,0,0,0], save_to=save_to)
 
-	def view_result(self, show_cost=False, lang='EN'):
+	def view_result(self, show_cost=False, lang='EN', fixed_team=None):
 		try:
-			return self.best_gem_allocator.view_optimal_details(show_cost=show_cost, lang=lang)
+			return self.best_gem_allocator.view_optimal_details(show_cost=show_cost, lang=lang, fixed_team=fixed_team)
 		except:
 			print('The best team has not been formed yet')
 
@@ -224,15 +224,27 @@ class TeamBuilder:
 			adv_card = AdvancedCard(index, card)
 			adv_card.list_gem_allocation(self.live)
 			adv_card.compute_card_stats(team.center().cskill, self.guest_cskill, self.live, self.setting)
-			adv_card.CR = CC.compute_coverage(card)
+			adv_card.CR, adv_card.CR_list = CC.compute_coverage(card)
 			if index == 4:
 				center = adv_card
 			else:
 				candidates.append(adv_card)
 		gem_allocator = GemAllocator([center] + candidates, self.live, self.setting, self.owned_gem)
 		gem_allocator.allocate(alloc_method)
-		new_team = gem_allocator.construct_team()
-		# new_team.compute_expected_total_score(self.live, opt=self.setting, verbose=True)
-		# new_team.to_LLHelper('team.sd')
-		# new_team.to_ieb('team.ieb')
 		return gem_allocator.view_optimal_details(show_cost=show_cost)
+
+	def team_strength_detail(self, team, show_cost=False):
+		candidates, CC = [], CoverageCalculator(self.live, self.setting)
+		for index, card in enumerate(team.card_list):
+			adv_card = AdvancedCard(index, card)
+			adv_card.list_gem_allocation(self.live)
+			adv_card.compute_card_stats(team.center().cskill, self.guest_cskill, self.live, self.setting)
+			adv_card.CR, adv_card.CR_list = CC.compute_coverage(card)
+			if index == 4:
+				center = adv_card
+			else:
+				candidates.append(adv_card)
+		gem_allocator = GemAllocator([center] + candidates, self.live, self.setting, self.owned_gem)
+		gem_allocator.update_gem_score()
+		new_team = Team(candidates[:4]+[center]+candidates[4:])
+		return gem_allocator.view_optimal_details(show_cost=show_cost, fixed_team=new_team)

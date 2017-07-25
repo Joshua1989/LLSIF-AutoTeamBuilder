@@ -173,6 +173,13 @@ class MFLive:
 		df.timing_sec = df.timing_sec + df.effect_value * df.long
 		df = df.sort_values(by='timing_sec', ascending=True)
 		df.index = [i for i in range(1, len(df)+1)]
+
+		# Compute a new note list specifically for web simulation
+		web_note_list = df.copy()
+		web_note_list.position = 10 - web_note_list.position
+		web_note_list = web_note_list[['timing_sec', 'position', 'long', 'swing', 'star']].to_dict('index')
+		self.web_note_list = [web_note_list[i] for i in range(1, len(web_note_list)+1)]
+
 		# Compute all factors that matter scoring, under presumed perfect rate
 		p, alpha, beta = self.perfect_rate, accuracy_factor['Perfect'], accuracy_factor['Great']
 		df['judge_factor'] = df.long.apply(lambda x: ( alpha*p + beta*(1-p) )**(1+x) )

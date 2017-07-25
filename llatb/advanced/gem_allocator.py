@@ -25,7 +25,11 @@ class GemAllocator:
 		zeta.sort()
 		self.mu_bar = self.card_list[0].mu * self.live.combo_weight_fraction[4] + (mu*zeta).sum()
 		# Compute team total cover rate
-		self.team_CR = 1 - (1-np.array([card.CR for card in self.card_list])).prod()
+		# self.team_CR = 1 - (1-np.array([card.CR for card in self.card_list])).prod()
+		temp = np.ones(self.live.note_number)
+		for card in self.card_list:
+			temp *= 1 - card.CR_list
+		self.team_CR = (1-temp).mean()
 		# Update settings to compute skill gain of Skill Up and Stamina Restore skills
 		new_setting = self.setting.copy()
 		new_setting['attr_group_factor'] = self.mu_bar
@@ -208,8 +212,8 @@ class GemAllocator:
 			final_card_list[weight_list[i][1]] = self.card_list[1:][bonus_list[i][1]]
 		return Team(final_card_list)
 
-	def view_optimal_details(self, show_cost=False, lang='EN'):
-		team = self.construct_team()		
+	def view_optimal_details(self, show_cost=False, lang='EN', fixed_team=None):
+		team = self.construct_team() if fixed_team is None else fixed_team
 
 		col_name = { x:'<img src="{0}" width=25/>'.format(misc_path(x)) for x in ['level','bond','smile','pure','cool'] }
 

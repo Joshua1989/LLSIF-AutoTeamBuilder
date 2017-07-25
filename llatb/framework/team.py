@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
-import json, sqlite3
-from llatb.common.config import unit_db_dir
+import json, sqlite3, math
+from llatb.common.config import unit_db_dir, icon_path
 from llatb.common.global_var import *
 from llatb.framework.card import Card
 
@@ -183,6 +183,53 @@ class Team:
 			print('Average Position Bonus {0:.4f}'.format(average_pos_bonus))
 			print('Expected Total Score {0}'.format(int(expected_total_score)))
 		return int(expected_total_score)
+	def prepare_simulation(self, opt={'scoreup':1, 'skillup':1, 'guest_cskill':None}):
+		res = self.team_strength(opt.get('guest_cskill'))
+		temp = np.array(res['displayed_card_attr'])
+		single, total = np.concatenate((temp[None,:,:],temp[None,:,:])), np.zeros((2,3))
+		for i,card in enumerate(self.card_list):
+			total += temp[i,:]
+			for gem in card.equipped_gems:
+				if gem.effect == 'judge_boost':
+					attr_idx = attr_list.index(gem.attribute)
+					total[1,attr_idx] += np.ceil(gem.value/100*temp[i,attr_idx])
+					single[1,i,attr_idx] += np.ceil(gem.value/100*temp[i,attr_idx])
+		single += np.array(res['center_SIS_bonus_detail'])[None,:,:] 
+		single += np.array(res['team_center_skill_bonus_detail'])[None,:,:]
+		single += np.array(res['guest_center_skill_bonus_detail'])[None,:,:]
+		total  += np.array(res['center_SIS_bonus']) + np.array(res['center_skill_bonus'])
+		skill_info = []
+		for card in self.card_list:
+			skill = card.skill
+			if skill is None:
+				skill_info.append(None)
+			else:
+				temp = skill.__dict__
+				temp.pop('odds_list', None)
+				temp.pop('reward_list', None)
+				temp.pop('max_level', None)
+				for k, v in temp.items():
+					if type(v) != str: temp[k] = float(v)
+				if skill.effect_type == 'Score Up':
+					temp['score'] = temp['reward']
+					if any(['Charm' in gem.name for gem in card.equipped_gems]):
+						temp['score'] += math.floor(1.5*temp['reward'])
+				elif skill.effect_type == 'Stamina Restore':
+					temp['score'] = 0
+					if any(['Heal' in gem.name for gem in card.equipped_gems]):
+						temp['score'] += math.floor(480*temp['reward'])
+				else:
+					temp['score'] = 0
+			skill_info.append(temp)
+		res = {
+			'icon_url': [icon_path(card.card_id, card.idolized) for card in self.card_list],
+			'tot_attr_strength': total.tolist(),
+			'strength_fraction': (single / total[:,None,:]).tolist(),
+			'group': ["μ's" if "μ's" in card.tags else 'Aqours' if 'Aqours' in card.tags else None for card in self.card_list],
+			'attr': [card.main_attr for card in self.card_list],
+			'skill_info': skill_info
+		}
+		return res
 	def to_LLHelper(self, filename):
 		def card_string(card):
 			card_field_list = ['smile', 'pure', 'cool', 'skilllevel', 'cardid', 'mezame']
@@ -228,7 +275,7 @@ class Team:
 		cid_uid_dict = {v:k for k,v in sqlite3.connect(unit_db_dir).cursor().execute("SELECT unit_id, unit_number FROM unit_m").fetchall()}
 		def card_dict(card):
 			res = {'love':int(card.bond), 'rank':int(card.idolized)+1, 'level':int(card.level), 'unit_skill_level':int(card.skill.level),
-				   'unit_id':cid_uid_dict[card.card_id], 'removable':[gem_id_dict[gem.name] for gem in card.equipped_gems]}
+				   'unit_id':cid_uid_dict[card.card_id], 'removable':[gem_id_dict[gem.name] for gem in card.equipped_gems], 'unit_removable_skill_capacity':int(card.slot_num)}
 			return res
 		content = [0] + [card_dict(card) for card in self.card_list]
 		if filename is not None:

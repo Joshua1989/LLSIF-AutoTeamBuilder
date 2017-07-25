@@ -18,6 +18,7 @@ class AdvancedCard(Card):
 		args = [getattr(card, x) for x in ['card_id', 'card_name', 'member_name', 'rarity', 'main_attr', 'stats_list', 'idolized', 'skill', 'cskill', 'promo']]
 		Card.__init__(self, *args)
 		self.level_up(slot_num=card.slot_num, level=card.level, bond=card.bond)
+		self.equip_gem([x.name for x in card.equipped_gems])
 
 		self.attr2 = attr2_list[attr_list.index(self.main_attr)]
 		temp = [int(tag[0]) for tag in self.tags if '-year' in tag]
@@ -25,7 +26,7 @@ class AdvancedCard(Card):
 		self.is_charm = self.skill is not None and self.skill.effect_type == 'Score Up'
 		self.is_heal = self.skill is not None and self.skill.effect_type == 'Stamina Restore'
 		self.is_trick = self.skill is not None and self.skill.effect_type in ['Weak Judge', 'Strong Judge']
-		self.CR = None
+		self.CR, self.CR_list = None, None
 	def compute_rough_strength(self, cskill, guest_cskill, live, setting):
 		# Compute rough strength and sort them by live attribute
 		setting = setting.copy()
