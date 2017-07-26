@@ -327,7 +327,10 @@ class GemAllocator:
 		df = pd.DataFrame(data, columns=columns)
 
 		# Data frame for live song
-		song_name = '<p style="color:{0};">{1}</p>'.format(attr_color[self.live.attr], '<br/>'.join(self.live.name.split(', ')))
+		def format_song_name(name):
+			s = name.split(': ')
+			return [s[0] + ':'] + s[1].split(', ') if len(s) > 1 else s[0].split(', ')
+		song_name = '<p style="color:{0};">{1}</p>'.format(attr_color[self.live.attr], '<br/>'.join(format_song_name(self.live.name)))
 		df_live = pd.DataFrame({'Song Name': [song_name]})
 		df_live['Difficulty'] = self.live.difficulty
 		df_live['Total Note'] = self.live.note_number

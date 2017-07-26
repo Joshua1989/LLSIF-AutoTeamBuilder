@@ -210,3 +210,61 @@ class MFLive:
 		self.strength_per_pt_tap = (1/base_score_factor) / (note_stat.loc['total','total_factor']/self.note_number)
 		self.pts_per_strength = base_score_factor * note_stat.loc['total','total_factor']
 		self.combo_weight_fraction = self.summary.weight.values[-2::-1]
+
+class SMLive:
+	def __init__(self, name_list, difficulty, perfect_rate=0.95, local_dir=None, is_random=False):
+		self.difficulty, self.perfect_rate = difficulty, perfect_rate
+		names, groups, attrs, covers, file_dirs = [], [], [], [], []
+		for name in name_list:
+			try:
+				info = live_basic_data[live_basic_data.apply(lambda x: x['name']==name and x['diff_level']==difficulty, axis=1)].iloc[0]
+			except:
+				print('Live data of {0} {1} not found!'.format(name, difficulty))
+				raise
+			names.append(name)
+			covers.append(info.cover)
+			groups.append(info.group)
+			attrs.append(info.attr)
+
+		if len(set(groups)) > 1 or len(set(attrs)) > 1:
+			print('Group and attribute must be same!')
+			raise
+		self.name = 'SM' + ' random'*is_random + ': ' + ', '.join(names)
+		self.group, self.attr, self.is_random = groups[0], attrs[0], is_random
+		self.cover = covers[0]
+
+		self.live_list = [Live(name, self.difficulty, self.perfect_rate, local_dir) for name in names]
+		self.compute_stat()
+	def __repr__(self):
+		return '{0} {1}: attr={2}, duration={3}'.format(self.name, self.difficulty, self.attr, self.duration)
+	def compute_stat(self):
+		song_num = len(self.live_list)
+		self.note_number = int(np.mean([live.note_number for live in self.live_list]))
+		self.duration = np.mean([live.duration for live in self.live_list])
+		self.star_density   = np.mean([live.star_density for live in self.live_list])
+
+		self.note_type_dist = {
+			'normal_density': np.mean([live.note_type_dist['normal_density'] for live in self.live_list]),
+			'long_density': np.mean([live.note_type_dist['long_density'] for live in self.live_list]),
+			'swing_density': np.mean([live.note_type_dist['swing_density'] for live in self.live_list])
+		}
+
+		if not self.is_random:
+			self.average_bonus = np.mean([live.average_bonus for live in self.live_list])
+			self.strength_per_pt_tap = np.mean([live.strength_per_pt_tap for live in self.live_list])
+			self.pts_per_strength = np.mean([live.pts_per_strength for live in self.live_list])
+			self.combo_weight_fraction = np.mean([live.combo_weight_fraction for live in self.live_list], axis=0)
+		else:
+			self.combo_weight_fraction = np.ones(9)/9
+			self.average_bonus, self.strength_per_pt_tap, self.pts_per_strength = 0, 0, 0
+			for live in self.live_list:
+			# Average combo factor if achieve FC
+				combo_weight = np.array([combo_factor(i+1) for i in range(live.note_number)]).mean()
+				# Average accuracy factor under presumed player perfect rate and live note type fractions
+				note_judge_factor = live.perfect_rate*accuracy_factor['Perfect'] + (1-live.perfect_rate)*accuracy_factor['Great']
+				normal_density, swing_density, long_density = live.note_type_dist['normal_density'], live.note_type_dist['swing_density'], live.note_type_dist['long_density']
+				note_judge_weight = note_judge_factor*(normal_density+swing_factor*swing_density) + note_judge_factor**2 * long_factor*long_density
+				# Corrected strength per point per tap
+				self.average_bonus += combo_weight*note_judge_weight / song_num
+				self.strength_per_pt_tap += (1/base_score_factor) / (combo_weight*note_judge_weight) / song_num
+				self.pts_per_strength += live.note_number / live.strength_per_pt_tap / song_num

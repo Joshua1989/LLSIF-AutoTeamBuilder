@@ -8,7 +8,7 @@ from llatb.common import config, global_var
 from llatb.common.display import view_card, view_cards, view_team, view_live
 from llatb.common.util import update_card_data, update_live_data
 from llatb import skill
-from llatb.framework import Card, Team, Live, DefaultLive, MFLive
+from llatb.framework import Card, Team, Live, DefaultLive, MFLive, SMLive
 from llatb.importer.game_data import GameData, uid_cid_dict
 from llatb.simulator import Simulator
 from llatb.advanced import TeamBuilder
