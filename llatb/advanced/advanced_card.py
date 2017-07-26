@@ -94,6 +94,12 @@ class AdvancedCard(Card):
 		# Compute the score of each gem
 		boost = live.pts_per_strength * mu_bar * new_setting['score_up_rate']
 		self.card_base_score = math.ceil(self.base_score*mu_bar)
+		if self.is_charm:
+			# If the skill is Score/Perfect/Star triggered, compute the skill gain under new settings
+			if self.skill.trigger_type in ['Score', 'Perfect', 'Star']:
+				self.skill_gain = self.skill.skill_gain(setting=new_setting)[0]
+			self.card_base_score += math.ceil(self.skill_gain*strength_per_pt_tap*live.pts_per_strength)
+
 		# Compute the score for each kind of gem
 		gem_score = dict()
 		if self.slot_num >= 1:
@@ -108,15 +114,13 @@ class AdvancedCard(Card):
 			gem_score[live.attr +' Veil'] = math.ceil(team_base*0.024*boost)
 			if live.attr == self.main_attr:
 				gem_score[self.attr2+' Trick'] = math.ceil(0.33*team_CR*self.base_bond_value*boost)
-			if self.is_charm or self.is_heal:
+			if self.is_charm:
+				gem_score[self.attr2+' Charm'] = math.ceil(self.skill_gain*1.5*strength_per_pt_tap*live.pts_per_strength)
+			if self.is_heal:
 				# If the skill is Score/Perfect/Star triggered, compute the skill gain under new settings
 				if self.skill.trigger_type in ['Score', 'Perfect', 'Star']:
 					self.skill_gain = self.skill.skill_gain(setting=new_setting)[0]
-				if self.is_charm:
-					gem_score[self.attr2+' Charm'] = math.ceil(self.skill_gain*1.5*strength_per_pt_tap*live.pts_per_strength)
-					self.card_base_score += math.ceil(self.skill_gain*strength_per_pt_tap*live.pts_per_strength)
-				elif self.is_heal:
-					gem_score[self.attr2+' Heal'] = math.ceil(self.skill_gain*480*strength_per_pt_tap*live.pts_per_strength)
+				gem_score[self.attr2+' Heal'] = math.ceil(self.skill_gain*480*strength_per_pt_tap*live.pts_per_strength)
 		self.gem_score = gem_score
 		# Compute the score for all possible gem allocation for this card
 		self.max_alloc_score = 0
