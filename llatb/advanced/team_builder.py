@@ -1,7 +1,8 @@
 import numpy as np
 import pandas as pd
 from collections import defaultdict
-import math, itertools, copy
+from random import shuffle
+import math, itertools, copy, time
 from llatb.common.global_var import *
 from llatb.framework import card_dataframe, Team
 from llatb.framework.live import Live, DefaultLive
@@ -162,7 +163,7 @@ class TeamBuilder:
 			raise		
 		return best_gem_allocator
 
-	def build_team(self, K=15, method='4-suboptimal', alloc_method='DC', show_cost=False):
+	def build_team(self, K=15, method='4-suboptimal', alloc_method='DC', show_cost=False, time_limit=24):
 		def find_candidate_cskill():
 			# Enumerate center skill of the highest rarity card that have same attribute with live
 			rarity_list = ['UR','SSR','SR','R']
@@ -179,8 +180,10 @@ class TeamBuilder:
 					candidate_cskill = cskill_dict[rarity]
 					break
 			candidate_cskill.sort(key=lambda x: str(x))
+			shuffle(candidate_cskill)
 			return candidate_cskill
 
+		start_time = time.time()
 		print('{2} {3}: Team searching method: {0}. Gem allocation searching method: {1}'.format(method, alloc_method, self.live.name, self.live.difficulty))
 		self.log += 'Team searching method: {0}. Gem allocation searching method: {1}\n'.format(method, alloc_method)
 		cskill_list, result = find_candidate_cskill(), []
@@ -190,13 +193,17 @@ class TeamBuilder:
 			gem_allocator = self.build_team_fix_cskill(cskill=cskill, K=K, method=method, alloc_method=alloc_method)
 			exp_score = gem_allocator.construct_team().compute_expected_total_score(self.live, opt=opt)
 			result.append((exp_score, gem_allocator))
-			print('{0}/{1}: Best team has score {2:6d} for {3}'.format(i, len(cskill_list), exp_score, cskill))
+			elapsed_time = time.time() - start_time
+			print('{0}/{1}: {4:5.2f} secs elapsed, best team has score {2:6d} for {3}'.format(i, len(cskill_list), exp_score, cskill, elapsed_time))
 			self.log += '{0}/{1}: Best team has score {2:6d} for {3}\n'.format(i, len(cskill_list), exp_score, cskill)
 			if exp_score > max_score: max_score, best_gem_allocator = gem_allocator.total_score, gem_allocator
+			if elapsed_time > time_limit:
+				print('Due to HTTP response time limit, jump out of the algorithm')
+				break
 
 		self.best_gem_allocator = best_gem_allocator
 		self.best_team = best_gem_allocator.construct_team()
-		return self.view_result()
+		return self.view_result(), (i, len(cskill_list))
 
 	def simulate(self, boosts={}, save_to=None):
 		if type(self.live) == DefaultLive:

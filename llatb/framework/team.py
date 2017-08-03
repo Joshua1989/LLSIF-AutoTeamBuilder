@@ -183,6 +183,44 @@ class Team:
 			print('Average Position Bonus {0:.4f}'.format(average_pos_bonus))
 			print('Expected Total Score {0}'.format(int(expected_total_score)))
 		return int(expected_total_score)
+	def compute_mics(self):
+		# Construct Otasuke Power boundary
+		mic_boundaries = [
+			{ 'min': 0.00, 'max': 1.87, 'mics': 1 },
+			{ 'min': 2.34, 'max': 4.55, 'mics': 2 },
+			{ 'min': 4.63, 'max': 6.81, 'mics': 3 },
+			{ 'min': 6.82, 'max': 11.22, 'mics': 4 },
+			{ 'min': 11.29, 'max': 15.63, 'mics': 5 },
+			{ 'min': 16.05, 'max': 23.13, 'mics': 6 },
+			{ 'min': 23.24, 'max': 34.40, 'mics': 7 },
+			{ 'min': 34.52, 'max': 50.00, 'mics': 8 },
+			{ 'min': 50.05, 'max': 71.00, 'mics': 9 },
+			{ 'min': 72.00, 'max': 72.01, 'mics': 10 }
+		]
+		# There are some interval that still unknown, just fill it
+		full_mic_boundaries = []
+		for i in range(9):
+			full_mic_boundaries.append(mic_boundaries[i])
+			full_mic_boundaries.append({
+				'min': mic_boundaries[i]['max'],
+				'max': mic_boundaries[i+1]['min'],
+				'mics': mic_boundaries[i]['mics'] + 0.5
+				})
+		full_mic_boundaries.append(mic_boundaries[9])
+		# Otasuke Power Ratio
+		op_ratio = {'UR':1, 'SSR':0.59, 'SR':0.29, 'R':0.13, 'N':0}
+		# Compute Otasuke Power
+		otasuke_power = 0
+		for card in self.card_list:
+			if card.skill is not None:
+				rarity = 'R' if card.promo else card.rarity
+				otasuke_power += op_ratio[rarity] * card.skill.level
+		# See which interval the Otasuke Power lies in and return mics
+		mics = None
+		for intv in full_mic_boundaries:
+			if otasuke_power >= intv['min'] and otasuke_power < intv['max']:
+				mics = intv['mics']
+		return mics, otasuke_power
 	def prepare_simulation(self, opt={'scoreup':1, 'skillup':1, 'guest_cskill':None}):
 		res = self.team_strength(opt.get('guest_cskill'))
 		temp = np.array(res['displayed_card_attr'])

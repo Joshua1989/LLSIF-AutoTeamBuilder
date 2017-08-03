@@ -267,4 +267,6 @@ def view_live(live, lang='EN'):
 		df_head.columns = ['<p>{0}</p>'.format(x) for x in ['曲目封面', '歌曲名称', '歌手', '难度', 'Note个数', '时长']]
 		df.columns = list(df.columns)[:-1] + ['<p>总计</p>']
 		df.index = ['<p>{0}</p>'.format(x) for x in ['单点', '长按', '滑键', '星标', '道具', '按键权重', '连击权重', '连击权重占比']]
+	elif lang=='EN':
+		df.index = ['<p>{0}</p>'.format(x) for x in ['tap', 'hold', 'swing', 'star', 'token', 'type weight', 'combo weight', 'weight fraction']]
 	return HTML(html_template.format(df_head.to_html(escape=False, index=False) + df.to_html(escape=False)))

@@ -52,14 +52,14 @@ class GemAllocator:
 			best_gem_score  += card.max_alloc_score
 		return team_base_score, best_gem_score
 
-	def find_optimal_gem_allocation_DP(self):
+	def find_optimal_gem_allocation_DP(self, add_trick=True):
 		# Generate a dict to store index of different types of gems
 		grade_append = {1:'(1st)', 2:'(2nd)', 3:'(3rd)'}
 		attr, attr2 = self.live.attr, attr2_list[attr_list.index(self.live.attr)]
 		gem_list  = [attr+' Kiss', attr+' Perfume']
 		gem_list += [attr+x+grade for x in [' Ring ', ' Cross '] for grade in list(grade_append.values())]
 		gem_list += [attr+x for x in [' Aura', ' Veil']]
-		gem_list += [attr2+x for x in [' Charm', ' Heal'] for attr2 in attr2_list] + [attr2+' Trick']
+		gem_list += [attr2+x for x in [' Charm', ' Heal'] for attr2 in attr2_list] + [attr2+' Trick']*add_trick
 		gem_idx_dict = {v:k for k,v in enumerate(gem_list)}
 
 		# Compute the highest possible gem score for each card to help to prune branch
@@ -113,6 +113,7 @@ class GemAllocator:
 					# Construct new remain vector and check if it is feasible
 					new_remain, violate = remain.copy(), False
 					for gem in alloc.gems: 
+						if 'Trick' in gem and not add_trick: continue
 						idx = gem_idx_dict[gem]
 						if new_remain[idx] > 0: new_remain[idx] -= 1
 						else: violate = True; break
@@ -150,7 +151,7 @@ class GemAllocator:
 			if cum_score > Qmax: x_opt, Qmax = plan, cum_score
 		return x_opt, Qmax
 
-	def find_optimal_gem_allocation_DC(self):
+	def find_optimal_gem_allocation_DC(self, add_trick=True):
 		def recursion(alloc_info, Qmax_init=0, first_alloc=None, first_Q=None):
 			# Find the most scarce gem type
 			best_case, scarce_gem, max_lack = defaultdict(lambda:False), None, 0
@@ -171,7 +172,7 @@ class GemAllocator:
 				peeled = [[ x for x in alloc_list if scarce_gem not in x.gems] for alloc_list in alloc_info]
 				# Split current case into subproblems
 				x_opt, Qmax = [Alloc([],0)]*9, Qmax_init
-				for ind in itertools.combinations(list(range(9)), self.owned_gem[scarce_gem]):
+				for ind in itertools.combinations(valid_card_index[scarce_gem], self.owned_gem[scarce_gem]):
 					# Construct subproblem
 					sub_alloc_info = [alloc_info[i] if i in ind else peeled[i] for i in range(9)]
 					# Compute the best allocation of subproblem
@@ -181,21 +182,34 @@ class GemAllocator:
 						x_sol, Qsol = recursion(sub_alloc_info, Qmax, first_alloc, first_Q)
 						if Qsol > Qmax: x_opt, Qmax = x_sol, Qsol
 			return x_opt, Qmax
-		# alloc_info = copy.deepcopy([card.gem_alloc_list for card in self.card_list])
-		alloc_info = [card.gem_alloc_list for card in self.card_list]
+		if add_trick:
+			alloc_info = [card.gem_alloc_list for card in self.card_list]
+		else:
+			alloc_info = [[alloc for alloc in card.gem_alloc_list if 'Trick' not in str(alloc.gems)] for card in self.card_list]
+		# For each considered SIS, compute list of card indices that can equip it
+		valid_card_index = dict()
+		for ind, alloc_list in enumerate(alloc_info):
+			for alloc in alloc_list:
+				if len(alloc.gems) == 1:
+					gem = alloc.gems[0]
+					if valid_card_index.get(gem) is None:
+						valid_card_index[gem] = [ind]
+					else:
+						valid_card_index[gem].append(ind)
 		x_opt, Qmax = recursion(alloc_info)
 		return x_opt, Qmax
 
-	def allocate(self, alloc_method='DP', max_score=0):
+	def allocate(self, alloc_method='DP', max_score=0, add_trick_thresh=0.67):
 		# Update score of gems
 		team_base_score, best_gem_score = self.update_gem_score(sort=alloc_method=='DC')
+		add_trick = int(self.team_CR > add_trick_thresh)
 		# # If for unlimited gem the choice is worse than max_score, drop it
 		if team_base_score + best_gem_score < max_score: return None
 		# Solve for best gem allocation
 		if alloc_method == 'DP':
-			optimal_alloc, alloc_score = self.find_optimal_gem_allocation_DP()
+			optimal_alloc, alloc_score = self.find_optimal_gem_allocation_DP(add_trick)
 		elif alloc_method == 'DC':
-			optimal_alloc, alloc_score = self.find_optimal_gem_allocation_DC()
+			optimal_alloc, alloc_score = self.find_optimal_gem_allocation_DC(add_trick)
 		# Compute total score
 		self.optimal_alloc, self.total_score = optimal_alloc, team_base_score + alloc_score
 		return self.optimal_alloc, self.total_score
@@ -359,6 +373,7 @@ class GemAllocator:
 			return cskill_str
 
 		df_team = pd.DataFrame({'Center Skill':[format_cskill(team[4].cskill)], 'Guest Center Skill': [format_cskill(self.guest_cskill)]})
+		df_team['Mics/OP'] = '{0} / {1}'.format(*team.compute_mics())
 		df_team['Cover Rate'] = '{0:.2f}%'.format(self.team_CR*100)
 		df_team['Team STR'] = df['Team STR'].sum()
 		df_team['Amend Team STR'] = df['Amend STR'].sum()
@@ -369,7 +384,7 @@ class GemAllocator:
 		df_team.columns = ['<p>{0}</p>'.format(x) for x in list(df_team.columns)]
 		df_team = df_team.applymap(lambda x: x if type(x)==str and x[0]=='<' else '<p>{0}</p>'.format(round(x,3) if type(x)==float else ('-' if str(x)=='0' else x)))
 		if lang=='CN':
-			df_team.columns = ['<p>{0}</p>'.format(x) for x in ['Center技', '好友Center技', '判定覆盖率' ,'队伍强度', '判定修正队伍强度', '总技能强度', '期望得分']]
+			df_team.columns = ['<p>{0}</p>'.format(x) for x in ['Center技', '好友Center技', 'Mic数／援力', '判定覆盖率' ,'队伍强度', '判定修正队伍强度', '总技能强度', '期望得分']]
 		html_team = df_team.to_html(escape=False)
 
 		df.columns = ['<p>{0}</p>'.format(x) if '<p>' not in x else x for x in columns]		

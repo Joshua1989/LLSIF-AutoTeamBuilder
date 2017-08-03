@@ -1,3763 +1,427 @@
 {
-  "deck_info": [
+  "unit_info": [
     {
-      "deck_name": "缪粉",
-      "main_flag": false,
-      "unit_deck_id": 1,
-      "unit_owning_user_ids": [
-        {
-          "position": 1,
-          "unit_owning_user_id": 1000920511776
-        },
-        {
-          "position": 2,
-          "unit_owning_user_id": 1000878580101
-        },
-        {
-          "position": 3,
-          "unit_owning_user_id": 1000821681595
-        },
-        {
-          "position": 4,
-          "unit_owning_user_id": 1000766986721
-        },
-        {
-          "position": 5,
-          "unit_owning_user_id": 1000921375903
-        },
-        {
-          "position": 6,
-          "unit_owning_user_id": 1000829473894
-        },
-        {
-          "position": 7,
-          "unit_owning_user_id": 1000913557658
-        },
-        {
-          "position": 8,
-          "unit_owning_user_id": 1000808356162
-        },
-        {
-          "position": 9,
-          "unit_owning_user_id": 1000776015794
-        }
-      ]
+      "unit_owning_user_id": 0,
+      "unit_id": 338,
+      "level": 80,
+      "love": 500,
+      "rank": 1,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 1
     },
     {
-      "deck_name": "缪绿",
-      "main_flag": false,
-      "unit_deck_id": 2,
-      "unit_owning_user_ids": [
-        {
-          "position": 1,
-          "unit_owning_user_id": 1000829431916
-        },
-        {
-          "position": 2,
-          "unit_owning_user_id": 1000731590923
-        },
-        {
-          "position": 3,
-          "unit_owning_user_id": 1000828737129
-        },
-        {
-          "position": 4,
-          "unit_owning_user_id": 1000881253052
-        },
-        {
-          "position": 5,
-          "unit_owning_user_id": 1000776015803
-        },
-        {
-          "position": 6,
-          "unit_owning_user_id": 1000917701392
-        },
-        {
-          "position": 7,
-          "unit_owning_user_id": 1000872133084
-        },
-        {
-          "position": 8,
-          "unit_owning_user_id": 1000829473896
-        },
-        {
-          "position": 9,
-          "unit_owning_user_id": 1000901181802
-        }
-      ]
+      "unit_owning_user_id": 0,
+      "unit_id": 976,
+      "level": 80,
+      "love": 500,
+      "rank": 1,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 1
     },
     {
-      "deck_name": "缪蓝",
-      "main_flag": true,
-      "unit_deck_id": 3,
-      "unit_owning_user_ids": [
-        {
-          "position": 1,
-          "unit_owning_user_id": 1000884033282
-        },
-        {
-          "position": 2,
-          "unit_owning_user_id": 1000787225262
-        },
-        {
-          "position": 3,
-          "unit_owning_user_id": 1000921384329
-        },
-        {
-          "position": 4,
-          "unit_owning_user_id": 1000901182430
-        },
-        {
-          "position": 5,
-          "unit_owning_user_id": 1000829473899
-        },
-        {
-          "position": 6,
-          "unit_owning_user_id": 1000700842188
-        },
-        {
-          "position": 7,
-          "unit_owning_user_id": 1000829473897
-        },
-        {
-          "position": 8,
-          "unit_owning_user_id": 1000915739331
-        },
-        {
-          "position": 9,
-          "unit_owning_user_id": 1000913103742
-        }
-      ]
+      "unit_owning_user_id": 0,
+      "unit_id": 746,
+      "level": 80,
+      "love": 500,
+      "rank": 1,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 4
     },
     {
-      "deck_name": "判定",
-      "main_flag": false,
-      "unit_deck_id": 4,
-      "unit_owning_user_ids": [
-        {
-          "position": 1,
-          "unit_owning_user_id": 1000731590923
-        },
-        {
-          "position": 2,
-          "unit_owning_user_id": 1000752086491
-        },
-        {
-          "position": 3,
-          "unit_owning_user_id": 1000787225262
-        },
-        {
-          "position": 4,
-          "unit_owning_user_id": 1000700842188
-        },
-        {
-          "position": 5,
-          "unit_owning_user_id": 1000921375903
-        },
-        {
-          "position": 6,
-          "unit_owning_user_id": 1000921384329
-        },
-        {
-          "position": 7,
-          "unit_owning_user_id": 1000864375215
-        },
-        {
-          "position": 8,
-          "unit_owning_user_id": 1000808356162
-        },
-        {
-          "position": 9,
-          "unit_owning_user_id": 1000829431916
-        }
-      ]
+      "unit_owning_user_id": 0,
+      "unit_id": 864,
+      "level": 100,
+      "love": 1000,
+      "rank": 2,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 1
     },
     {
-      "deck_name": "水粉",
-      "main_flag": false,
-      "unit_deck_id": 5,
-      "unit_owning_user_ids": [
-        {
-          "position": 1,
-          "unit_owning_user_id": 1000766986721
-        },
-        {
-          "position": 2,
-          "unit_owning_user_id": 1000776015794
-        },
-        {
-          "position": 3,
-          "unit_owning_user_id": 1000737606142
-        },
-        {
-          "position": 4,
-          "unit_owning_user_id": 1000864375215
-        },
-        {
-          "position": 5,
-          "unit_owning_user_id": 1000866148490
-        },
-        {
-          "position": 6,
-          "unit_owning_user_id": 1000791148257
-        },
-        {
-          "position": 7,
-          "unit_owning_user_id": 1000737893962
-        },
-        {
-          "position": 8,
-          "unit_owning_user_id": 1000821681595
-        },
-        {
-          "position": 9,
-          "unit_owning_user_id": 1000878580101
-        }
-      ]
+      "unit_owning_user_id": 0,
+      "unit_id": 873,
+      "level": 80,
+      "love": 500,
+      "rank": 1,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 4
     },
     {
-      "deck_name": "水绿",
-      "main_flag": false,
-      "unit_deck_id": 6,
-      "unit_owning_user_ids": [
-        {
-          "position": 1,
-          "unit_owning_user_id": 1000731590923
-        },
-        {
-          "position": 2,
-          "unit_owning_user_id": 1000880818475
-        },
-        {
-          "position": 3,
-          "unit_owning_user_id": 1000857877364
-        },
-        {
-          "position": 4,
-          "unit_owning_user_id": 1000783767686
-        },
-        {
-          "position": 5,
-          "unit_owning_user_id": 1000752086491
-        },
-        {
-          "position": 6,
-          "unit_owning_user_id": 1000799206668
-        },
-        {
-          "position": 7,
-          "unit_owning_user_id": 1000880818775
-        },
-        {
-          "position": 8,
-          "unit_owning_user_id": 1000872133084
-        },
-        {
-          "position": 9,
-          "unit_owning_user_id": 1000776015803
-        }
-      ]
+      "unit_owning_user_id": 0,
+      "unit_id": 781,
+      "level": 100,
+      "love": 1000,
+      "rank": 2,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 5
     },
     {
-      "deck_name": "水蓝",
-      "main_flag": false,
-      "unit_deck_id": 7,
-      "unit_owning_user_ids": [
-        {
-          "position": 1,
-          "unit_owning_user_id": 1000700842188
-        },
-        {
-          "position": 2,
-          "unit_owning_user_id": 1000746125412
-        },
-        {
-          "position": 3,
-          "unit_owning_user_id": 1000737628575
-        },
-        {
-          "position": 4,
-          "unit_owning_user_id": 1000761142421
-        },
-        {
-          "position": 5,
-          "unit_owning_user_id": 1000868748470
-        },
-        {
-          "position": 6,
-          "unit_owning_user_id": 1000913840139
-        },
-        {
-          "position": 7,
-          "unit_owning_user_id": 1000757923090
-        },
-        {
-          "position": 8,
-          "unit_owning_user_id": 1000829473897
-        },
-        {
-          "position": 9,
-          "unit_owning_user_id": 1000829473899
-        }
-      ]
+      "unit_owning_user_id": 0,
+      "unit_id": 883,
+      "level": 100,
+      "love": 1000,
+      "rank": 2,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 5
     },
     {
-      "deck_name": "无判",
-      "main_flag": false,
-      "unit_deck_id": 8,
-      "unit_owning_user_ids": [
-        {
-          "position": 1,
-          "unit_owning_user_id": 1000799206668
-        },
-        {
-          "position": 2,
-          "unit_owning_user_id": 1000761142421
-        },
-        {
-          "position": 3,
-          "unit_owning_user_id": 1000766986721
-        },
-        {
-          "position": 4,
-          "unit_owning_user_id": 1000868748470
-        },
-        {
-          "position": 5,
-          "unit_owning_user_id": 1000829473899
-        },
-        {
-          "position": 6,
-          "unit_owning_user_id": 1000767708273
-        },
-        {
-          "position": 7,
-          "unit_owning_user_id": 1000791148257
-        },
-        {
-          "position": 8,
-          "unit_owning_user_id": 1000857877364
-        },
-        {
-          "position": 9,
-          "unit_owning_user_id": 1000828737129
-        }
-      ]
+      "unit_owning_user_id": 0,
+      "unit_id": 1075,
+      "level": 100,
+      "love": 1000,
+      "rank": 2,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 5
     },
     {
-      "deck_name": "队伍I",
-      "main_flag": false,
-      "unit_deck_id": 9,
-      "unit_owning_user_ids": [
-        {
-          "position": 1,
-          "unit_owning_user_id": 1000829473894
-        },
-        {
-          "position": 2,
-          "unit_owning_user_id": 1000864375215
-        },
-        {
-          "position": 3,
-          "unit_owning_user_id": 1000808356162
-        },
-        {
-          "position": 4,
-          "unit_owning_user_id": 1000791148257
-        },
-        {
-          "position": 5,
-          "unit_owning_user_id": 1000821681595
-        },
-        {
-          "position": 6,
-          "unit_owning_user_id": 1000776015794
-        },
-        {
-          "position": 7,
-          "unit_owning_user_id": 1000905858256
-        },
-        {
-          "position": 8,
-          "unit_owning_user_id": 1000767708273
-        },
-        {
-          "position": 9,
-          "unit_owning_user_id": 1000917701392
-        }
-      ]
+      "unit_owning_user_id": 0,
+      "unit_id": 703,
+      "level": 100,
+      "love": 1000,
+      "rank": 2,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 5
+    },
+    {
+      "unit_owning_user_id": 0,
+      "unit_id": 531,
+      "level": 100,
+      "love": 1000,
+      "rank": 2,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 4
+    },
+    {
+      "unit_owning_user_id": 0,
+      "unit_id": 108,
+      "level": 100,
+      "love": 1000,
+      "rank": 2,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 4
+    },
+    {
+      "unit_owning_user_id": 0,
+      "unit_id": 1048,
+      "level": 100,
+      "love": 1000,
+      "rank": 2,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 6
+    },
+    {
+      "unit_owning_user_id": 0,
+      "unit_id": 945,
+      "level": 90,
+      "love": 750,
+      "rank": 2,
+      "unit_removable_skill_capacity": 6,
+      "unit_skill_level": 4
+    },
+    {
+      "unit_owning_user_id": 0,
+      "unit_id": 108,
+      "level": 100,
+      "love": 1000,
+      "rank": 2,
+      "unit_removable_skill_capacity": 5,
+      "unit_skill_level": 4
+    },
+    {
+      "unit_owning_user_id": 0,
+      "unit_id": 282,
+      "level": 100,
+      "love": 1000,
+      "rank": 2,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 1
+    },
+    {
+      "unit_owning_user_id": 0,
+      "unit_id": 367,
+      "level": 80,
+      "love": 500,
+      "rank": 1,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 1
+    },
+    {
+      "unit_owning_user_id": 0,
+      "unit_id": 735,
+      "level": 100,
+      "love": 1000,
+      "rank": 2,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 6
+    },
+    {
+      "unit_owning_user_id": 0,
+      "unit_id": 180,
+      "level": 100,
+      "love": 1000,
+      "rank": 2,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 4
+    },
+    {
+      "unit_owning_user_id": 0,
+      "unit_id": 72,
+      "level": 100,
+      "love": 1000,
+      "rank": 2,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 6
+    },
+    {
+      "unit_owning_user_id": 0,
+      "unit_id": 693,
+      "level": 100,
+      "love": 1000,
+      "rank": 2,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 3
+    },
+    {
+      "unit_owning_user_id": 0,
+      "unit_id": 72,
+      "level": 80,
+      "love": 500,
+      "rank": 1,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 2
+    },
+    {
+      "unit_owning_user_id": 0,
+      "unit_id": 693,
+      "level": 80,
+      "love": 500,
+      "rank": 1,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 1
+    },
+    {
+      "unit_owning_user_id": 0,
+      "unit_id": 801,
+      "level": 100,
+      "love": 1000,
+      "rank": 2,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 5
+    },
+    {
+      "unit_owning_user_id": 0,
+      "unit_id": 592,
+      "level": 100,
+      "love": 1000,
+      "rank": 2,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 3
+    },
+    {
+      "unit_owning_user_id": 0,
+      "unit_id": 514,
+      "level": 80,
+      "love": 500,
+      "rank": 1,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 5
+    },
+    {
+      "unit_owning_user_id": 0,
+      "unit_id": 957,
+      "level": 80,
+      "love": 500,
+      "rank": 1,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 4
+    },
+    {
+      "unit_owning_user_id": 0,
+      "unit_id": 958,
+      "level": 80,
+      "love": 500,
+      "rank": 1,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 1
+    },
+    {
+      "unit_owning_user_id": 0,
+      "unit_id": 1084,
+      "level": 100,
+      "love": 1000,
+      "rank": 2,
+      "unit_removable_skill_capacity": 2,
+      "unit_skill_level": 8
+    },
+    {
+      "unit_owning_user_id": 0,
+      "unit_id": 1048,
+      "level": 80,
+      "love": 500,
+      "rank": 1,
+      "unit_removable_skill_capacity": 4,
+      "unit_skill_level": 3
     }
   ],
+  "deck_info": [],
   "removable_info": {
-    "equipment_info": {
-      "1000700842188": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 3
-          },
-          {
-            "unit_removable_skill_id": 24
-          }
-        ],
-        "unit_owning_user_id": 1000700842188
-      },
-      "1000731590923": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 23
-          }
-        ],
-        "unit_owning_user_id": 1000731590923
-      },
-      "1000737606142": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 10
-          }
-        ],
-        "unit_owning_user_id": 1000737606142
-      },
-      "1000737628575": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 12
-          }
-        ],
-        "unit_owning_user_id": 1000737628575
-      },
-      "1000737893962": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 13
-          }
-        ],
-        "unit_owning_user_id": 1000737893962
-      },
-      "1000746125412": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 15
-          }
-        ],
-        "unit_owning_user_id": 1000746125412
-      },
-      "1000752086491": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 17
-          }
-        ],
-        "unit_owning_user_id": 1000752086491
-      },
-      "1000757923090": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 18
-          }
-        ],
-        "unit_owning_user_id": 1000757923090
-      },
-      "1000761142421": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 24
-          }
-        ],
-        "unit_owning_user_id": 1000761142421
-      },
-      "1000766986721": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 22
-          }
-        ],
-        "unit_owning_user_id": 1000766986721
-      },
-      "1000767708273": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 19
-          }
-        ],
-        "unit_owning_user_id": 1000767708273
-      },
-      "1000776015794": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 16
-          }
-        ],
-        "unit_owning_user_id": 1000776015794
-      },
-      "1000776015803": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 17
-          }
-        ],
-        "unit_owning_user_id": 1000776015803
-      },
-      "1000782784669": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 10
-          }
-        ],
-        "unit_owning_user_id": 1000782784669
-      },
-      "1000783767686": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 11
-          }
-        ],
-        "unit_owning_user_id": 1000783767686
-      },
-      "1000787225262": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 24
-          }
-        ],
-        "unit_owning_user_id": 1000787225262
-      },
-      "1000790467315": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 10
-          }
-        ],
-        "unit_owning_user_id": 1000790467315
-      },
-      "1000791148257": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 16
-          }
-        ],
-        "unit_owning_user_id": 1000791148257
-      },
-      "1000799206668": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 20
-          }
-        ],
-        "unit_owning_user_id": 1000799206668
-      },
-      "1000808356162": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 16
-          }
-        ],
-        "unit_owning_user_id": 1000808356162
-      },
-      "1000821681595": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 13
-          }
-        ],
-        "unit_owning_user_id": 1000821681595
-      },
-      "1000828737129": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 23
-          }
-        ],
-        "unit_owning_user_id": 1000828737129
-      },
-      "1000829431916": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 11
-          }
-        ],
-        "unit_owning_user_id": 1000829431916
-      },
-      "1000829432571": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 9
-          }
-        ],
-        "unit_owning_user_id": 1000829432571
-      },
-      "1000829473894": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 19
-          }
-        ],
-        "unit_owning_user_id": 1000829473894
-      },
-      "1000829473896": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 8
-          }
-        ],
-        "unit_owning_user_id": 1000829473896
-      },
-      "1000829473897": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 24
-          }
-        ],
-        "unit_owning_user_id": 1000829473897
-      },
-      "1000829473899": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 30
-          }
-        ],
-        "unit_owning_user_id": 1000829473899
-      },
-      "1000841230965": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 18
-          }
-        ],
-        "unit_owning_user_id": 1000841230965
-      },
-      "1000857877364": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 23
-          }
-        ],
-        "unit_owning_user_id": 1000857877364
-      },
-      "1000864375215": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 22
-          }
-        ],
-        "unit_owning_user_id": 1000864375215
-      },
-      "1000866148490": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 25
-          }
-        ],
-        "unit_owning_user_id": 1000866148490
-      },
-      "1000868748470": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 30
-          }
-        ],
-        "unit_owning_user_id": 1000868748470
-      },
-      "1000871136582": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 15
-          }
-        ],
-        "unit_owning_user_id": 1000871136582
-      },
-      "1000872133084": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 26
-          }
-        ],
-        "unit_owning_user_id": 1000872133084
-      },
-      "1000878580101": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 10
-          }
-        ],
-        "unit_owning_user_id": 1000878580101
-      },
-      "1000880818475": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 11
-          }
-        ],
-        "unit_owning_user_id": 1000880818475
-      },
-      "1000880818775": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 8
-          }
-        ],
-        "unit_owning_user_id": 1000880818775
-      },
-      "1000880819403": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 12
-          }
-        ],
-        "unit_owning_user_id": 1000880819403
-      },
-      "1000881253052": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 11
-          }
-        ],
-        "unit_owning_user_id": 1000881253052
-      },
-      "1000884033282": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 12
-          }
-        ],
-        "unit_owning_user_id": 1000884033282
-      },
-      "1000895099985": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 24
-          }
-        ],
-        "unit_owning_user_id": 1000895099985
-      },
-      "1000901181802": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 11
-          }
-        ],
-        "unit_owning_user_id": 1000901181802
-      },
-      "1000901182430": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 21
-          },
-          {
-            "unit_removable_skill_id": 3
-          }
-        ],
-        "unit_owning_user_id": 1000901182430
-      },
-      "1000905858256": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 16
-          }
-        ],
-        "unit_owning_user_id": 1000905858256
-      },
-      "1000913103742": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 24
-          }
-        ],
-        "unit_owning_user_id": 1000913103742
-      },
-      "1000913557658": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 7
-          }
-        ],
-        "unit_owning_user_id": 1000913557658
-      },
-      "1000913840139": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 21
-          }
-        ],
-        "unit_owning_user_id": 1000913840139
-      },
-      "1000915739331": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 9
-          }
-        ],
-        "unit_owning_user_id": 1000915739331
-      },
-      "1000917701392": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 8
-          }
-        ],
-        "unit_owning_user_id": 1000917701392
-      },
-      "1000920511776": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 19
-          }
-        ],
-        "unit_owning_user_id": 1000920511776
-      },
-      "1000921375903": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 33
-          }
-        ],
-        "unit_owning_user_id": 1000921375903
-      },
-      "1000921384329": {
-        "detail": [
-          {
-            "unit_removable_skill_id": 27
-          }
-        ],
-        "unit_owning_user_id": 1000921384329
-      }
-    },
+    "equipment_info": {},
     "owning_info": [
       {
-        "equipped_amount": 0,
-        "insert_date": "2017-02-21 17:42:30",
-        "total_amount": 22,
+        "total_amount": 1,
         "unit_removable_skill_id": 1
       },
       {
-        "equipped_amount": 0,
-        "insert_date": "2017-02-21 17:42:30",
-        "total_amount": 20,
+        "total_amount": 1,
         "unit_removable_skill_id": 2
       },
       {
-        "equipped_amount": 2,
-        "insert_date": "2017-02-21 17:42:30",
-        "total_amount": 20,
+        "total_amount": 1,
         "unit_removable_skill_id": 3
       },
       {
-        "equipped_amount": 0,
-        "insert_date": "2017-03-15 20:05:47",
-        "total_amount": 14,
+        "total_amount": 9,
         "unit_removable_skill_id": 4
       },
       {
-        "equipped_amount": 0,
-        "insert_date": "2017-03-22 06:28:45",
-        "total_amount": 16,
+        "total_amount": 9,
         "unit_removable_skill_id": 5
       },
       {
-        "equipped_amount": 0,
-        "insert_date": "2017-03-06 21:26:35",
-        "total_amount": 16,
+        "total_amount": 9,
         "unit_removable_skill_id": 6
       },
       {
-        "equipped_amount": 1,
-        "insert_date": "2017-02-25 08:35:20",
-        "total_amount": 25,
+        "total_amount": 9,
         "unit_removable_skill_id": 7
       },
       {
-        "equipped_amount": 3,
-        "insert_date": "2017-03-10 23:37:05",
-        "total_amount": 17,
+        "total_amount": 9,
         "unit_removable_skill_id": 8
       },
       {
-        "equipped_amount": 2,
-        "insert_date": "2017-02-27 21:16:26",
-        "total_amount": 26,
+        "total_amount": 9,
         "unit_removable_skill_id": 9
       },
       {
-        "equipped_amount": 4,
-        "insert_date": "2017-02-21 22:56:46",
-        "total_amount": 14,
+        "total_amount": 9,
         "unit_removable_skill_id": 10
       },
       {
-        "equipped_amount": 5,
-        "insert_date": "2017-03-29 12:10:09",
-        "total_amount": 15,
+        "total_amount": 9,
         "unit_removable_skill_id": 11
       },
       {
-        "equipped_amount": 3,
-        "insert_date": "2017-03-03 23:15:36",
-        "total_amount": 25,
+        "total_amount": 9,
         "unit_removable_skill_id": 12
       },
       {
-        "equipped_amount": 2,
-        "insert_date": "2017-03-08 21:26:32",
-        "total_amount": 15,
+        "total_amount": 9,
         "unit_removable_skill_id": 13
       },
       {
-        "equipped_amount": 0,
-        "insert_date": "2017-02-21 22:56:46",
-        "total_amount": 21,
+        "total_amount": 9,
         "unit_removable_skill_id": 14
       },
       {
-        "equipped_amount": 2,
-        "insert_date": "2017-02-23 20:03:57",
-        "total_amount": 19,
+        "total_amount": 9,
         "unit_removable_skill_id": 15
       },
       {
-        "equipped_amount": 4,
-        "insert_date": "2017-03-10 23:37:05",
-        "total_amount": 6,
+        "total_amount": 3,
         "unit_removable_skill_id": 16
       },
       {
-        "equipped_amount": 2,
-        "insert_date": "2017-03-31 21:48:46",
         "total_amount": 2,
         "unit_removable_skill_id": 17
       },
       {
-        "equipped_amount": 2,
-        "insert_date": "2017-05-27 19:43:28",
-        "total_amount": 2,
+        "total_amount": 0,
         "unit_removable_skill_id": 18
       },
       {
-        "equipped_amount": 3,
-        "insert_date": "2017-04-01 17:09:00",
-        "total_amount": 4,
+        "total_amount": 3,
         "unit_removable_skill_id": 19
       },
       {
-        "equipped_amount": 1,
-        "insert_date": "2017-02-25 08:35:20",
-        "total_amount": 4,
+        "total_amount": 2,
         "unit_removable_skill_id": 20
       },
       {
-        "equipped_amount": 2,
-        "insert_date": "2017-04-03 19:54:35",
-        "total_amount": 3,
+        "total_amount": 4,
         "unit_removable_skill_id": 21
       },
       {
-        "equipped_amount": 2,
-        "insert_date": "2017-02-23 20:03:57",
-        "total_amount": 2,
+        "total_amount": 6,
         "unit_removable_skill_id": 22
       },
       {
-        "equipped_amount": 3,
-        "insert_date": "2017-04-01 15:28:58",
-        "total_amount": 3,
+        "total_amount": 7,
         "unit_removable_skill_id": 23
       },
       {
-        "equipped_amount": 6,
-        "insert_date": "2017-03-06 07:35:26",
-        "total_amount": 6,
+        "total_amount": 4,
         "unit_removable_skill_id": 24
       },
       {
-        "equipped_amount": 1,
-        "insert_date": "2017-04-01 14:51:58",
-        "total_amount": 7,
+        "total_amount": 2,
         "unit_removable_skill_id": 25
       },
       {
-        "equipped_amount": 1,
-        "insert_date": "2017-04-01 17:09:00",
-        "total_amount": 3,
+        "total_amount": 5,
         "unit_removable_skill_id": 26
       },
       {
-        "equipped_amount": 1,
-        "insert_date": "2017-04-01 14:25:49",
-        "total_amount": 4,
+        "total_amount": 1,
         "unit_removable_skill_id": 27
       },
       {
-        "equipped_amount": 0,
-        "insert_date": "2017-02-26 11:05:12",
-        "total_amount": 4,
+        "total_amount": 2,
+        "unit_removable_skill_id": 28
+      },
+      {
+        "total_amount": 3,
         "unit_removable_skill_id": 29
       },
       {
-        "equipped_amount": 2,
-        "insert_date": "2017-04-29 14:56:11",
         "total_amount": 2,
         "unit_removable_skill_id": 30
       },
       {
-        "equipped_amount": 0,
-        "insert_date": "2017-06-29 19:12:03",
-        "total_amount": 2,
+        "total_amount": 1,
         "unit_removable_skill_id": 31
       },
       {
-        "equipped_amount": 0,
-        "insert_date": "2017-03-13 07:07:12",
-        "total_amount": 3,
+        "total_amount": 2,
         "unit_removable_skill_id": 32
       },
       {
-        "equipped_amount": 1,
-        "insert_date": "2017-05-09 07:15:41",
-        "total_amount": 1,
+        "total_amount": 0,
         "unit_removable_skill_id": 33
       },
       {
-        "equipped_amount": 0,
-        "insert_date": "2017-04-30 15:51:43",
-        "total_amount": 1,
+        "total_amount": 2,
         "unit_removable_skill_id": 34
       },
       {
-        "equipped_amount": 0,
-        "insert_date": "2017-04-02 11:23:22",
-        "total_amount": 3,
+        "total_amount": 2,
         "unit_removable_skill_id": 35
       },
       {
-        "equipped_amount": 0,
-        "insert_date": "2017-05-12 20:40:45",
         "total_amount": 1,
         "unit_removable_skill_id": 36
       },
       {
-        "equipped_amount": 0,
-        "insert_date": "2017-07-15 08:00:33",
+        "total_amount": 1,
+        "unit_removable_skill_id": 37
+      },
+      {
         "total_amount": 1,
         "unit_removable_skill_id": 38
       },
       {
-        "equipped_amount": 0,
-        "insert_date": "2017-03-10 23:16:24",
-        "total_amount": 1,
+        "total_amount": 2,
         "unit_removable_skill_id": 39
       }
     ]
-  },
-  "unit_info": [
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-01-11 21:48:10",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 572,
-      "unit_owning_user_id": 1000691987609,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-01-11 22:02:00",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 580,
-      "unit_owning_user_id": 1000691999788,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-01-15 09:30:47",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 365,
-      "unit_owning_user_id": 1000695288157,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-01-17 18:02:51",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 819,
-      "unit_owning_user_id": 1000698013805,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-01-19 23:50:16",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 579,
-      "unit_owning_user_id": 1000700626698,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-01-20 07:26:35",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 148,
-      "unit_owning_user_id": 1000700842186,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 59408,
-      "favorite_flag": true,
-      "insert_date": "2017-01-20 07:26:35",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 80,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 59408,
-      "rank": 1,
-      "unit_id": 442,
-      "unit_owning_user_id": 1000700842188,
-      "unit_removable_skill_capacity": 4,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-01-24 14:16:48",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 472,
-      "unit_owning_user_id": 1000706569305,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-01-27 09:07:31",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 279,
-      "unit_owning_user_id": 1000709881636,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-01-27 09:07:31",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 297,
-      "unit_owning_user_id": 1000709881644,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 79700,
-      "favorite_flag": true,
-      "insert_date": "2017-02-02 07:38:36",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": true,
-      "is_skill_level_max": false,
-      "level": 100,
-      "love": 1000,
-      "max_hp": 5,
-      "max_level": 100,
-      "max_love": 1000,
-      "max_rank": 2,
-      "next_exp": 79700,
-      "rank": 2,
-      "unit_id": 605,
-      "unit_owning_user_id": 1000716860907,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 70,
-      "unit_skill_level": 4
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-02-03 20:14:36",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 783,
-      "unit_owning_user_id": 1000718538659,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-02-15 07:49:10",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 551,
-      "unit_owning_user_id": 1000730019952,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 36800,
-      "favorite_flag": true,
-      "insert_date": "2017-02-16 21:10:19",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 80,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 36800,
-      "rank": 2,
-      "unit_id": 467,
-      "unit_owning_user_id": 1000731590923,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-02-21 17:45:05",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 930,
-      "unit_owning_user_id": 1000737606142,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-02-21 17:51:06",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 931,
-      "unit_owning_user_id": 1000737628575,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-02-21 18:56:29",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 937,
-      "unit_owning_user_id": 1000737893962,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-02-21 18:56:41",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 604,
-      "unit_owning_user_id": 1000737894825,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-02-25 08:07:11",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 933,
-      "unit_owning_user_id": 1000746125412,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 36800,
-      "favorite_flag": true,
-      "insert_date": "2017-02-28 07:20:13",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 80,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 36800,
-      "rank": 2,
-      "unit_id": 962,
-      "unit_owning_user_id": 1000752086491,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 36800,
-      "favorite_flag": true,
-      "insert_date": "2017-03-04 16:07:04",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 80,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 36800,
-      "rank": 2,
-      "unit_id": 935,
-      "unit_owning_user_id": 1000757923090,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-03-04 16:13:45",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 590,
-      "unit_owning_user_id": 1000757932963,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 36800,
-      "favorite_flag": true,
-      "insert_date": "2017-03-06 16:56:16",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 80,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 36800,
-      "rank": 2,
-      "unit_id": 961,
-      "unit_owning_user_id": 1000761142421,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-03-09 22:22:47",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 281,
-      "unit_owning_user_id": 1000765342479,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-03-11 10:37:13",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 589,
-      "unit_owning_user_id": 1000766979874,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-03-11 10:37:13",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 588,
-      "unit_owning_user_id": 1000766979880,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 36800,
-      "favorite_flag": true,
-      "insert_date": "2017-03-11 10:42:37",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 80,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 36800,
-      "rank": 2,
-      "unit_id": 573,
-      "unit_owning_user_id": 1000766986721,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-03-11 10:42:37",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 576,
-      "unit_owning_user_id": 1000766986730,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 36800,
-      "favorite_flag": true,
-      "insert_date": "2017-03-11 20:54:27",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 80,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 36800,
-      "rank": 2,
-      "unit_id": 885,
-      "unit_owning_user_id": 1000767708273,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 39939,
-      "favorite_flag": true,
-      "insert_date": "2017-03-20 19:45:39",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 70,
-      "love": 375,
-      "max_hp": 3,
-      "max_level": 70,
-      "max_love": 375,
-      "max_rank": 2,
-      "next_exp": 39939,
-      "rank": 1,
-      "unit_id": 943,
-      "unit_owning_user_id": 1000776015794,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-03-20 19:45:39",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 280,
-      "unit_owning_user_id": 1000776015798,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-03-20 19:45:39",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 136,
-      "unit_owning_user_id": 1000776015800,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 39939,
-      "favorite_flag": true,
-      "insert_date": "2017-03-20 19:45:39",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 70,
-      "love": 375,
-      "max_hp": 3,
-      "max_level": 70,
-      "max_love": 375,
-      "max_rank": 2,
-      "next_exp": 39939,
-      "rank": 1,
-      "unit_id": 946,
-      "unit_owning_user_id": 1000776015803,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-03-26 12:46:48",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 690,
-      "unit_owning_user_id": 1000782784669,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 79700,
-      "favorite_flag": true,
-      "insert_date": "2017-03-27 08:13:19",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": true,
-      "is_skill_level_max": false,
-      "level": 100,
-      "love": 1000,
-      "max_hp": 6,
-      "max_level": 100,
-      "max_love": 1000,
-      "max_rank": 2,
-      "next_exp": 79700,
-      "rank": 2,
-      "unit_id": 1084,
-      "unit_owning_user_id": 1000783767686,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 40,
-      "unit_skill_level": 3
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-03-29 18:52:22",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 329,
-      "unit_owning_user_id": 1000787225260,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 25351,
-      "favorite_flag": true,
-      "insert_date": "2017-03-29 18:52:22",
-      "is_level_max": false,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 62,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 25632,
-      "rank": 2,
-      "unit_id": 727,
-      "unit_owning_user_id": 1000787225262,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-03-29 18:52:22",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 24,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 486,
-      "unit_owning_user_id": 1000787225263,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-03-29 18:52:22",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 797,
-      "unit_owning_user_id": 1000787225266,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-03-29 19:19:08",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 591,
-      "unit_owning_user_id": 1000787269676,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-03-31 21:03:45",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 907,
-      "unit_owning_user_id": 1000790467315,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-03-31 21:03:48",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 909,
-      "unit_owning_user_id": 1000790467357,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-03-31 21:03:51",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 908,
-      "unit_owning_user_id": 1000790467400,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 36800,
-      "favorite_flag": true,
-      "insert_date": "2017-04-01 09:04:41",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 80,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 36800,
-      "rank": 2,
-      "unit_id": 979,
-      "unit_owning_user_id": 1000791148257,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 100,
-      "unit_skill_level": 2
-    },
-    {
-      "display_rank": 2,
-      "exp": 36800,
-      "favorite_flag": true,
-      "insert_date": "2017-04-05 18:20:48",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 80,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 36800,
-      "rank": 2,
-      "unit_id": 978,
-      "unit_owning_user_id": 1000799206668,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 36800,
-      "favorite_flag": true,
-      "insert_date": "2017-04-13 07:13:09",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 80,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 36800,
-      "rank": 2,
-      "unit_id": 837,
-      "unit_owning_user_id": 1000808356162,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 79700,
-      "favorite_flag": true,
-      "insert_date": "2017-04-23 06:54:57",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": true,
-      "is_skill_level_max": false,
-      "level": 100,
-      "love": 1000,
-      "max_hp": 5,
-      "max_level": 100,
-      "max_love": 1000,
-      "max_rank": 2,
-      "next_exp": 79700,
-      "rank": 2,
-      "unit_id": 1056,
-      "unit_owning_user_id": 1000821681595,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 36800,
-      "favorite_flag": true,
-      "insert_date": "2017-04-29 13:39:41",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 80,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 36800,
-      "rank": 2,
-      "unit_id": 878,
-      "unit_owning_user_id": 1000828737129,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 100,
-      "unit_skill_level": 2
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-04-30 00:02:18",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 770,
-      "unit_owning_user_id": 1000829431916,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-04-30 00:02:31",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 816,
-      "unit_owning_user_id": 1000829432569,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-04-30 00:02:31",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 840,
-      "unit_owning_user_id": 1000829432571,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 39939,
-      "favorite_flag": true,
-      "insert_date": "2017-04-30 00:19:24",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 70,
-      "love": 375,
-      "max_hp": 3,
-      "max_level": 70,
-      "max_love": 375,
-      "max_rank": 2,
-      "next_exp": 39939,
-      "rank": 1,
-      "unit_id": 944,
-      "unit_owning_user_id": 1000829473893,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 36800,
-      "favorite_flag": true,
-      "insert_date": "2017-04-30 00:19:24",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 80,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 36800,
-      "rank": 2,
-      "unit_id": 760,
-      "unit_owning_user_id": 1000829473894,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-04-30 00:19:24",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 666,
-      "unit_owning_user_id": 1000829473896,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 36800,
-      "favorite_flag": true,
-      "insert_date": "2017-04-30 00:19:24",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 80,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 36800,
-      "rank": 2,
-      "unit_id": 980,
-      "unit_owning_user_id": 1000829473897,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-04-30 00:19:24",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 981,
-      "unit_owning_user_id": 1000829473898,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 59408,
-      "favorite_flag": true,
-      "insert_date": "2017-04-30 00:19:24",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 80,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 59408,
-      "rank": 1,
-      "unit_id": 735,
-      "unit_owning_user_id": 1000829473899,
-      "unit_removable_skill_capacity": 4,
-      "unit_skill_exp": 1730,
-      "unit_skill_level": 3
-    },
-    {
-      "display_rank": 2,
-      "exp": 36800,
-      "favorite_flag": true,
-      "insert_date": "2017-05-10 20:02:54",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 80,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 36800,
-      "rank": 2,
-      "unit_id": 866,
-      "unit_owning_user_id": 1000841230965,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 100,
-      "unit_skill_level": 2
-    },
-    {
-      "display_rank": 2,
-      "exp": 36800,
-      "favorite_flag": true,
-      "insert_date": "2017-05-27 10:50:57",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 80,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 36800,
-      "rank": 2,
-      "unit_id": 1001,
-      "unit_owning_user_id": 1000857877364,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 100,
-      "unit_skill_level": 2
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-05-29 18:44:06",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 964,
-      "unit_owning_user_id": 1000860618365,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 36800,
-      "favorite_flag": true,
-      "insert_date": "2017-06-02 17:39:19",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 80,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 36800,
-      "rank": 2,
-      "unit_id": 1002,
-      "unit_owning_user_id": 1000864375215,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 100,
-      "unit_skill_level": 2
-    },
-    {
-      "display_rank": 1,
-      "exp": 39939,
-      "favorite_flag": true,
-      "insert_date": "2017-06-04 00:08:54",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 70,
-      "love": 348,
-      "max_hp": 3,
-      "max_level": 70,
-      "max_love": 375,
-      "max_rank": 2,
-      "next_exp": 39939,
-      "rank": 1,
-      "unit_id": 1019,
-      "unit_owning_user_id": 1000866148490,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-06-04 00:09:40",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 414,
-      "unit_owning_user_id": 1000866149817,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-06-04 00:09:54",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 651,
-      "unit_owning_user_id": 1000866150192,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 59408,
-      "favorite_flag": true,
-      "insert_date": "2017-06-06 20:46:00",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 80,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 59408,
-      "rank": 1,
-      "unit_id": 958,
-      "unit_owning_user_id": 1000868748470,
-      "unit_removable_skill_capacity": 4,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-06-08 19:42:55",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 151,
-      "unit_owning_user_id": 1000871136582,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 36800,
-      "favorite_flag": true,
-      "insert_date": "2017-06-09 13:09:34",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 80,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 36800,
-      "rank": 2,
-      "unit_id": 803,
-      "unit_owning_user_id": 1000872133084,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 100,
-      "unit_skill_level": 2
-    },
-    {
-      "display_rank": 2,
-      "exp": 79700,
-      "favorite_flag": true,
-      "insert_date": "2017-06-14 07:10:02",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": true,
-      "is_skill_level_max": false,
-      "level": 100,
-      "love": 1000,
-      "max_hp": 5,
-      "max_level": 100,
-      "max_love": 1000,
-      "max_rank": 2,
-      "next_exp": 79700,
-      "rank": 2,
-      "unit_id": 855,
-      "unit_owning_user_id": 1000878580101,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-06-15 23:00:43",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 995,
-      "unit_owning_user_id": 1000880818475,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-06-15 23:00:52",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 938,
-      "unit_owning_user_id": 1000880818775,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 0,
-      "favorite_flag": true,
-      "insert_date": "2017-06-15 23:01:09",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 1,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 54,
-      "rank": 1,
-      "unit_id": 823,
-      "unit_owning_user_id": 1000880819176,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 0,
-      "favorite_flag": true,
-      "insert_date": "2017-06-15 23:01:19",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 1,
-      "love": 125,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 54,
-      "rank": 1,
-      "unit_id": 675,
-      "unit_owning_user_id": 1000880819403,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 39939,
-      "favorite_flag": true,
-      "insert_date": "2017-06-15 23:01:25",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 70,
-      "love": 375,
-      "max_hp": 3,
-      "max_level": 70,
-      "max_love": 375,
-      "max_rank": 2,
-      "next_exp": 39939,
-      "rank": 1,
-      "unit_id": 939,
-      "unit_owning_user_id": 1000880819583,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 79700,
-      "favorite_flag": true,
-      "insert_date": "2017-06-16 07:47:29",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": true,
-      "is_skill_level_max": false,
-      "level": 100,
-      "love": 1000,
-      "max_hp": 5,
-      "max_level": 100,
-      "max_love": 1000,
-      "max_rank": 2,
-      "next_exp": 79700,
-      "rank": 2,
-      "unit_id": 856,
-      "unit_owning_user_id": 1000881253052,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 0,
-      "favorite_flag": true,
-      "insert_date": "2017-06-16 19:19:06",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 1,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 54,
-      "rank": 1,
-      "unit_id": 374,
-      "unit_owning_user_id": 1000882175782,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 79700,
-      "favorite_flag": false,
-      "insert_date": "2017-06-18 02:25:54",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": true,
-      "is_skill_level_max": false,
-      "level": 100,
-      "love": 1000,
-      "max_hp": 5,
-      "max_level": 100,
-      "max_love": 1000,
-      "max_rank": 2,
-      "next_exp": 79700,
-      "rank": 2,
-      "unit_id": 857,
-      "unit_owning_user_id": 1000884033282,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 0,
-      "favorite_flag": true,
-      "insert_date": "2017-06-28 20:38:44",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 1,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 40,
-      "max_love": 100,
-      "max_rank": 2,
-      "next_exp": 14,
-      "rank": 1,
-      "unit_id": 1092,
-      "unit_owning_user_id": 1000895045084,
-      "unit_removable_skill_capacity": 1,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 0,
-      "favorite_flag": true,
-      "insert_date": "2017-06-28 20:51:39",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 1,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 40,
-      "max_love": 100,
-      "max_rank": 2,
-      "next_exp": 14,
-      "rank": 1,
-      "unit_id": 1098,
-      "unit_owning_user_id": 1000895058582,
-      "unit_removable_skill_capacity": 1,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 36800,
-      "favorite_flag": true,
-      "insert_date": "2017-06-28 21:27:49",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 80,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 36800,
-      "rank": 2,
-      "unit_id": 904,
-      "unit_owning_user_id": 1000895099985,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 100,
-      "unit_skill_level": 2
-    },
-    {
-      "display_rank": 1,
-      "exp": 0,
-      "favorite_flag": true,
-      "insert_date": "2017-06-28 21:47:11",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 1,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 40,
-      "max_love": 100,
-      "max_rank": 2,
-      "next_exp": 14,
-      "rank": 1,
-      "unit_id": 1094,
-      "unit_owning_user_id": 1000895124697,
-      "unit_removable_skill_capacity": 1,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 23803,
-      "favorite_flag": true,
-      "insert_date": "2017-07-03 18:46:09",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 60,
-      "love": 250,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 23803,
-      "rank": 1,
-      "unit_id": 861,
-      "unit_owning_user_id": 1000901181802,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 39939,
-      "favorite_flag": true,
-      "insert_date": "2017-07-03 18:46:46",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 70,
-      "love": 375,
-      "max_hp": 3,
-      "max_level": 70,
-      "max_love": 375,
-      "max_rank": 2,
-      "next_exp": 39939,
-      "rank": 1,
-      "unit_id": 940,
-      "unit_owning_user_id": 1000901182429,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 56657,
-      "favorite_flag": true,
-      "insert_date": "2017-07-03 18:46:46",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 90,
-      "love": 750,
-      "max_hp": 4,
-      "max_level": 90,
-      "max_love": 750,
-      "max_rank": 2,
-      "next_exp": 56657,
-      "rank": 2,
-      "unit_id": 942,
-      "unit_owning_user_id": 1000901182430,
-      "unit_removable_skill_capacity": 4,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 10296,
-      "favorite_flag": true,
-      "insert_date": "2017-07-03 18:46:46",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 34,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 10456,
-      "rank": 1,
-      "unit_id": 692,
-      "unit_owning_user_id": 1000901182433,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 0,
-      "favorite_flag": true,
-      "insert_date": "2017-07-03 18:47:19",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 1,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 54,
-      "rank": 1,
-      "unit_id": 571,
-      "unit_owning_user_id": 1000901183179,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 36800,
-      "favorite_flag": true,
-      "insert_date": "2017-07-07 11:46:20",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 80,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 36800,
-      "rank": 2,
-      "unit_id": 905,
-      "unit_owning_user_id": 1000905858256,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 100,
-      "unit_skill_level": 2
-    },
-    {
-      "display_rank": 2,
-      "exp": 0,
-      "favorite_flag": true,
-      "insert_date": "2017-07-13 19:56:10",
-      "is_level_max": false,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 1,
-      "love": 500,
-      "max_hp": 3,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 54,
-      "rank": 2,
-      "unit_id": 969,
-      "unit_owning_user_id": 1000913103742,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 79700,
-      "favorite_flag": true,
-      "insert_date": "2017-07-14 06:35:53",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": true,
-      "is_skill_level_max": false,
-      "level": 100,
-      "love": 1000,
-      "max_hp": 5,
-      "max_level": 100,
-      "max_love": 1000,
-      "max_rank": 2,
-      "next_exp": 79700,
-      "rank": 2,
-      "unit_id": 874,
-      "unit_owning_user_id": 1000913557658,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 3372,
-      "favorite_flag": true,
-      "insert_date": "2017-07-14 12:40:54",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 12,
-      "love": 0,
-      "max_hp": 4,
-      "max_level": 70,
-      "max_love": 375,
-      "max_rank": 2,
-      "next_exp": 3658,
-      "rank": 1,
-      "unit_id": 1031,
-      "unit_owning_user_id": 1000913840139,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 6684,
-      "favorite_flag": true,
-      "insert_date": "2017-07-14 12:41:08",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 26,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 7006,
-      "rank": 1,
-      "unit_id": 62,
-      "unit_owning_user_id": 1000913840470,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 72576,
-      "favorite_flag": true,
-      "insert_date": "2017-07-16 09:22:35",
-      "is_level_max": false,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": true,
-      "is_skill_level_max": false,
-      "level": 93,
-      "love": 1000,
-      "max_hp": 5,
-      "max_level": 100,
-      "max_love": 1000,
-      "max_rank": 2,
-      "next_exp": 73469,
-      "rank": 2,
-      "unit_id": 875,
-      "unit_owning_user_id": 1000915739331,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 0,
-      "favorite_flag": true,
-      "insert_date": "2017-07-17 20:30:32",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 1,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 40,
-      "max_love": 100,
-      "max_rank": 2,
-      "next_exp": 14,
-      "rank": 1,
-      "unit_id": 1096,
-      "unit_owning_user_id": 1000917312329,
-      "unit_removable_skill_capacity": 1,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 79700,
-      "favorite_flag": true,
-      "insert_date": "2017-07-18 07:43:49",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": true,
-      "is_skill_level_max": false,
-      "level": 100,
-      "love": 1000,
-      "max_hp": 5,
-      "max_level": 100,
-      "max_love": 1000,
-      "max_rank": 2,
-      "next_exp": 79700,
-      "rank": 2,
-      "unit_id": 876,
-      "unit_owning_user_id": 1000917701392,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 10,
-      "unit_skill_level": 2
-    },
-    {
-      "display_rank": 2,
-      "exp": 36800,
-      "favorite_flag": true,
-      "insert_date": "2017-07-20 18:19:26",
-      "is_level_max": true,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 80,
-      "love": 500,
-      "max_hp": 4,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 36800,
-      "rank": 2,
-      "unit_id": 970,
-      "unit_owning_user_id": 1000920511776,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 42336,
-      "favorite_flag": true,
-      "insert_date": "2017-07-21 07:47:53",
-      "is_level_max": false,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 72,
-      "love": 750,
-      "max_hp": 4,
-      "max_level": 90,
-      "max_love": 750,
-      "max_rank": 2,
-      "next_exp": 42344,
-      "rank": 2,
-      "unit_id": 947,
-      "unit_owning_user_id": 1000921375903,
-      "unit_removable_skill_capacity": 4,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 0,
-      "favorite_flag": true,
-      "insert_date": "2017-07-21 07:53:23",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 1,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 54,
-      "rank": 1,
-      "unit_id": 66,
-      "unit_owning_user_id": 1000921380859,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 0,
-      "favorite_flag": true,
-      "insert_date": "2017-07-21 07:56:27",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 1,
-      "love": 0,
-      "max_hp": 5,
-      "max_level": 70,
-      "max_love": 375,
-      "max_rank": 2,
-      "next_exp": 128,
-      "rank": 1,
-      "unit_id": 992,
-      "unit_owning_user_id": 1000921384321,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 0,
-      "favorite_flag": true,
-      "insert_date": "2017-07-21 07:56:27",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 1,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 54,
-      "rank": 1,
-      "unit_id": 773,
-      "unit_owning_user_id": 1000921384322,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 0,
-      "favorite_flag": true,
-      "insert_date": "2017-07-21 07:56:27",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 1,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 54,
-      "rank": 1,
-      "unit_id": 357,
-      "unit_owning_user_id": 1000921384326,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 0,
-      "favorite_flag": true,
-      "insert_date": "2017-07-21 07:56:27",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 1,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 54,
-      "rank": 1,
-      "unit_id": 212,
-      "unit_owning_user_id": 1000921384327,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 0,
-      "favorite_flag": true,
-      "insert_date": "2017-07-21 07:56:27",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 1,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 54,
-      "rank": 1,
-      "unit_id": 636,
-      "unit_owning_user_id": 1000921384328,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 2,
-      "exp": 0,
-      "favorite_flag": true,
-      "insert_date": "2017-07-21 07:56:27",
-      "is_level_max": false,
-      "is_love_max": true,
-      "is_rank_max": true,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 1,
-      "love": 500,
-      "max_hp": 3,
-      "max_level": 80,
-      "max_love": 500,
-      "max_rank": 2,
-      "next_exp": 54,
-      "rank": 2,
-      "unit_id": 644,
-      "unit_owning_user_id": 1000921384329,
-      "unit_removable_skill_capacity": 3,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 0,
-      "favorite_flag": true,
-      "insert_date": "2017-07-21 07:56:27",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 1,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 54,
-      "rank": 1,
-      "unit_id": 901,
-      "unit_owning_user_id": 1000921384330,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 0,
-      "favorite_flag": true,
-      "insert_date": "2017-07-21 07:56:27",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": false,
-      "level": 1,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 60,
-      "max_love": 250,
-      "max_rank": 2,
-      "next_exp": 54,
-      "rank": 1,
-      "unit_id": 155,
-      "unit_owning_user_id": 1000921384331,
-      "unit_removable_skill_capacity": 2,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 669,
-      "favorite_flag": false,
-      "insert_date": "2017-07-22 10:50:24",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": true,
-      "level": 12,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 30,
-      "max_love": 25,
-      "max_rank": 2,
-      "next_exp": 793,
-      "rank": 1,
-      "unit_id": 818,
-      "unit_owning_user_id": 1000923201100,
-      "unit_removable_skill_capacity": 0,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 0,
-      "favorite_flag": false,
-      "insert_date": "2017-07-24 07:54:30",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": true,
-      "level": 1,
-      "love": 0,
-      "max_hp": 2,
-      "max_level": 30,
-      "max_love": 25,
-      "max_rank": 2,
-      "next_exp": 6,
-      "rank": 1,
-      "unit_id": 416,
-      "unit_owning_user_id": 1000926968452,
-      "unit_removable_skill_capacity": 0,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 0,
-      "favorite_flag": false,
-      "insert_date": "2017-07-24 07:54:30",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": true,
-      "level": 1,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 30,
-      "max_love": 25,
-      "max_rank": 2,
-      "next_exp": 6,
-      "rank": 1,
-      "unit_id": 334,
-      "unit_owning_user_id": 1000926968453,
-      "unit_removable_skill_capacity": 0,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 555,
-      "favorite_flag": false,
-      "insert_date": "2017-07-24 07:54:30",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": true,
-      "level": 11,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 30,
-      "max_love": 25,
-      "max_rank": 2,
-      "next_exp": 669,
-      "rank": 1,
-      "unit_id": 508,
-      "unit_owning_user_id": 1000926968454,
-      "unit_removable_skill_capacity": 0,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 0,
-      "favorite_flag": false,
-      "insert_date": "2017-07-24 07:54:55",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": true,
-      "level": 1,
-      "love": 0,
-      "max_hp": 2,
-      "max_level": 30,
-      "max_love": 25,
-      "max_rank": 2,
-      "next_exp": 6,
-      "rank": 1,
-      "unit_id": 152,
-      "unit_owning_user_id": 1000926969947,
-      "unit_removable_skill_capacity": 0,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 0,
-      "favorite_flag": false,
-      "insert_date": "2017-07-24 07:55:00",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": true,
-      "level": 1,
-      "love": 0,
-      "max_hp": 1,
-      "max_level": 30,
-      "max_love": 25,
-      "max_rank": 2,
-      "next_exp": 6,
-      "rank": 1,
-      "unit_id": 849,
-      "unit_owning_user_id": 1000926970179,
-      "unit_removable_skill_capacity": 0,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 0,
-      "favorite_flag": false,
-      "insert_date": "2017-07-24 17:41:21",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": true,
-      "level": 1,
-      "love": 0,
-      "max_hp": 1,
-      "max_level": 30,
-      "max_love": 25,
-      "max_rank": 2,
-      "next_exp": 6,
-      "rank": 1,
-      "unit_id": 251,
-      "unit_owning_user_id": 1000929322774,
-      "unit_removable_skill_capacity": 0,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 0,
-      "favorite_flag": false,
-      "insert_date": "2017-07-24 17:41:21",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": true,
-      "level": 1,
-      "love": 0,
-      "max_hp": 3,
-      "max_level": 30,
-      "max_love": 25,
-      "max_rank": 2,
-      "next_exp": 6,
-      "rank": 1,
-      "unit_id": 99,
-      "unit_owning_user_id": 1000929322775,
-      "unit_removable_skill_capacity": 0,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    },
-    {
-      "display_rank": 1,
-      "exp": 669,
-      "favorite_flag": false,
-      "insert_date": "2017-07-24 17:41:21",
-      "is_level_max": false,
-      "is_love_max": false,
-      "is_rank_max": false,
-      "is_removable_skill_capacity_max": false,
-      "is_skill_level_max": true,
-      "level": 12,
-      "love": 0,
-      "max_hp": 2,
-      "max_level": 30,
-      "max_love": 25,
-      "max_rank": 2,
-      "next_exp": 793,
-      "rank": 1,
-      "unit_id": 109,
-      "unit_owning_user_id": 1000929322776,
-      "unit_removable_skill_capacity": 0,
-      "unit_skill_exp": 0,
-      "unit_skill_level": 1
-    }
-  ]
+  }
 }
