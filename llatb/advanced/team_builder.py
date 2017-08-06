@@ -78,41 +78,48 @@ class TeamBuilder:
 			df = df.iloc[:head+1]
 		return view_cards(df, extra_col=['Same CSkill']+[x+self.live.attr for x in ['Rough ', 'Use Gem ']])
 
-	def find_candidates(self, cskill, K):
+	def find_candidates(self, cskill, K, pin_index=[]):
 		# Compute rough strength
 		for card in self.cards:
 			card.compute_rough_strength(cskill, self.guest_cskill, self.live, self.setting)
 		self.cards.sort(key=lambda x: x.rough_strength[self.live.attr]['strength'], reverse=True)
 		# Find the best card and choose it to be the center, and find K best cards from the rest for candidates
-		center, candidates, k, CC = None, [], 0, CoverageCalculator(self.live, self.setting)
+		center, candidates, pinned = None, [], []
+		k, k_pin, CC = 0, 0, CoverageCalculator(self.live, self.setting)
 		for card in self.cards:
 			if card.has_same_cskill and center is None:
 				card.compute_card_stats(cskill, self.guest_cskill, self.live, self.setting)
 				if card.CR is None: card.CR, card.CR_list = CC.compute_coverage(card)
+				if card.index in pin_index: k_pin += 1
 				center = card
-			elif k < K:
+			elif k < K and card.index not in pin_index:
 				card.compute_card_stats(cskill, self.guest_cskill, self.live, self.setting)
 				if card.CR is None: card.CR, card.CR_list = CC.compute_coverage(card)
 				candidates.append(card)
 				k += 1
-			if center is not None and k >= K: break
+			elif card.index in pin_index:
+				card.compute_card_stats(cskill, self.guest_cskill, self.live, self.setting)
+				if card.CR is None: card.CR, card.CR_list = CC.compute_coverage(card)
+				k_pin += 1
+				pinned.append(card)
+			if center is not None and k >= K and k_pin == len(pin_index): break
 		if center is None:
 			print('There is no card has center skill', cskill)
 			self.log += 'There is no card has center skill {0}\n'.format(cskill)
 			raise
-		return center, candidates
+		return center, candidates, pinned
 
-	def build_team_fix_cskill(self, cskill, K, method, alloc_method):
-		def single_case(choice, center, candidates, max_score=0):
-			gem_allocator = GemAllocator([center] + [candidates[i] for i in choice], self.live, self.setting, self.owned_gem)
+	def build_team_fix_cskill(self, cskill, K, method, alloc_method, pin_index):
+		def single_case(choice, center, candidates, pinned, max_score=0):
+			gem_allocator = GemAllocator([center] + pinned + [candidates[i] for i in choice], self.live, self.setting, self.owned_gem)
 			res = gem_allocator.allocate(alloc_method, max_score)
 			return gem_allocator if res is not None else None
 
-		center, candidates = self.find_candidates(cskill, K)
+		center, candidates, pinned = self.find_candidates(cskill, K, pin_index)
 		if method == 'brute':
-			best_gem_allocator = single_case(tuple(list(range(8))), center, candidates, 0)
-			for choice in itertools.combinations(list(range(K)), 8):
-				gem_allocator = single_case(choice, center, candidates, best_gem_allocator.total_score)
+			best_gem_allocator = single_case(tuple(list(range(8-len(pinned)))), center, candidates, pinned, 0)
+			for choice in itertools.combinations(list(range(K)), 8-len(pinned)):
+				gem_allocator = single_case(choice, center, candidates, pinned, best_gem_allocator.total_score)
 				if gem_allocator is None: continue
 				if gem_allocator.total_score > best_gem_allocator.total_score:
 					best_gem_allocator = gem_allocator
@@ -126,8 +133,8 @@ class TeamBuilder:
 			# Use a map to keep track of computed team to avoid duplicated computation
 			score_map, eliminate = defaultdict(lambda:0), defaultdict(lambda:False)
 			# Initialize queue
-			choice = tuple(list(range(8)))
-			gem_allocator = single_case(choice, center, candidates)
+			choice = tuple(list(range(8-len(pinned))))
+			gem_allocator = single_case(choice, center, candidates, pinned)
 			best_gem_allocator = gem_allocator
 			score_map[choice] = gem_allocator.total_score
 			queue = [choice]
@@ -137,14 +144,14 @@ class TeamBuilder:
 				eliminate[choice] = True
 				rest = [x for x in range(K) if x not in choice]
 				for tt in range(1,t+1):
-					for pos in itertools.combinations(list(range(8)), tt):
+					for pos in itertools.combinations(list(range(8-len(pinned))), tt):
 						neighbor = list(choice)
 						for new_idx in itertools.combinations(rest, tt):
 							for i in range(tt): neighbor[pos[i]] = new_idx[i]
 							new_choice = tuple(sorted(neighbor))
 							# If this team combination has not been computed, compute it
 							if score_map[new_choice] == 0:
-								gem_allocator = single_case(new_choice, center, candidates, best_gem_allocator.total_score)
+								gem_allocator = single_case(new_choice, center, candidates, pinned, best_gem_allocator.total_score)
 								if gem_allocator is None: 
 									score_map[new_choice] = 1
 									continue
@@ -163,7 +170,7 @@ class TeamBuilder:
 			raise		
 		return best_gem_allocator
 
-	def build_team(self, K=15, method='4-suboptimal', alloc_method='DC', show_cost=False, time_limit=24):
+	def build_team(self, K=15, method='4-suboptimal', alloc_method='DC', show_cost=False, time_limit=24, pin_index=[]):
 		def find_candidate_cskill():
 			# Enumerate center skill of the highest rarity card that have same attribute with live
 			rarity_list = ['UR','SSR','SR','R']
@@ -190,13 +197,13 @@ class TeamBuilder:
 		max_score, best_team = 0, None
 		opt = {'score_up_bonus':self.score_up_bonus, 'skill_up_bonus':self.skill_up_bonus, 'guest_cskill':self.guest_cskill}
 		for i, cskill in enumerate(cskill_list,1):
-			gem_allocator = self.build_team_fix_cskill(cskill=cskill, K=K, method=method, alloc_method=alloc_method)
+			gem_allocator = self.build_team_fix_cskill(cskill=cskill, K=K, method=method, alloc_method=alloc_method, pin_index=pin_index)
 			exp_score = gem_allocator.construct_team().compute_expected_total_score(self.live, opt=opt)
 			result.append((exp_score, gem_allocator))
 			elapsed_time = time.time() - start_time
 			print('{0}/{1}: {4:5.2f} secs elapsed, best team has score {2:6d} for {3}'.format(i, len(cskill_list), exp_score, cskill, elapsed_time))
 			self.log += '{0}/{1}: Best team has score {2:6d} for {3}\n'.format(i, len(cskill_list), exp_score, cskill)
-			if exp_score > max_score: max_score, best_gem_allocator = gem_allocator.total_score, gem_allocator
+			if exp_score > max_score: max_score, best_gem_allocator = exp_score, gem_allocator
 			if elapsed_time > time_limit:
 				print('Due to HTTP response time limit, jump out of the algorithm')
 				break
