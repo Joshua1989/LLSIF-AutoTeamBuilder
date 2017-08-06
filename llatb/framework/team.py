@@ -220,7 +220,7 @@ class Team:
 		for intv in full_mic_boundaries:
 			if otasuke_power >= intv['min'] and otasuke_power < intv['max']:
 				mics = intv['mics']
-		return mics, otasuke_power
+		return mics, round(otasuke_power, 2)
 	def prepare_simulation(self, opt={'scoreup':1, 'skillup':1, 'guest_cskill':None}):
 		res = self.team_strength(opt.get('guest_cskill'))
 		temp = np.array(res['displayed_card_attr'])

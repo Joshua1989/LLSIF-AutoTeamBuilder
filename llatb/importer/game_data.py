@@ -169,7 +169,7 @@ class GameData:
 			except:
 				if error_capture == '': error_capture += ieb_file
 				print('{0} is not in uid_cid_dict, please update {1}'.format(card['unit_id'], unit_db_dir))
-		if error_capture != '': print(error_capture)
+		# if error_capture != '': print(error_capture)
 		for key, value in ieb_info['removable_info']['equipment_info'].items():
 			card_info[owning_id_dict[key]]['equipped_gems'] = [gem_skill_id_dict[x] for x in value]
 		# Generate user gem information
@@ -211,7 +211,7 @@ class GameData:
 			except:
 				if error_capture == '': error_capture += pll_file
 				print('{0} is not in uid_cid_dict, please update {1}'.format(card['unit_id'], unit_db_dir))
-		if error_capture != '': print(error_capture)
+		# if error_capture != '': print(error_capture)
 		for key, equip_info in pll_info['removable_info']['equipment_info'].items():
 			value = [x['unit_removable_skill_id'] for x in equip_info['detail']]
 			card_info[owning_id_dict[key]]['equipped_gems'] = [gem_skill_id_dict[x] for x in value]

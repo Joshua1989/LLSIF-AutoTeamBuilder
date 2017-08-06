@@ -62,15 +62,15 @@ def view_card(card, show_gem=False, extra_col=[], gem_size=25):
 		res[col_name['cool']]  = fmt.format('blue', card.cool, temp['cool*'])
 
 		if card.skill is None:
-			res['skill_gain'] = '<p>NA</p>'
+			res['Skill Gain'] = '<p>NA</p>'
 		else:
 			gain = card.skill.skill_gain()[0]
 			if card.skill.effect_type in ['Strong Judge', 'Weak Judge']:
-				res['skill_gain'] = '<p>{0:.4f}% <br/> covered </p>'.format(100*gain)
+				res['Skill Gain'] = '<p>{0:.4f}% <br/> covered </p>'.format(100*gain)
 			elif card.skill.effect_type == 'Stamina Restore':
-				res['skill_gain'] = '<p>{0:.4f} <br/> hp/note</p>'.format(gain)
+				res['Skill Gain'] = '<p>{0:.4f} <br/> hp/note</p>'.format(gain)
 			elif card.skill.effect_type == 'Score Up':
-				res['skill_gain'] = '<p>{0:.4f} <br/> pt/note</p>'.format(gain)
+				res['Skill Gain'] = '<p>{0:.4f} <br/> pt/note</p>'.format(gain)
 		temp = card.general_strength()
 		fmt = '<p> <span style="color:red">{0}</span> <br/> <span style="color:green">{1}</span> <br/> <span style="color:blue">{2}</span> </p> '
 		func = lambda x: str(x['strength']) + ' (gem)'*int(x['use_skill_gem'])
@@ -85,18 +85,18 @@ def view_card(card, show_gem=False, extra_col=[], gem_size=25):
 	col_name.update({ x:'<img src="{0}" width=25/>'.format(misc_path(x)) for x in ['level','bond','hp','smile','pure','cool'] })
 	columns  = ['index', 'CID']
 	columns += [col_name[x] for x in ['view', 'skill', 'level', 'bond', 'hp', 'smile', 'pure', 'cool']]
-	columns += ['skill_gain', 'skill_strength', 'general_strength']
+	columns += ['Skill Gain', 'skill_strength', 'general_strength']
 	columns += extra_col
 	df = pd.DataFrame([get_summary(0, card, show_gem=show_gem, ext_col=extra_col)], columns=columns)
 	df = df.set_index('index')
 	df.index.name = ''
 	return HTML(html_template.format(df.to_html(escape=False, index=False)))
 
-def view_cards(cards, show_gem=False, extra_col=[], gem_size=25):
+def view_cards(cards, show_gem=False, extra_col=[], gem_size=25, no_skill=True):
 	def get_summary(index, card, show_gem=False, ext_col=[]):
-		res = {'index':int(index), 'CID': '<span> &nbsp {0} &nbsp </span>'.format(card.card_id)}
+		res = {'index':int(index), 'CID': '<span>{0}</span>'.format(card.card_id)}
 		# Generate HTML code for card view and skill
-		res[col_name['view']] =  '<img src="{0}" width=60 />'.format(icon_path(card.card_id, card.idolized))
+		res[col_name['view']] =  '<img src="{0}" width=50 />'.format(icon_path(card.card_id, card.idolized))
 		if show_gem:
 			gems = [gem.name for gem in card.equipped_gems]
 			res[col_name['view']] += gem_slot_pic(card, gem_size=gem_size)
@@ -113,28 +113,28 @@ def view_cards(cards, show_gem=False, extra_col=[], gem_size=25):
 			if temp[1] == '':
 				res[col_name['skill']] += '<p>{0}</p>'.format(func(temp[0]))
 			else:
-				res[col_name['skill']] += '<p> {0} <br/> {1} </p>'.format(func(temp[0]), func(temp[1]))
+				res[col_name['skill']] += '<p>{0}<br/>{1}</p>'.format(func(temp[0]), func(temp[1]))
 
-		fmt = '<p style="color:{0};"> {1:<4d} <br/> {2:<4d} </p>'
+		fmt = '<p style="color:{0};">{1}<br/>{2}</p>'
 		res[col_name['level']] = fmt.format('black', card.level, card.max_level)
 		res[col_name['bond']] = fmt.format('black', card.bond, card.max_bond)
-		res[col_name['hp']] = '<p style="color:orange;"> <b> &nbsp &nbsp {0} &nbsp </b> </p>'.format(card.hp)
+		res[col_name['hp']] = '<p style="color:orange;"><b>{0}</b></p>'.format(card.hp)
 
-		fmt = '<p style="color:{0};"> {1} </p>'
+		fmt = '<p style="color:{0};">{1}</p>'
 		res[col_name['smile']] = fmt.format('red', card.smile)
 		res[col_name['pure']]  = fmt.format('green', card.pure)
 		res[col_name['cool']]  = fmt.format('blue', card.cool)
 
 		if card.skill is None:
-			res['skill_gain'] = '<p>NA</p>'
+			res['Skill Gain'] = '<p>NA</p>'
 		else:
 			gain = card.skill.skill_gain()[0]
 			if card.skill.effect_type in ['Strong Judge', 'Weak Judge']:
-				res['skill_gain'] = '<p>{0:.4f}% <br/> covered </p>'.format(100*gain)
+				res['Skill Gain'] = '<p>Lv:{1}<br/>{0:.2f}%<br/>covered</p>'.format(100*gain, card.skill.level)
 			elif card.skill.effect_type == 'Stamina Restore':
-				res['skill_gain'] = '<p>{0:.4f} <br/> hp/note</p>'.format(gain)
+				res['Skill Gain'] = '<p>Lv:{1}<br/>{0:.4f}<br/>hp/note</p>'.format(gain, card.skill.level)
 			elif card.skill.effect_type == 'Score Up':
-				res['skill_gain'] = '<p>{0:.4f} <br/> pt/note</p>'.format(gain)
+				res['Skill Gain'] = '<p>Lv:{1}<br/>{0:.4f}<br/>pt/note</p>'.format(gain, card.skill.level)
 
 		# If there are other columns to show
 		for attr in ext_col: res[attr] = getattr(card, attr)
@@ -144,7 +144,7 @@ def view_cards(cards, show_gem=False, extra_col=[], gem_size=25):
 	col_name.update({ x:'<img src="{0}" width=25/>'.format(misc_path(x)) for x in ['level','bond','hp','smile','pure','cool'] })
 	columns  = ['index', 'CID']
 	columns += [col_name[x] for x in ['view', 'skill', 'level', 'bond', 'hp', 'smile', 'pure', 'cool']]
-	columns += ['skill_gain'] + extra_col
+	columns += ['Skill Gain'] + extra_col
 
 	if isinstance(cards, pd.core.frame.DataFrame):
 		data = [get_summary(index, card, show_gem, ext_col=extra_col) for index, card in cards.iterrows()]
@@ -159,6 +159,9 @@ def view_cards(cards, show_gem=False, extra_col=[], gem_size=25):
 	df = pd.DataFrame(data, columns=columns)
 	df = df.set_index('index')
 	df.index.name = ''
+	if no_skill:
+		del df['<p><b> Skill & Center Skill </b></p>']
+		del df[col_name['hp']]
 	return HTML(html_template.format(df.to_html(escape=False)))
 
 def view_team(team, show_gem=False, extra_col=[], gem_size=25):

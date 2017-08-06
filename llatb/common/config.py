@@ -30,9 +30,9 @@ def gem_path(name):
 		return 'http://my.llsif.win/images/sis/sis{0}_{1}.png'.format(str(idx).zfill(3), str(cost).zfill(2))
 def misc_path(name):
 	url_dict = {
-		'smile':'http://c.dash.moe/static/images/smile.png',
-		'pure':'http://c.dash.moe/static/images/pure.png',
-		'cool':'http://c.dash.moe/static/images/cool.png',
+		'smile':'https://db.loveliv.es/static/img/icon/1.png',
+		'pure':'https://db.loveliv.es/static/img/icon/2.png',
+		'cool':'https://db.loveliv.es/static/img/icon/3.png',
 		'empty':'https://r.llsif.win/assets/image/ui/live/l_etc_xxx.png',
 		'Weak Judge':'http://c.dash.moe/static/images/skillsyo.png',
 		'Strong Judge':'http://c.dash.moe/static/images/skilldai.png',
