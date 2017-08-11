@@ -233,7 +233,7 @@ class GemAllocator:
 
 		col_name = { x:'<img src="{0}" width=25/>'.format(misc_path(x)) for x in ['level','bond','smile','pure','cool'] }
 
-		columns  = ['CID', 'Icon', 'Gem', 'Skill Gain']
+		columns  = ['CID', 'Icon', 'SIS', 'Skill Gain']
 		columns += [col_name[x] for x in ['level', 'bond', 'smile', 'pure', 'cool']]
 		columns += ['Single +', 'Single ×', 'Team ×', 'Card STR', 
 					'Main-C', 'Vice-C', 'Main-C2', 'Vice-C2', 'Team STR', 'Judge STR',
@@ -260,7 +260,7 @@ class GemAllocator:
 		def get_summary(index, card):
 			res = { 'CID':'<p>{0}</p>'.format(card.card_id), 
 					'Icon': '<img src="{0}" style="width:100%;max-width:75px;" />'.format(icon_path(card.card_id, card.idolized)),
-					'Gem':gem_slot_pic(card, show_cost=show_cost, gem_size=25)}
+					'SIS':gem_slot_pic(card, show_cost=show_cost, gem_size=25)}
 
 			# Skill gain information
 			if card.skill is not None:
