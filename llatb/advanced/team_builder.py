@@ -78,7 +78,7 @@ class TeamBuilder:
 			df = df.iloc[:head+1]
 		return view_cards(df, extra_col=['Same CSkill']+[x+self.live.attr for x in ['Rough ', 'Use Gem ']])
 
-	def find_candidates(self, cskill, K, pin_index=[]):
+	def find_candidates(self, cskill, K, pin_index=[], exclude_index=[]):
 		# Compute rough strength
 		for card in self.cards:
 			card.compute_rough_strength(cskill, self.guest_cskill, self.live, self.setting)
@@ -87,6 +87,7 @@ class TeamBuilder:
 		center, candidates, pinned = None, [], []
 		k, k_pin, CC = 0, 0, CoverageCalculator(self.live, self.setting)
 		for card in self.cards:
+			if card.index in exclude_index: continue
 			if card.has_same_cskill and center is None:
 				card.compute_card_stats(cskill, self.guest_cskill, self.live, self.setting)
 				if card.CR is None: card.CR, card.CR_list = CC.compute_coverage(card)
@@ -109,13 +110,13 @@ class TeamBuilder:
 			raise
 		return center, candidates, pinned
 
-	def build_team_fix_cskill(self, cskill, K, method, alloc_method, pin_index):
+	def build_team_fix_cskill(self, cskill, K, method, alloc_method, pin_index=[], exclude_index=[]):
 		def single_case(choice, center, candidates, pinned, max_score=0):
 			gem_allocator = GemAllocator([center] + pinned + [candidates[i] for i in choice], self.live, self.setting, self.owned_gem)
 			res = gem_allocator.allocate(alloc_method, max_score)
 			return gem_allocator if res is not None else None
 
-		center, candidates, pinned = self.find_candidates(cskill, K, pin_index)
+		center, candidates, pinned = self.find_candidates(cskill, K, pin_index, exclude_index)
 		if method == 'brute':
 			best_gem_allocator = single_case(tuple(list(range(8-len(pinned)))), center, candidates, pinned, 0)
 			for choice in itertools.combinations(list(range(K)), 8-len(pinned)):
@@ -170,13 +171,14 @@ class TeamBuilder:
 			raise		
 		return best_gem_allocator
 
-	def build_team(self, K=15, method='4-suboptimal', alloc_method='DC', show_cost=False, time_limit=24, pin_index=[]):
+	def build_team(self, K=15, method='4-suboptimal', alloc_method='DC', show_cost=False, time_limit=24, pin_index=[], exclude_index=[]):
 		def find_candidate_cskill():
 			# Enumerate center skill of the highest rarity card that have same attribute with live
 			rarity_list = ['UR','SSR','SR','R']
 			cskill_dict = {rarity:[] for rarity in rarity_list}
 			is_new = lambda rarity, cskill: all([not x.is_equal(cskill) for x in cskill_dict[rarity]])
 			for card in self.cards:
+				if card.index in exclude_index: continue
 				if card.main_attr != self.live.attr or card.rarity not in rarity_list: continue
 				rarity, cskill = 'R' if card.promo else card.rarity, card.cskill
 				if is_new(rarity, cskill): 
@@ -197,9 +199,12 @@ class TeamBuilder:
 		max_score, best_team = 0, None
 		opt = {'score_up_bonus':self.score_up_bonus, 'skill_up_bonus':self.skill_up_bonus, 'guest_cskill':self.guest_cskill}
 		for i, cskill in enumerate(cskill_list,1):
-			gem_allocator = self.build_team_fix_cskill(cskill=cskill, K=K, method=method, alloc_method=alloc_method, pin_index=pin_index)
-			exp_score = gem_allocator.construct_team().compute_expected_total_score(self.live, opt=opt)
-			result.append((exp_score, gem_allocator))
+			try:
+				gem_allocator = self.build_team_fix_cskill(cskill=cskill, K=K, method=method, alloc_method=alloc_method, pin_index=pin_index, exclude_index=exclude_index)
+				exp_score = gem_allocator.construct_team().compute_expected_total_score(self.live, opt=opt)
+				result.append((exp_score, gem_allocator))
+			except:
+				exp_score = -1
 			elapsed_time = time.time() - start_time
 			print('{0}/{1}: {4:5.2f} secs elapsed, best team has score {2:6d} for {3}'.format(i, len(cskill_list), exp_score, cskill, elapsed_time))
 			self.log += '{0}/{1}: Best team has score {2:6d} for {3}\n'.format(i, len(cskill_list), exp_score, cskill)

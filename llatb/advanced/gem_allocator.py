@@ -259,8 +259,8 @@ class GemAllocator:
 
 		def get_summary(index, card):
 			res = { 'CID':'<p>{0}</p>'.format(card.card_id), 
-					'Icon': '<img src="{0}" width=75 />'.format(icon_path(card.card_id, card.idolized)),
-					'Gem':gem_slot_pic(card, show_cost=show_cost, gem_size=25-8*show_cost)}
+					'Icon': '<img src="{0}" style="width:100%;max-width:75px;" />'.format(icon_path(card.card_id, card.idolized)),
+					'Gem':gem_slot_pic(card, show_cost=show_cost, gem_size=25)}
 
 			# Skill gain information
 			if card.skill is not None:

@@ -8,7 +8,7 @@ pd.set_option('display.max_colwidth', -1)
 
 def gem_slot_pic(card, total_slot_num=8, show_cost=True, gem_size=35):
 	gems, slot_num, max_slot_num = card.equipped_gems, card.slot_num, card.max_slot_num
-	fmt ='<div style="float:left;*padding-left:0;"><img src="{0}" width={1}></div>'
+	fmt ='<img src="{0}" width={1}>'
 	if show_cost:
 		gem_name_list = []
 		for gem in gems: 
@@ -20,11 +20,17 @@ def gem_slot_pic(card, total_slot_num=8, show_cost=True, gem_size=35):
 		if len(gem_name_list) < total_slot_num:
 			gem_name_list.extend(['void'] * (total_slot_num-len(gem_name_list)))
 		divs = [fmt.format(gem_path(gem_name), gem_size) for gem_name in gem_name_list]
-		result = '<div style="width:{0}px;">{1}<div>'.format(8*gem_size, ''.join(divs))
+		if len(divs) > 4:
+			result = ''.join(divs[:4]) + '<br>' + ''.join(divs[4:])
+		else:
+			result = ''.join(divs)
 		return result
 	else:
 		divs = [fmt.format(gem_path(gem.name), gem_size) for gem in gems]
-		result = '<div style="width:{0}px;">{1}<div>'.format(len(gems)*gem_size, ''.join(divs))
+		if len(divs) > 4:
+			result = ''.join(divs[:4]) + '<br>' + ''.join(divs[4:])
+		else:
+			result = ''.join(divs)
 		return result
 
 
