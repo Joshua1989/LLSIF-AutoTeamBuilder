@@ -10,6 +10,7 @@ card_archive_dir = root+'assets/data_base.json'
 live_archive_dir = root+'assets/live_data_base.json'
 # unit_id and unit_number correspondence
 unit_db_dir = root+'assets/unit.db_'
+unit_aux_db_dir = root+'assets/unit_aux.db_'
 unit_db_download_url = 'https://r.llsif.win/db/unit/unit.db_'
 live_db_dir = root+'assets/live.db_'
 live_db_download_url = 'https://r.llsif.win/db/live/live.db_'

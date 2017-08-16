@@ -6,6 +6,7 @@ from pathlib import Path
 from llatb.common.config import *
 from llatb.framework.card import Card
 from llatb.framework.team import Team
+from llatb.common.global_var import Aqours
 
 def update_card_data():
 	def card_summary(unit_id):
@@ -117,6 +118,26 @@ def update_card_data():
 		if not row['is_support']:
 			card_id, card_info = card_summary(unit_id)
 			card_basic_stat[str(card_id)] = card_info
+
+	print('Generating basic card stats for Region Promo Set')
+	conn = sqlite3.connect(unit_aux_db_dir)
+	df_level_up = pd.read_sql('SELECT * FROM unit_level_up_pattern_m', con=conn, index_col='unit_level_up_pattern_id')
+	df_skill = pd.read_sql('SELECT * FROM unit_skill_m', con=conn, index_col='unit_skill_id')
+	df_skill_level = pd.read_sql('SELECT * FROM unit_skill_level_m', con=conn, index_col='unit_skill_id')
+	df_cskill1 = pd.read_sql('SELECT * FROM unit_leader_skill_m', con=conn, index_col='unit_leader_skill_id')
+	df_cskill2 = pd.read_sql('SELECT * FROM unit_leader_skill_extra_m', con=conn, index_col='unit_leader_skill_id')
+	df_unit = pd.read_sql('SELECT * FROM unit_m', con=conn, index_col='unit_id')
+	df_unit = df_unit[df_unit['unit_number']>0]
+	df_unit['is_support'] = df_unit['smile_max'] == 1
+	df_unit['is_promo'] = df_unit.apply(lambda x: x['smile_max'] > 1 and
+										x['normal_icon_asset'] == x['rank_max_icon_asset'], axis=1)
+	# Generate card basic stat and save it to JSON
+	for unit_id, row in df_unit.iterrows():
+		if not row['is_support'] and unit_id in list(range(1243,1252)):
+			card_id, card_info = card_summary(unit_id)
+			card_info['member_name'] = Aqours[unit_id-1243]
+			card_basic_stat[str(card_id)] = card_info
+
 	with open(card_archive_dir, 'w') as fp:
 	    json.dump(card_basic_stat, fp)
 	print('Basic card data has been saved in', card_archive_dir)

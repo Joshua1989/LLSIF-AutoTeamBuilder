@@ -18,6 +18,7 @@ except:
 # Load uid cid correspondence from unit.db
 try:
 	uid_cid_dict = {str(k):str(v) for k,v in sqlite3.connect(unit_db_dir).cursor().execute("SELECT unit_id, unit_number FROM unit_m").fetchall()}
+	for i, x in enumerate(range(1243,1252),1): uid_cid_dict[str(x)] = str(2000+i)
 	cid_uid_dict = {v:k for k,v in uid_cid_dict.items()}
 except:
 	print('Please update the data base')
