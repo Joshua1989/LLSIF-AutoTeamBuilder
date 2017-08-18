@@ -7,7 +7,7 @@ from llatb.common.global_var import *
 from llatb.framework import card_dataframe, Team
 from llatb.framework.live import Live, DefaultLive
 from llatb.common.display import gem_slot_pic, view_cards
-from llatb.common.config import misc_path, icon_path, gem_path
+from llatb.common.config import misc_path, icon_path, gem_path, html_template
 from llatb.simulator import Simulator
 from IPython.display import HTML
 from llatb.advanced.gem_allocator import GemAllocator, AdvancedCard
@@ -37,46 +37,100 @@ class TeamBuilder:
 		res['skill_up_rate'] = 1 + self.skill_up_bonus
 		self.setting = res
 
-	def show_rough_strength(self, center_idx, head=None):
-		keys = [ 'index', 'card_id', 'member_name', 'main_attr',
-				 'idolized', 'promo', 'rarity',
-				 'level', 'max_level', 
-				 'bond', 'max_bond', 
-				 'hp', 'smile', 'pure', 'cool',
-				 'skill', 'cskill', 
-				 'slot_num', 'max_slot_num', 'equipped_gems', 'tags']
-		columns  = keys + ['Same CSkill']
-		columns += ['Rough '+attr for attr in attr_list] + ['Use Gem '+attr for attr in attr_list]
-		center_card, data = None, []
+	def show_rough_strength(self, extra_col=[], no_skill=True):
+		def get_summary(card, ext_col=[]):
+			res = {'index':int(card.index)}
+			match_cskill = self.guest_cskill is not None and self.guest_cskill.bonus_range in card.tags
+			match_color, match_group = card.main_attr == self.live.attr, self.live.group in card.tags
+			font_color, font_weight = attr_color[self.live.attr] if match_color else 'black', 900 if match_cskill else 'normal'
+			border_style = '3px double' if (match_color and match_group) else ('1px solid' if (match_color or match_group) else '1px none')
+			res['CID'] = '<span style="color:{1}; border:{1} {2};font-weight:{3}; padding: 0 3px">{0}</span>'.format(card.card_id, font_color, border_style, font_weight)
+			# Generate HTML code for card view and skill
+			res[col_name['view']] =  '<img src="{0}" width=50 />'.format(icon_path(card.card_id, card.idolized))
 
-		for card in self.cards:
-			if card.index == center_idx:
-				center_card = card
-				break
-		if center_card is None:
-			print('Did not find center card with index', center_idx)
-			self.log += 'Did not find center card with index {0}\n'.format(center_idx)
-			raise
-		for card in self.cards:
-			res = {k:getattr(card,k) for k in keys}
-			card.compute_rough_strength(center_card.cskill, self.guest_cskill, self.live, self.setting)
+			if card.skill is not None:
+				temp = repr(card.skill).split(': ')
+				fmt = '<p> <img style="float: left" src="{0}" width=15 /> {1} <br style="clear: both;"/> {2} <br/> {3} </p>'
+				res[col_name['skill']] = fmt.format(misc_path(card.skill.effect_type) ,temp[0], *temp[1].split('. '))
+			else:
+				res[col_name['skill']] = '<p>{0}</p>'.format('NA')
+			if card.cskill is not None:
+				temp = repr(card.cskill).split('. ')
+				func = lambda x: x.split(': ')[-1].replace('raise', 'Raise').replace('contribution ','')
+				if temp[1] == '':
+					res[col_name['skill']] += '<p>{0}</p>'.format(func(temp[0]))
+				else:
+					res[col_name['skill']] += '<p>{0}<br/>{1}</p>'.format(func(temp[0]), func(temp[1]))
+
+			fmt = '<p style="color:{0};">{1}<br/>{2}</p>'
+			res[col_name['level']] = fmt.format('black', card.level, card.max_level)
+			res[col_name['bond']] = fmt.format('black', card.bond, card.max_bond)
+			res[col_name['hp']] = '<p style="color:orange;"><b>{0}</b></p>'.format(card.hp)
+			res['Slot'] = card.slot_num
+
+			fmt = '<p style="color:{0};">{1}<br>{2}</p>'
+			card.compute_rough_strength(cskill=None, guest_cskill=self.guest_cskill, live=self.live, setting=self.setting)
+			roungh_str_fmt = lambda attr: ('<b style="border:1px solid; padding:0px 1px">{0}</b>' if card.rough_strength[attr]['use_skill_gem'] else '{0}').format(card.rough_strength[attr]['strength'])
 			for attr in attr_list:
-				res['Rough '+attr] = card.rough_strength[attr]['strength']
-				res['Use Gem '+attr] = card.rough_strength[attr]['use_skill_gem']
-			res['Same CSkill'] = card.has_same_cskill
-			data.append(res)
-		data.sort(key=lambda x: x['Rough '+self.live.attr], reverse=True)
+				res[col_name[attr.lower()]] = fmt.format(attr_color[attr], getattr(card, attr.lower()), roungh_str_fmt(attr))
+			res['sort_STR'] = card.rough_strength[self.live.attr]['strength']
 
+			if card.skill is None:
+				res['skill_effect_type'] = 'NA'
+				res['skill_gain'] = 0
+				res['Skill Gain'] = '<p>NA</p>'
+			else:
+				gain = card.skill.skill_gain(self.setting)[0]
+				res['skill_effect_type'] = card.skill.effect_type
+				res['skill_gain'] = gain
+				if card.skill.effect_type in ['Strong Judge', 'Weak Judge']:
+					res['Skill Gain'] = '<p><img style="float: left" src="{2}" width=15 />Lv:{1}<br clear="both"/>{0:.2f}%<br/>covered</p>'.format(100*gain, card.skill.level, misc_path(card.skill.effect_type))
+				elif card.skill.effect_type == 'Stamina Restore':
+					res['Skill Gain'] = '<p><img style="float: left" src="{2}" width=15 />Lv:{1}<br clear="both"/>{0:.4f}<br/>hp/note</p>'.format(gain, card.skill.level, misc_path(card.skill.effect_type))
+				elif card.skill.effect_type == 'Score Up':
+					res['Skill Gain'] = '<p><img style="float: left" src="{2}" width=15 />Lv:{1}<br clear="both"/>{0:.4f}<br/>pt/note</p>'.format(gain, card.skill.level, misc_path(card.skill.effect_type))
+
+			# If there are other columns to show
+			for attr in ext_col: res[attr] = getattr(card, attr)
+			return res
+
+		col_name = {'view':'<p><b> Card View </b></p>', 'skill':'<p><b> Skill & Center Skill </b></p>'}
+		col_name.update({ x:'<img src="{0}" width=25/>'.format(misc_path(x)) for x in ['level','bond','hp','smile','pure','cool'] })
+		columns  = ['index', 'CID']
+		columns += [col_name[x] for x in ['view', 'skill', 'level', 'bond', 'hp', 'smile', 'pure', 'cool']]
+		columns += ['Slot', 'Skill Gain'] + ['sort_STR', 'skill_effect_type', 'skill_gain'] + extra_col
+
+		data = [get_summary(card, ext_col=extra_col) for card in self.cards if card.rarity not in ['N', 'R']]
 		df = pd.DataFrame(data, columns=columns)
 		df = df.set_index('index')
 		df.index.name = ''
-		# Sort cards according to live attribute and corresponding rough strength, put the center card at first
-		df_center = df.loc[[center_idx]]
-		df_rest = df.loc[[x for x in list(df.index) if x != center_idx]]
-		df = df_center.append(df_rest)
-		if head is not None:
-			df = df.iloc[:head+1]
-		return view_cards(df, extra_col=['Same CSkill']+[x+self.live.attr for x in ['Rough ', 'Use Gem ']])
+
+		df_all = df.sort_values(by='sort_STR', ascending=False)
+		del df_all['sort_STR']
+		del df_all['skill_effect_type']
+		del df_all['skill_gain']
+		if no_skill:
+			del df_all['<p><b> Skill & Center Skill </b></p>']
+			del df_all[col_name['hp']]
+
+		df_healer = df[df.skill_effect_type=='Stamina Restore'].sort_values(by='skill_gain', ascending=False)
+		del df_healer['sort_STR']
+		del df_healer['skill_effect_type']
+		del df_healer['skill_gain']
+		if no_skill:
+			del df_healer['<p><b> Skill & Center Skill </b></p>']
+			del df_healer[col_name['hp']]
+
+		df_plocker = df[df.apply(lambda x: 'Judge' in x.skill_effect_type, axis=1)].sort_values(by='skill_gain', ascending=False)
+		del df_plocker['sort_STR']
+		del df_plocker['skill_effect_type']
+		del df_plocker['skill_gain']
+		if no_skill:
+			del df_plocker['<p><b> Skill & Center Skill </b></p>']
+			del df_plocker[col_name['hp']]
+		return {'all': HTML(html_template.format(df_all.to_html(escape=False))),
+				'healer': HTML(html_template.format(df_healer.to_html(escape=False))),
+				'plocker': HTML(html_template.format(df_plocker.to_html(escape=False)))}
 
 	def find_candidates(self, cskill, K, pin_index=[], exclude_index=[]):
 		# Compute rough strength
