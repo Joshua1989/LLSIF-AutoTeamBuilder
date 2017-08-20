@@ -130,8 +130,8 @@ class Card:
 					strength += np.ceil(card_only_attr*gem_matrix[gem_type])
 			strength = np.array(strength, dtype=int)
 		return {k.lower()+'*':v for k,v in zip(attr_list, strength)}
-	def general_strength(self, setting={'cskill1':None, 'cskill2':None, 'group_match':True}):
-		cskill1, cskill2, group_match = setting.get('cskill1', None), setting.get('cskill2', None), setting.get('group_match', True)
+	def general_strength(self, setting={'cskill1':None, 'cskill2':None, 'group_match':True, 'score_up_rate':1}):
+		cskill1, cskill2, group_match, score_up_rate = setting.get('cskill1', None), setting.get('cskill2', None), setting.get('group_match', True), setting.get('score_up_rate', 1)
 		# From LL Helper, one slot is equivalent to 5.2% bonus
 		slot_bonus = 5.2/100 	
 		# Skill gems costs 4 slots
@@ -175,21 +175,21 @@ class Card:
 		elif self.skill.effect_type in ['Weak Judge', 'Strong Judge']:
 			gem_bonus, strength = 0.33, skill_gain * (1+slot_bonus*(self.slot_num-skillup_gem_cost)) * attr_val
 			branch1 = attr_val * (1+slot_bonus*self.slot_num)
-			branch2 = attr_val * (1+slot_bonus*(self.slot_num-skillup_gem_cost)) + gem_bonus*strength/(group_match_factor*attr_match_factor)
+			branch2 = attr_val * (1+slot_bonus*(self.slot_num-skillup_gem_cost)) + gem_bonus*strength/(group_match_factor*attr_match_factor) * (self.slot_num>=4)
 			use_skill_gem = branch2 > branch1
 			attr_val = np.maximum(branch1, branch2)
 			skill_strength = gem_bonus*strength*np.ones(3)
 		elif self.skill.effect_type == 'Stamina Restore':
 			gem_bonus, strength = 480, skill_gain*strength_per_pt_tap*np.ones(3)
 			branch1 = attr_val * (1+slot_bonus*self.slot_num)
-			branch2 = attr_val * (1+slot_bonus*(self.slot_num-skillup_gem_cost)) + gem_bonus*strength/(group_match_factor*attr_match_factor)
+			branch2 = attr_val * (1+slot_bonus*(self.slot_num-skillup_gem_cost)) + gem_bonus*strength/score_up_rate/(group_match_factor*attr_match_factor) * (self.slot_num>=4)
 			use_skill_gem = branch2 > branch1
 			attr_val = np.maximum(branch1, branch2)
 			skill_strength = gem_bonus*strength
 		elif self.skill.effect_type == 'Score Up':
 			gem_bonus, strength = 2.5, skill_gain*strength_per_pt_tap*np.ones(3)
 			branch1 = attr_val * (1+slot_bonus*self.slot_num) + strength/(group_match_factor*attr_match_factor)
-			branch2 = attr_val * (1+slot_bonus*(self.slot_num-skillup_gem_cost)) + gem_bonus*strength/(group_match_factor*attr_match_factor)
+			branch2 = attr_val * (1+slot_bonus*(self.slot_num-skillup_gem_cost)) + gem_bonus*strength/score_up_rate/(group_match_factor*attr_match_factor) * (self.slot_num>=4)
 			use_skill_gem = branch2 > branch1
 			attr_val = np.maximum(branch1, branch2)
 			skill_strength = strength*np.ones(3)

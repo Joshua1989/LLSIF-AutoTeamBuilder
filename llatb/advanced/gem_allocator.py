@@ -61,7 +61,7 @@ class GemAllocator:
 		gem_list  = [attr+' Kiss', attr+' Perfume']
 		gem_list += [attr+x+grade for x in [' Ring ', ' Cross '] for grade in list(grade_append.values())]
 		gem_list += [attr+x for x in [' Aura', ' Veil']]
-		gem_list += [attr2+x for x in [' Charm', ' Heal'] for attr2 in attr2_list] + [attr2+' Trick']*add_trick
+		gem_list += [attr2+x for x in [' Charm', ' Heal', ' Trick'] for attr2 in attr2_list]
 		gem_idx_dict = {v:k for k,v in enumerate(gem_list)}
 
 		# Compute the highest possible gem score for each card to help to prune branch
@@ -99,6 +99,7 @@ class GemAllocator:
 			if gem_occupy[idx] >= charm_count[attr2]: gem_occupy[idx] = np.Inf
 			idx = gem_idx_dict[attr2+' Heal']
 			if gem_occupy[idx] >= heal_count[attr2]: gem_occupy[idx] = np.Inf
+		if not add_trick: gem_occupy[gem_idx_dict[attr2+' Trick']] = 0
 
 		# Initialize trellis
 		trellis, current_max_score = [ {tuple(gem_occupy):[[],0]} ], 0
@@ -115,7 +116,6 @@ class GemAllocator:
 					# Construct new remain vector and check if it is feasible
 					new_remain, violate = remain.copy(), False
 					for gem in alloc.gems: 
-						if 'Trick' in gem and not add_trick: continue
 						idx = gem_idx_dict[gem]
 						if new_remain[idx] > 0: new_remain[idx] -= 1
 						else: violate = True; break
