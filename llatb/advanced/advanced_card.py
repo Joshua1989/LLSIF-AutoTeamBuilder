@@ -23,9 +23,9 @@ class AdvancedCard(Card):
 		self.attr2 = attr2_list[attr_list.index(self.main_attr)]
 		temp = [int(tag[0]) for tag in self.tags if '-year' in tag]
 		self.grade = '' if len(temp) == 0 else {1:'(1st)', 2:'(2nd)', 3:'(3rd)'}[int(temp[0])]
-		self.is_charm = self.skill is not None and self.skill.effect_type == 'Score Up'
-		self.is_heal = self.skill is not None and self.skill.effect_type == 'Stamina Restore'
-		self.is_trick = self.skill is not None and self.skill.effect_type in ['Weak Judge', 'Strong Judge']
+		self.is_charm = self.skill is not None and self.skill.effect_type == 'Score Up' and self.slot_num >= 4
+		self.is_heal = self.skill is not None and self.skill.effect_type == 'Stamina Restore' and self.slot_num >= 4
+		self.is_trick = self.skill is not None and self.skill.effect_type in ['Weak Judge', 'Strong Judge'] and self.slot_num >= 4
 		self.CR, self.CR_list = None, None
 	def compute_rough_strength(self, cskill, guest_cskill, live, setting):
 		# Compute rough strength and sort them by live attribute

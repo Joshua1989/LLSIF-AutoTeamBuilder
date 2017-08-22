@@ -186,14 +186,14 @@ class Team:
 	def compute_mics(self):
 		# Construct Otasuke Power boundary
 		mic_boundaries = [
-			{ 'min': 0.00, 'max': 1.87, 'mics': 1 },
-			{ 'min': 2.34, 'max': 4.55, 'mics': 2 },
-			{ 'min': 4.63, 'max': 6.81, 'mics': 3 },
-			{ 'min': 6.82, 'max': 11.22, 'mics': 4 },
-			{ 'min': 11.29, 'max': 15.63, 'mics': 5 },
-			{ 'min': 16.05, 'max': 23.13, 'mics': 6 },
-			{ 'min': 23.24, 'max': 34.40, 'mics': 7 },
-			{ 'min': 34.52, 'max': 50.00, 'mics': 8 },
+			{ 'min': 0.00, 'max': 1.95, 'mics': 1 },
+			{ 'min': 2, 'max': 4.65, 'mics': 2 },
+			{ 'min': 4.7, 'max': 6.85, 'mics': 3 },
+			{ 'min': 6.9, 'max': 11.45, 'mics': 4 },
+			{ 'min': 11.5, 'max': 15.95, 'mics': 5 },
+			{ 'min': 16, 'max': 23.35, 'mics': 6 },
+			{ 'min': 23.4, 'max': 34.95, 'mics': 7 },
+			{ 'min': 35, 'max': 50.00, 'mics': 8 },
 			{ 'min': 50.05, 'max': 71.00, 'mics': 9 },
 			{ 'min': 72.00, 'max': 72.01, 'mics': 10 }
 		]
@@ -208,7 +208,7 @@ class Team:
 				})
 		full_mic_boundaries.append(mic_boundaries[9])
 		# Otasuke Power Ratio
-		op_ratio = {'UR':1, 'SSR':0.59, 'SR':0.29, 'R':0.13, 'N':0}
+		op_ratio = {'UR':1, 'SSR':0.6, 'SR':0.3, 'R':0.15, 'N':0}
 		# Compute Otasuke Power
 		otasuke_power = 0
 		for card in self.card_list:

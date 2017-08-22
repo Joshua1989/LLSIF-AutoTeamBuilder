@@ -6,6 +6,10 @@ from llatb.common.display import gem_slot_pic, view_cards
 from llatb.common.config import card_archive_dir, misc_path, icon_path, gem_path, html_template
 from IPython.display import HTML
 
+def binom(n, k):
+	if k > n/2: k = n-k
+	return np.prod(list(range(n-k+1,n+1))) / np.prod(list(range(1,k+1)))
+
 class GemAllocator:
 	def __init__(self, adv_card_list, live, setting, owned_gem):
 		if type(adv_card_list) != list or len(adv_card_list) != 9:
@@ -201,13 +205,38 @@ class GemAllocator:
 		x_opt, Qmax = recursion(alloc_info)
 		return x_opt, Qmax
 
-	def allocate(self, alloc_method='DP', max_score=0, add_trick_thresh=0.67):
+	def choose_algorithm(self, add_trick, thresh=0):
+		if add_trick:
+			alloc_info = [card.gem_alloc_list for card in self.card_list]
+		else:
+			alloc_info = [[alloc for alloc in card.gem_alloc_list if 'Trick' not in str(alloc.gems)] for card in self.card_list]
+		# For each considered SIS, compute list of card indices that can equip it
+		valid_card_index = dict()
+		for ind, alloc_list in enumerate(alloc_info):
+			for alloc in alloc_list:
+				if len(alloc.gems) == 1:
+					gem = alloc.gems[0]
+					if valid_card_index.get(gem) is None:
+						valid_card_index[gem] = [ind]
+					else:
+						valid_card_index[gem].append(ind)
+		num_branch = 1
+		for gem, item in valid_card_index.items():
+			if gem.split()[1] in ['Cross', 'Aura', 'Veil', 'Charm', 'Heal', 'Trick']:
+				need, own = len(item), self.owned_gem[gem]
+				if need > own:
+					num_branch *= binom(need, own)
+		return 'DC' if num_branch <= thresh else 'DP'
+
+	def allocate(self, alloc_method='auto', max_score=0, add_trick_thresh=0.67):
 		# Update score of gems
-		team_base_score, best_gem_score = self.update_gem_score(sort=alloc_method=='DC')
+		team_base_score, best_gem_score = self.update_gem_score(sort=True)
 		add_trick = int(self.team_CR > add_trick_thresh)
 		# # If for unlimited gem the choice is worse than max_score, drop it
 		if team_base_score + best_gem_score < max_score: return None
 		# Solve for best gem allocation
+		if alloc_method == 'auto':
+			alloc_method = self.choose_algorithm(add_trick, thresh=2.5e7)
 		if alloc_method == 'DP':
 			optimal_alloc, alloc_score = self.find_optimal_gem_allocation_DP(add_trick)
 		elif alloc_method == 'DC':
