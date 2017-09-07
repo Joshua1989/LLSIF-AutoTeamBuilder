@@ -169,6 +169,8 @@ class Team:
 
 		setting = generate_setting(live)
 		CR = rough_total_cover_rate()
+		if hasattr(live, 'update_live_stat'):
+			live.update_live_stat(CR)
 		amend_perfect_rate, amend_team_strength = amend_perfect_rate_and_team_strength(CR)
 		total_skill_strength = compute_total_skill_strength(amend_perfect_rate, amend_team_strength)
 		average_pos_bonus = compute_average_position_bonus()

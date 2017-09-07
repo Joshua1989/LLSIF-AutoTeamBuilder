@@ -53,21 +53,28 @@ class Live:
 		df.timing_sec = df.timing_sec + df.effect_value * df.long
 		df = df.sort_values(by='timing_sec', ascending=True)
 		df.index = [i for i in range(1, len(df)+1)]
-		# Compute all factors that matter scoring, under presumed perfect rate
-		p, alpha, beta = self.perfect_rate, accuracy_factor['Perfect'], accuracy_factor['Great']
-		df['judge_factor'] = df.long.apply(lambda x: ( alpha*p + beta*(1-p) )**(1+x) )
+		# Compute all factors that matter scoring, under presumed perfect rate		
 		df['note_factor'] = df.apply(lambda x: long_factor**x.long * swing_factor**x.swing, axis=1)
 		df['combo_factor'] = [combo_factor(i) for i in range(1,len(df)+1)]
-		df['total_factor'] = df.combo_factor * df.note_factor * df.judge_factor
+		df['aux_long'] = df.combo_factor * df.note_factor * df.long
+		df['aux_not_long'] = df.combo_factor * df.note_factor * (1-df.long)
 		# Compute stats for each position
+		self.aux = df.groupby(by='position')[['aux_long', 'aux_not_long']].sum()
+		if len(self.aux) < 9:
+			missing_pos = [x for x in range(1,10) if x not in self.aux.index]
+			for pos in missing_pos:
+				self.aux = self.aux.append(pd.DataFrame(0*self.aux.sum(), columns=[pos]).transpose())
+			self.aux = self.aux.sort_index()
+
 		note_stat = df.groupby(by='position')[['tap', 'long', 'swing', 'star', 'token']].sum().applymap(int)
 		note_stat['note_factor'] = df.groupby(by='position')['note_factor'].sum()
-		note_stat['total_factor'] = df.groupby(by='position')['total_factor'].sum()
 		if len(note_stat) < 9:
 			missing_pos = [x for x in range(1,10) if x not in note_stat.index]
 			for pos in missing_pos:
 				note_stat = note_stat.append(pd.DataFrame(0*note_stat.sum(), columns=[pos]).transpose())
 			note_stat = note_stat.sort_index()
+		p, alpha, beta = self.perfect_rate, accuracy_factor['Perfect'], accuracy_factor['Great']
+		note_stat['total_factor'] = self.aux['aux_long'] * ( alpha*p + beta*(1-p) )**2 + self.aux['aux_not_long'] * ( alpha*p + beta*(1-p) )
 		note_stat = note_stat.append(pd.DataFrame(note_stat.sum(), columns=['total']).transpose())
 		note_stat['weight'] = note_stat['total_factor'] / note_stat.loc['total','total_factor']
 		# Save useful statistics as member variables
@@ -79,6 +86,19 @@ class Live:
 		self.note_type_dist['long_density'] = note_stat.loc['total','long'] / self.note_number
 		self.note_type_dist['swing_density'] = note_stat.loc['total','swing'] / self.note_number
 
+		self.average_bonus = note_stat.loc['total','total_factor']/self.note_number
+		self.strength_per_pt_tap = (1/base_score_factor) / (note_stat.loc['total','total_factor']/self.note_number)
+		self.pts_per_strength = base_score_factor * note_stat.loc['total','total_factor']
+		self.combo_weight_fraction = self.summary.weight.values[-2::-1]
+	def update_live_stat(self, team_CR):
+		note_stat = self.summary
+		p, alpha, beta = 1 - (1-self.perfect_rate)*(1-team_CR), accuracy_factor['Perfect'], accuracy_factor['Great']
+		note_stat['total_factor'] = self.aux['aux_long'] * ( alpha*p + beta*(1-p) )**2 + self.aux['aux_not_long'] * ( alpha*p + beta*(1-p) )
+		note_stat['total_factor']['total'] = (self.aux['aux_long'] * ( alpha*p + beta*(1-p) )**2 + self.aux['aux_not_long'] * ( alpha*p + beta*(1-p) )).sum()
+		# note_stat = note_stat.append(pd.DataFrame(note_stat.sum(), columns=['total']).transpose())
+		note_stat['weight'] = note_stat['total_factor'] / note_stat.loc['total','total_factor']
+		# Save useful statistics as member variables
+		self.summary = note_stat
 		self.average_bonus = note_stat.loc['total','total_factor']/self.note_number
 		self.strength_per_pt_tap = (1/base_score_factor) / (note_stat.loc['total','total_factor']/self.note_number)
 		self.pts_per_strength = base_score_factor * note_stat.loc['total','total_factor']
@@ -109,12 +129,21 @@ class DefaultLive:
 		# Average accuracy factor under presumed player perfect rate and live note type fractions
 		note_judge_factor = self.perfect_rate*accuracy_factor['Perfect'] + (1-self.perfect_rate)*accuracy_factor['Great']
 		normal_density, swing_density, long_density = param['note_type_dist']['normal_density'], param['note_type_dist']['swing_density'], param['note_type_dist']['long_density']
-		note_judge_weight = note_judge_factor*(normal_density+swing_factor*swing_density) + note_judge_factor**2 * long_factor*long_density
+		self.aux = { 'aux_long': combo_weight*long_factor*long_density, 'aux_not_long': combo_weight*(normal_density+swing_factor*swing_density)}
 		# Corrected strength per point per tap
-		self.average_bonus = combo_weight*note_judge_weight
-		self.strength_per_pt_tap = (1/base_score_factor) / (combo_weight*note_judge_weight)
+		self.average_bonus = note_judge_factor*self.aux['aux_not_long'] + note_judge_factor**2 * self.aux['aux_long']
+		self.strength_per_pt_tap = (1/base_score_factor) / self.average_bonus
 		self.pts_per_strength = self.note_number / self.strength_per_pt_tap
-		self.combo_weight_fraction = np.ones(9)/9
+		self.combo_weight_fraction = np.array([1,1,1,1,0,1,1,1,1])/8
+	def update_live_stat(self, team_CR):
+		perfect_rate = 1 - (1-self.perfect_rate)*(1-team_CR)
+		note_judge_factor = perfect_rate*accuracy_factor['Perfect'] + (1-perfect_rate)*accuracy_factor['Great']
+		# Corrected strength per point per tap
+		self.average_bonus = note_judge_factor*self.aux['aux_not_long'] + note_judge_factor**2 * self.aux['aux_long']
+		self.strength_per_pt_tap = (1/base_score_factor) / self.average_bonus
+		self.pts_per_strength = self.note_number / self.strength_per_pt_tap
+		self.combo_weight_fraction = np.array([1,1,1,1,0,1,1,1,1])/8
+		
 
 class MFLive:
 	def __init__(self, name_list, difficulty, perfect_rate=0.95, local_dir=None):
@@ -147,9 +176,9 @@ class MFLive:
 				temp = json.loads(urllib.request.urlopen(req).read().decode('utf-8'))
 			else:
 				try:
-					temp = json.loads(open(local_dir+info.file_dir.split('/')[-1]).read())
+					temp = json.loads(open(local_dir+file_dir.split('/')[-1]).read())
 				except:
-					req = urllib.request.Request(info.file_dir, data=None, headers={'User-Agent': 'whatever'})
+					req = urllib.request.Request(file_dir, data=None, headers={'User-Agent': 'whatever'})
 					temp = json.loads(urllib.request.urlopen(req).read().decode('utf-8'))
 			df = pd.DataFrame(temp, index=list(range(1,len(temp)+1)))
 			df = df.assign(token=df.effect==2, long=df.effect.apply(lambda x: x == 3), 
@@ -180,21 +209,28 @@ class MFLive:
 		web_note_list = web_note_list[['timing_sec', 'position', 'long', 'swing', 'star']].to_dict('index')
 		self.web_note_list = [web_note_list[i] for i in range(1, len(web_note_list)+1)]
 
-		# Compute all factors that matter scoring, under presumed perfect rate
-		p, alpha, beta = self.perfect_rate, accuracy_factor['Perfect'], accuracy_factor['Great']
-		df['judge_factor'] = df.long.apply(lambda x: ( alpha*p + beta*(1-p) )**(1+x) )
+		# Compute all factors that matter scoring, under presumed perfect rate		
 		df['note_factor'] = df.apply(lambda x: long_factor**x.long * swing_factor**x.swing, axis=1)
 		df['combo_factor'] = [combo_factor(i) for i in range(1,len(df)+1)]
-		df['total_factor'] = df.combo_factor * df.note_factor * df.judge_factor
+		df['aux_long'] = df.combo_factor * df.note_factor * df.long
+		df['aux_not_long'] = df.combo_factor * df.note_factor * (1-df.long)
 		# Compute stats for each position
+		self.aux = df.groupby(by='position')[['aux_long', 'aux_not_long']].sum()
+		if len(self.aux) < 9:
+			missing_pos = [x for x in range(1,10) if x not in self.aux.index]
+			for pos in missing_pos:
+				self.aux = self.aux.append(pd.DataFrame(0*self.aux.sum(), columns=[pos]).transpose())
+			self.aux = self.aux.sort_index()
+
 		note_stat = df.groupby(by='position')[['tap', 'long', 'swing', 'star', 'token']].sum().applymap(int)
 		note_stat['note_factor'] = df.groupby(by='position')['note_factor'].sum()
-		note_stat['total_factor'] = df.groupby(by='position')['total_factor'].sum()
 		if len(note_stat) < 9:
 			missing_pos = [x for x in range(1,10) if x not in note_stat.index]
 			for pos in missing_pos:
 				note_stat = note_stat.append(pd.DataFrame(0*note_stat.sum(), columns=[pos]).transpose())
 			note_stat = note_stat.sort_index()
+		p, alpha, beta = self.perfect_rate, accuracy_factor['Perfect'], accuracy_factor['Great']
+		note_stat['total_factor'] = self.aux['aux_long'] * ( alpha*p + beta*(1-p) )**2 + self.aux['aux_not_long'] * ( alpha*p + beta*(1-p) )
 		note_stat = note_stat.append(pd.DataFrame(note_stat.sum(), columns=['total']).transpose())
 		note_stat['weight'] = note_stat['total_factor'] / note_stat.loc['total','total_factor']
 		# Save useful statistics as member variables
@@ -206,6 +242,19 @@ class MFLive:
 		self.note_type_dist['long_density'] = note_stat.loc['total','long'] / self.note_number
 		self.note_type_dist['swing_density'] = note_stat.loc['total','swing'] / self.note_number
 
+		self.average_bonus = note_stat.loc['total','total_factor']/self.note_number
+		self.strength_per_pt_tap = (1/base_score_factor) / (note_stat.loc['total','total_factor']/self.note_number)
+		self.pts_per_strength = base_score_factor * note_stat.loc['total','total_factor']
+		self.combo_weight_fraction = self.summary.weight.values[-2::-1]
+	def update_live_stat(self, team_CR):
+		note_stat = self.summary
+		p, alpha, beta = 1 - (1-self.perfect_rate)*(1-team_CR), accuracy_factor['Perfect'], accuracy_factor['Great']
+		note_stat['total_factor'] = self.aux['aux_long'] * ( alpha*p + beta*(1-p) )**2 + self.aux['aux_not_long'] * ( alpha*p + beta*(1-p) )
+		note_stat['total_factor']['total'] = (self.aux['aux_long'] * ( alpha*p + beta*(1-p) )**2 + self.aux['aux_not_long'] * ( alpha*p + beta*(1-p) )).sum()
+		# note_stat = note_stat.append(pd.DataFrame(note_stat.sum(), columns=['total']).transpose())
+		note_stat['weight'] = note_stat['total_factor'] / note_stat.loc['total','total_factor']
+		# Save useful statistics as member variables
+		self.summary = note_stat
 		self.average_bonus = note_stat.loc['total','total_factor']/self.note_number
 		self.strength_per_pt_tap = (1/base_score_factor) / (note_stat.loc['total','total_factor']/self.note_number)
 		self.pts_per_strength = base_score_factor * note_stat.loc['total','total_factor']
@@ -255,7 +304,7 @@ class SMLive:
 			self.pts_per_strength = np.mean([live.pts_per_strength for live in self.live_list])
 			self.combo_weight_fraction = np.mean([live.combo_weight_fraction for live in self.live_list], axis=0)
 		else:
-			self.combo_weight_fraction = np.ones(9)/9
+			self.combo_weight_fraction = np.array([1,1,1,1,0,1,1,1,1])/8
 			self.average_bonus, self.strength_per_pt_tap, self.pts_per_strength = 0, 0, 0
 			for live in self.live_list:
 			# Average combo factor if achieve FC

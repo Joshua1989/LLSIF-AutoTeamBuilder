@@ -22,12 +22,6 @@ class GemAllocator:
 		self.owned_gem = owned_gem
 
 	def update_gem_score(self, sort=False):
-		# Compute Average Position Bonus
-		mu = np.array([card.mu for card in self.card_list[1:]])
-		zeta = self.live.combo_weight_fraction.copy()[[0,1,2,3,5,6,7,8]]
-		mu.sort()
-		zeta.sort()
-		self.mu_bar = self.card_list[0].mu * self.live.combo_weight_fraction[4] + (mu*zeta).sum()
 		# Compute team total cover rate
 		if hasattr(self.live, 'note_list'):
 			temp = np.ones(self.live.note_number)
@@ -36,6 +30,20 @@ class GemAllocator:
 			self.team_CR = (1-temp).mean()
 		else:
 			self.team_CR = 1 - (1-np.array([card.CR for card in self.card_list])).prod()
+		# Update live settings on new CR
+		if hasattr(self.live, 'update_live_stat'):
+			self.live.update_live_stat(self.team_CR)
+		# Compute Average Position Bonus
+		center_skill = self.card_list[0].cskill
+		center_idx_list = [i for i, card in enumerate(self.card_list) if card.cskill.is_equal(center_skill)]
+		self.mu_bar = 0
+		for center_idx in center_idx_list:
+			# Put non-center card with less same group&color bonus at position with smaller combo weight fraction
+			bonus_list  = sorted([(card.mu,i) for i, card in enumerate(self.card_list) if i != center_idx])
+			weight_list = sorted([(self.live.combo_weight_fraction[i], i) for i in range(9) if i!=4])
+			pos_factor  = self.card_list[center_idx].mu * self.live.combo_weight_fraction[4]
+			pos_factor += sum([b[0] * w[0] for b, w in zip(bonus_list, weight_list)])
+			if pos_factor > self.mu_bar: self.mu_bar = pos_factor
 		# Update settings to compute skill gain of Skill Up and Stamina Restore skills
 		new_setting = self.setting.copy()
 		new_setting['attr_group_factor'] = self.mu_bar
@@ -222,7 +230,7 @@ class GemAllocator:
 						valid_card_index[gem].append(ind)
 		num_branch = 1
 		for gem, item in valid_card_index.items():
-			if gem.split()[1] in ['Cross', 'Aura', 'Veil', 'Charm', 'Heal', 'Trick']:
+			if gem.split()[1] in ['Cross', 'Aura', 'Veil', 'Charm', 'Heal']:
 				need, own = len(item), self.owned_gem[gem]
 				if need > own:
 					num_branch *= binom(need, own)
@@ -236,7 +244,7 @@ class GemAllocator:
 		if team_base_score + best_gem_score < max_score: return None
 		# Solve for best gem allocation
 		if alloc_method == 'auto':
-			alloc_method = self.choose_algorithm(add_trick, thresh=2.5e7)
+			alloc_method = self.choose_algorithm(add_trick, thresh=1e6)
 		if alloc_method == 'DP':
 			optimal_alloc, alloc_score = self.find_optimal_gem_allocation_DP(add_trick)
 		elif alloc_method == 'DC':
@@ -248,17 +256,28 @@ class GemAllocator:
 	def construct_team(self):
 		for card, alloc in zip(self.card_list, self.optimal_alloc):
 			card.equip_gem(alloc.gems)
-		# Put non-center card with less same group&color bonus at position with smaller combo weight fraction
-		bonus_list  = sorted([(card.mu,i) for i,card in enumerate(self.card_list[1:])])
-		weight_list = sorted([(self.live.combo_weight_fraction[i], i) for i in range(9) if i!=4])
 
-		final_card_list = [None]*4 + [self.card_list[0]] + [None]*4
-		for i in range(8): 
-			final_card_list[weight_list[i][1]] = self.card_list[1:][bonus_list[i][1]]
+		center_skill = self.card_list[0].cskill
+		center_idx_list = [i for i, card in enumerate(self.card_list) if card.cskill.is_equal(center_skill)]
+
+		max_pos_factor, final_card_list = 0, [None]*9
+		for center_idx in center_idx_list:
+			# Put non-center card with less same group&color bonus at position with smaller combo weight fraction
+			bonus_list  = sorted([(card.mu,i) for i, card in enumerate(self.card_list) if i != center_idx])
+			weight_list = sorted([(self.live.combo_weight_fraction[i], i) for i in range(9) if i!=4])
+			pos_factor  = self.card_list[center_idx].mu * self.live.combo_weight_fraction[4]
+			pos_factor += sum([b[0] * w[0] for b, w in zip(bonus_list, weight_list)])
+			if pos_factor > max_pos_factor:
+				max_pos_factor, final_card_list[4] = pos_factor, self.card_list[center_idx]
+				for i in range(8): 
+					final_card_list[weight_list[i][1]] = self.card_list[bonus_list[i][1]]
 		return Team(final_card_list)
 
 	def view_optimal_details(self, show_cost=False, lang='EN', fixed_team=None):
 		team = self.construct_team() if fixed_team is None else fixed_team
+		# Update live settings on new CR
+		if hasattr(self.live, 'update_live_stat'):
+			self.live.update_live_stat(self.team_CR)
 
 		col_name = { x:'<img src="{0}" width=25/>'.format(misc_path(x)) for x in ['level','bond','smile','pure','cool'] }
 
@@ -269,8 +288,7 @@ class GemAllocator:
 					'Charm', 'Heal', 'Trick', 'Amend STR', 'Skill STR', 'Live Bonus', 'Cmb WT%']
 
 		# Extract all team gems
-		team_gems = [gem for card in team.card_list for gem in card.equipped_gems \
-					 	if self.live.attr in gem.name and gem.effect == 'team_boost']
+		team_gems = [gem for card in team.card_list for gem in card.equipped_gems if self.live.attr in gem.name and gem.effect == 'team_boost']
 		# Find team center skill and cover rate
 		cskill = team.center().cskill
 		temp = np.ones(9)
@@ -288,9 +306,8 @@ class GemAllocator:
 
 		def get_summary(index, card):
 			res = { 'CID':'<p>{0}</p>'.format(card.card_id), 
-					'Icon': '<img src="{0}" style="width:100%;max-width:75px;" />'.format(icon_path(card.card_id, card.idolized)),
-					'SIS':gem_slot_pic(card, show_cost=show_cost, gem_size=25)}
-
+					'Icon': '<img src="{0}" style="width:100%;max-width:75px;" title="{1}"/>'.format(icon_path(card.card_id, card.idolized), card.tooltip()),
+					'SIS': gem_slot_pic(card, show_cost=show_cost, gem_size=25)}
 			# Skill gain information
 			if card.skill is not None:
 				gain = card.skill.skill_gain(setting=self.setting)[0]
@@ -436,7 +453,7 @@ class GemAllocator:
 			is_new = lambda cskill: all([not x.is_equal(cskill) for x in cskill_list])
 			for index, card in raw_card_dict.items():
 				if card.main_attr == self.live.attr and card.rarity == 'UR' and not card.promo:
-					guest_candidate[(card.cskill.base_attr, card.cskill.bonus_range)].append(card.card_id)
+					guest_candidate[(card.cskill.base_attr, card.cskill.bonus_range)].append(card)
 					if is_new(card.cskill):
 						cskill_list.append(card.cskill)
 			# find the center skill that increases the team strength most
@@ -450,10 +467,10 @@ class GemAllocator:
 			df_guest = pd.DataFrame()
 			df_guest['Recommend Guest Center Skill'] = [format_cskill(best_guest_cskill)]
 			# list the cards that has the best guest center skill
-			guest_size, fmt = 50, '<div style="float:left;*padding-left:0;"><img src="{0}" width={1}></div>'
+			guest_size, fmt = 50, '<div style="float:left;*padding-left:0;"><img src="{0}" width={1} title="{2}"></div>'
 			# divs = [fmt.format(icon_path(card_id,idolized), guest_size) for card_id in recommend_guest for idolized in [False,True] ]
-			divs1 = [fmt.format(icon_path(card_id,False), guest_size) for card_id in recommend_guest]
-			divs2 = [fmt.format(icon_path(card_id,True), guest_size) for card_id in recommend_guest]
+			divs1 = [fmt.format(icon_path(card.card_id,False), guest_size, card.tooltip()) for card in recommend_guest]
+			divs2 = [fmt.format(icon_path(card.card_id,True), guest_size, card.tooltip()) for card in recommend_guest]
 			df_guest['Recommend Guest Icon'] = '<div style="width:{0}px;">{1}<div>'.format(len(divs1)*guest_size, ''.join(divs1)+''.join(divs2))
 			# compute the expected score if the best guest center skill is present
 			setting = self.setting.copy()
