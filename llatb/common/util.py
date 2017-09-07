@@ -170,7 +170,8 @@ def update_live_data(download=False):
 	conn = sqlite3.connect(live_db_dir)
 	df_live_track = pd.read_sql('SELECT * FROM live_track_m', con=conn, index_col='live_track_id')
 	df_live_setting = pd.read_sql('SELECT * FROM live_setting_m', con=conn, index_col='live_setting_id')
-	live_data = [live_summary(live_setting_id) for live_setting_id, row in df_live_setting.iterrows() if row['difficulty']!=5]
+	# live_data = [live_summary(live_setting_id) for live_setting_id, row in df_live_setting.iterrows() if row['difficulty']!=5]
+	live_data = [live_summary(live_setting_id) for live_setting_id, row in df_live_setting.iterrows() if row['difficulty']!=5 and live_setting_id != 10779]
 
 	with open(live_archive_dir, 'w') as fp:
 	    json.dump(live_data, fp)
