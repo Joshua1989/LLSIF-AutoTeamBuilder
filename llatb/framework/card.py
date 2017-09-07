@@ -148,7 +148,7 @@ class Card:
 			center_bonus = 1.15
 			# Compute amend attribute
 			attr_val  = np.array([getattr(self, x.lower())/attr_match_factor**(x != self.main_attr) + self.bond*(x == self.main_attr) for x in attr_list])
-			attr_val *= center_bonus
+			attr_val *= center_bonus / group_match_factor**(1-group_match)
 		else:
 			# LL TeamBuilder rough strength
 			center_bonus = np.ones(3)
@@ -206,6 +206,15 @@ class Card:
 		return res
 	def copy(self):
 		return deepcopy(self)
+	def tooltip(self):
+		lines = []
+		intro = '{0}: {1}'.format(self.card_id, self.member_name)
+		lines.append(intro + (', Promo Card' if self.promo else ''))
+		if self.rarity != 'N':
+			lines.append(repr(self.skill))
+			lines.append('CSkill - ' + str(self.cskill))
+		string = '&#13;'.join(lines)
+		return string
 	@classmethod
 	def fromJSON(cls, json_data, idolized=False):
 		card_id, card_name, member_name = json_data['card_id'], json_data['card_name'], json_data['member_name']

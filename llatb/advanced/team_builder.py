@@ -46,7 +46,7 @@ class TeamBuilder:
 			border_style = '3px double' if (match_color and match_group) else ('1px solid' if (match_color or match_group) else '1px none')
 			res['CID'] = '<span style="color:{1}; border:{1} {2};font-weight:{3}; padding: 0 3px">{0}</span>'.format(card.card_id, font_color, border_style, font_weight)
 			# Generate HTML code for card view and skill
-			res[col_name['view']] =  '<img src="{0}" width=50 />'.format(icon_path(card.card_id, card.idolized))
+			res[col_name['view']] =  '<img src="{0}" width=50 title="{1}"/>'.format(icon_path(card.card_id, card.idolized), card.tooltip())
 
 			if card.skill is not None:
 				temp = repr(card.skill).split(': ')
@@ -225,7 +225,8 @@ class TeamBuilder:
 			raise		
 		return best_gem_allocator
 
-	def build_team(self, K=15, method='4-suboptimal', alloc_method='DC', show_cost=False, time_limit=24, pin_index=[], exclude_index=[]):
+	def build_team(self, K=15, method='4-suboptimal', alloc_method='DC', show_cost=False, time_limit=24, 
+		pin_index=[], exclude_index=[], next_cskill_index=0, prev_max_cskill_index=0):
 		def find_candidate_cskill():
 			# Enumerate center skill of the highest rarity card that have same attribute with live
 			rarity_list = ['UR','SSR','SR','R']
@@ -243,16 +244,17 @@ class TeamBuilder:
 					candidate_cskill = cskill_dict[rarity]
 					break
 			candidate_cskill.sort(key=lambda x: str(x))
-			shuffle(candidate_cskill)
+			# shuffle(candidate_cskill)
 			return candidate_cskill
 
 		start_time = time.time()
 		print('{2} {3}: Team searching method: {0}. Gem allocation searching method: {1}'.format(method, alloc_method, self.live.name, self.live.difficulty))
 		self.log += 'Team searching method: {0}. Gem allocation searching method: {1}\n'.format(method, alloc_method)
 		cskill_list, result = find_candidate_cskill(), []
-		max_score, best_team = 0, None
+		max_score, best_team, max_cskill_index = 0, None, 0
 		opt = {'score_up_bonus':self.score_up_bonus, 'skill_up_bonus':self.skill_up_bonus, 'guest_cskill':self.guest_cskill}
 		for i, cskill in enumerate(cskill_list,1):
+			if i != prev_max_cskill_index and i < next_cskill_index: continue
 			try:
 				gem_allocator = self.build_team_fix_cskill(cskill=cskill, K=K, method=method, alloc_method=alloc_method, pin_index=pin_index, exclude_index=exclude_index)
 				exp_score = gem_allocator.construct_team().compute_expected_total_score(self.live, opt=opt)
@@ -262,14 +264,15 @@ class TeamBuilder:
 			elapsed_time = time.time() - start_time
 			print('{0}/{1}: {4:5.2f} secs elapsed, best team has score {2:6d} for {3}'.format(i, len(cskill_list), exp_score, cskill, elapsed_time))
 			self.log += '{0}/{1}: Best team has score {2:6d} for {3}\n'.format(i, len(cskill_list), exp_score, cskill)
-			if exp_score > max_score: max_score, best_gem_allocator = exp_score, gem_allocator
-			if elapsed_time > time_limit:
+			if exp_score > max_score: max_score, best_gem_allocator, max_cskill_index = exp_score, gem_allocator, i
+			if elapsed_time > time_limit and i < len(cskill_list):
 				print('Due to HTTP response time limit, jump out of the algorithm')
 				break
 
 		self.best_gem_allocator = best_gem_allocator
 		self.best_team = best_gem_allocator.construct_team()
-		return self.view_result(), (i, len(cskill_list))
+		print('{0} out of {1} cases computed, index of best cskill is {2}'.format(i, len(cskill_list), max_cskill_index))
+		return self.best_team, (i, len(cskill_list), max_cskill_index)
 
 	def simulate(self, boosts={}, save_to=None):
 		if type(self.live) == DefaultLive:
