@@ -16,14 +16,43 @@ from llatb.advanced.judge_coverage import CoverageCalculator
 
 
 class TeamBuilder:
-	def __init__(self, live, game_data, opt={}):
-		self.owned_gem = copy.deepcopy(game_data.owned_gem)
+	def __init__(self, live, game_data, opt={}, unlimited_SIS=False, extra_cond=None):
+		# Get Live Info
 		self.live = live
+		# Get guest cskill and purchased boost
 		self.guest_cskill = opt.get('guest_cskill',None)
 		self.score_up_bonus = opt.get('score_up_bonus',0)
 		self.skill_up_bonus = opt.get('skill_up_bonus',0)
 		self.generate_setting(opt)
-		self.cards = [AdvancedCard(index, card) for index, card in game_data.raw_card.items()]
+		# Import SIS inventory
+		self.owned_gem = copy.deepcopy(game_data.owned_gem)
+		if not unlimited_SIS:
+			for x in attr_list: 
+				self.owned_gem[x+' Kiss'] = 9
+		else:
+			for x in list(self.owned_gem.keys()):
+				self.owned_gem[x] = 9
+		# Import card inventory
+		raw_cards = copy.deepcopy(game_data.raw_card)
+		if extra_cond == 'current_max':
+			for i, card in raw_cards.items():
+				card.idolize(idolized=card.idolized, reset_slot=False)
+		elif extra_cond == 'idolized_max':
+			for i, card in raw_cards.items():
+				card.idolize(idolized=True, reset_slot=False)
+		elif extra_cond == 'copy_idolized_max':
+			for i, card in raw_cards.items():
+				if not card.idolized:
+					card.idolize(idolized=True, reset_slot=False)
+					card.slot_num = card.min_slot_num + 1
+		elif extra_cond == 'ultimate':
+			for i, card in raw_cards.items():
+				card.idolize(idolized=True)
+				card.slot_num = card.max_slot_num
+				if card.skill is not None:
+					card.skill.level = 8
+		self.cards = [AdvancedCard(index, card) for index, card in raw_cards.items()]
+		# List all possible SIS single plans for each card
 		for card in self.cards: card.list_gem_allocation(self.live)
 		self.best_team = None
 		self.log = ''
@@ -190,7 +219,7 @@ class TeamBuilder:
 			# Initialize queue
 			choice = tuple(list(range(8-len(pinned))))
 			gem_allocator = single_case(choice, center, candidates, pinned)
-			best_gem_allocator = gem_allocator
+			best_gem_allocator = copy.deepcopy(gem_allocator)
 			score_map[choice] = gem_allocator.total_score
 			queue = [choice]
 
@@ -212,7 +241,7 @@ class TeamBuilder:
 									continue
 								score_map[new_choice] = gem_allocator.total_score
 								if gem_allocator.total_score > best_gem_allocator.total_score:
-									best_gem_allocator = gem_allocator
+									best_gem_allocator = copy.deepcopy(gem_allocator)
 							# If the new choice is better, add it to the queue to examine later
 							# otherwise the new choice is not promising, eliminate it
 							if not eliminate[new_choice] and score_map[new_choice] >= score_map[choice]:
@@ -257,7 +286,7 @@ class TeamBuilder:
 			if i != prev_max_cskill_index and i < next_cskill_index: continue
 			try:
 				gem_allocator = self.build_team_fix_cskill(cskill=cskill, K=K, method=method, alloc_method=alloc_method, pin_index=pin_index, exclude_index=exclude_index)
-				exp_score = gem_allocator.construct_team().compute_expected_total_score(self.live, opt=opt)
+				exp_score = gem_allocator.total_score
 				result.append((exp_score, gem_allocator))
 			except:
 				exp_score = -1

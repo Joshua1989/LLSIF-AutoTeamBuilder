@@ -42,7 +42,7 @@ class SkillTracker:
 			self.curr_state += note['time_elapse']
 		elif 'h' not in note['index']:
 			if self.trigger_type == 'Note':
-				self.curr_state += note['accuracy*'] != 'Miss'
+				self.curr_state += 1
 			elif self.trigger_type == 'Combo':
 				self.curr_state += note['accuracy*'] in ['Perfect', 'Great']
 			elif self.trigger_type == 'Score':

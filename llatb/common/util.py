@@ -116,8 +116,11 @@ def update_card_data():
 	card_basic_stat = dict()
 	for unit_id, row in df_unit.iterrows():
 		if not row['is_support']:
-			card_id, card_info = card_summary(unit_id)
-			card_basic_stat[str(card_id)] = card_info
+			try:
+				card_id, card_info = card_summary(unit_id)
+				card_basic_stat[str(card_id)] = card_info
+			except:
+				print('New card {0} is not supported yet'.format(unit_id))
 
 	print('Generating basic card stats for Region Promo Set')
 	conn = sqlite3.connect(unit_aux_db_dir)

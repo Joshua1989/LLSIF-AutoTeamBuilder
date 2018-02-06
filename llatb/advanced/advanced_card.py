@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import math
+from math import ceil
 from llatb.common.global_var import *
 from llatb.framework import Card
 
@@ -53,7 +53,7 @@ class AdvancedCard(Card):
 
 		for i in range(3,self.slot_num+1):
 			temp = []
-			for j in range(math.ceil(i/2),i):
+			for j in range(ceil(i/2),i):
 				alloc1, alloc2 = gem_alloc[j], gem_alloc[i-j]
 				for item1 in alloc1:
 					for item2 in alloc2:
@@ -67,15 +67,14 @@ class AdvancedCard(Card):
 		# Compute the single card judge cover rate
 		# self.CR = 0 if not self.is_trick else self.skill.skill_gain(setting=setting)[0]
 		# Compute center skill bonus and card base score before same group & same color bonus
-		partial_boost = live.pts_per_strength * setting['score_up_rate']
 		self.base_bond_value = getattr(self, live.attr.lower()) + self.bond * (self.main_attr==live.attr) 
-		self.cskill_bonus, self.base_score = 0, 0
+		self.cskill_bonus, self.base_stat = 0, 0
 		if cskill is not None:
 			if cskill.main_attr == live.attr:
 				if cskill.base_attr == live.attr:
 					self.cskill_bonus += cskill.main_ratio/100
 				else:
-					self.base_score += getattr(self,cskill.base_attr.lower())*partial_boost*cskill.main_ratio/100
+					self.base_stat += ceil( (getattr(self,cskill.base_attr.lower()) + self.bond*(self.main_attr==cskill.base_attr) )*cskill.main_ratio/100)
 				if cskill.bonus_ratio is not None:
 					self.cskill_bonus += (cskill.bonus_range in self.tags) * cskill.bonus_ratio/100
 		if guest_cskill is not None: 
@@ -83,44 +82,47 @@ class AdvancedCard(Card):
 				if guest_cskill.base_attr == live.attr:
 					self.cskill_bonus += guest_cskill.main_ratio/100
 				else:
-					self.base_score += getattr(self,guest_cskill.base_attr.lower())*partial_boost*guest_cskill.main_ratio/100
+					self.base_stat += ceil( (getattr(self,guest_cskill.base_attr.lower()) + self.bond*(self.main_attr==guest_cskill.base_attr) )*guest_cskill.main_ratio/100)
 				if guest_cskill.bonus_ratio is not None:
 					self.cskill_bonus += (guest_cskill.bonus_range in self.tags) * guest_cskill.bonus_ratio/100
-		self.base_score += self.base_bond_value*partial_boost*(1+self.cskill_bonus)
+		self.base_stat += ceil(self.base_bond_value*(1+self.cskill_bonus))
 		# For skills that are not Score or Perfect or Star Perfect triggered, we do not need to compute it again
-		if (self.is_charm or self.is_heal) and self.skill.trigger_type not in ['Score', 'Perfect', 'Star']:
+		if self.skill is not None and self.skill.effect_type in ['Score Up', 'Stamina Restore'] and self.skill.trigger_type not in ['Score', 'Perfect', 'Star']:
 			self.skill_gain = self.skill.skill_gain(setting=setting)[0]
-	def update_gem_score(self, mu_bar, team_CR, strength_per_pt_tap, team_base, live, new_setting, sort=False):
+	def update_gem_score(self, mu_bar, team_CR, team_total_stat, live, new_setting, sort=False):
 		# Compute the score of each gem
 		boost = live.pts_per_strength * mu_bar * new_setting['score_up_rate']
-		self.card_base_score = math.ceil(self.base_score*mu_bar)
-		if self.is_charm:
+		self.card_base_score = ceil(self.base_stat*boost)
+		if self.skill is not None and self.skill.effect_type == 'Score Up':
 			# If the skill is Score/Perfect/Star triggered, compute the skill gain under new settings
 			if self.skill.trigger_type in ['Score', 'Perfect', 'Star']:
 				self.skill_gain = self.skill.skill_gain(setting=new_setting)[0]
-			self.card_base_score += math.ceil(self.skill_gain*strength_per_pt_tap*live.pts_per_strength)
+			self.card_base_score += ceil(self.skill_gain*live.note_number)
 
 		# Compute the score for each kind of gem
 		gem_score = dict()
 		if self.slot_num >= 1:
-			gem_score[live.attr +' Kiss'] = math.ceil(200*boost*(1+self.cskill_bonus))
+			gem_score[live.attr +' Kiss'] = ceil(ceil(200 * (1+self.cskill_bonus)) * boost)
 		if self.slot_num >= 2:
-			gem_score[live.attr +' Perfume'] = math.ceil(450*boost*(1+self.cskill_bonus))
-			gem_score[live.attr +' Ring '+ self.grade] = math.ceil(self.base_bond_value*0.1*boost*(1+self.cskill_bonus))
+			gem_score[live.attr +' Perfume'] = ceil(ceil(450 * (1+self.cskill_bonus)) * boost)
+			gem_score[live.attr +' Ring '+ self.grade] = ceil(ceil(ceil(self.base_bond_value*0.1) * (1+self.cskill_bonus)) * boost)
 		if self.slot_num >= 3:
-			gem_score[live.attr +' Cross '+ self.grade] = math.ceil(self.base_bond_value*0.16*boost*(1+self.cskill_bonus))
-			gem_score[live.attr +' Aura'] = math.ceil(team_base*0.018*boost)
+			gem_score[live.attr +' Cross '+ self.grade] = ceil(ceil(ceil(self.base_bond_value*0.16) * (1+self.cskill_bonus)) * boost)
+			gem_score[live.attr +' Aura'] = ceil(team_total_stat * 0.018 * boost)
 		if self.slot_num >= 4:
-			gem_score[live.attr +' Veil'] = math.ceil(team_base*0.024*boost)
+			gem_score[live.attr +' Veil'] = ceil(team_total_stat * 0.024 * boost)
 			if live.attr == self.main_attr:
-				gem_score[self.attr2+' Trick'] = math.ceil(0.33*team_CR*self.base_bond_value*boost)
+				gem_score[self.attr2+' Trick'] = ceil(0.33 * team_CR * self.base_bond_value * boost)
 			if self.is_charm:
-				gem_score[self.attr2+' Charm'] = math.ceil(self.skill_gain*1.5*strength_per_pt_tap*live.pts_per_strength)
+				# If the skill is Score/Perfect/Star triggered, compute the skill gain under new settings
+				if self.skill.trigger_type in ['Score', 'Perfect', 'Star']:
+					self.skill_gain = self.skill.skill_gain(setting=new_setting)[0]
+				gem_score[self.attr2+' Charm'] = ceil(1.5 * self.skill_gain * live.note_number)
 			if self.is_heal:
 				# If the skill is Score/Perfect/Star triggered, compute the skill gain under new settings
 				if self.skill.trigger_type in ['Score', 'Perfect', 'Star']:
 					self.skill_gain = self.skill.skill_gain(setting=new_setting)[0]
-				gem_score[self.attr2+' Heal'] = math.ceil(self.skill_gain*480*strength_per_pt_tap*live.pts_per_strength)
+				gem_score[self.attr2+' Heal'] = ceil(480 * self.skill_gain * live.note_number)
 		self.gem_score = gem_score
 		# Compute the score for all possible gem allocation for this card
 		self.max_alloc_score = 0
@@ -133,7 +135,7 @@ class AdvancedCard(Card):
 			if self.attr2+' Trick' in alloc.gems:
 				for gem in alloc.gems: 
 					if gem.split()[1] in ['Kiss', 'Perfume', 'Ring', 'Cross']:
-						alloc.score += math.ceil(0.33*team_CR*self.gem_score[gem]/(1+self.cskill_bonus/100))
+						alloc.score += ceil(0.33 * team_CR * self.gem_score[gem] / (1+self.cskill_bonus))
 			if alloc.score > self.max_alloc_score:
 				self.max_alloc_score = alloc.score
 		# Sort all possible allocation by score

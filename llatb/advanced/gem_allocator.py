@@ -21,47 +21,54 @@ class GemAllocator:
 		self.guest_cskill = self.setting.get('guest_cskill', None)
 		self.owned_gem = owned_gem
 
-	def update_gem_score(self, sort=False):
-		# Compute team total cover rate
+	def compute_team_CR(self):
 		if hasattr(self.live, 'note_list'):
 			temp = np.ones(self.live.note_number)
 			for card in self.card_list:
 				temp *= 1 - card.CR_list
-			self.team_CR = (1-temp).mean()
+			team_CR = (1-temp).mean()
 		else:
-			self.team_CR = 1 - (1-np.array([card.CR for card in self.card_list])).prod()
-		# Update live settings on new CR
-		if hasattr(self.live, 'update_live_stat'):
-			self.live.update_live_stat(self.team_CR)
+			team_CR = 1 - (1-np.array([card.CR for card in self.card_list])).prod()
+		return team_CR
+
+	def compute_optimal_placement(self):
 		# Compute Average Position Bonus
 		center_skill = self.card_list[0].cskill
 		center_idx_list = [i for i, card in enumerate(self.card_list) if card.cskill.is_equal(center_skill)]
-		self.mu_bar = 0
+		mu_bar, placement = 0, [None]*9
 		for center_idx in center_idx_list:
 			# Put non-center card with less same group&color bonus at position with smaller combo weight fraction
 			bonus_list  = sorted([(card.mu,i) for i, card in enumerate(self.card_list) if i != center_idx])
 			weight_list = sorted([(self.live.combo_weight_fraction[i], i) for i in range(9) if i!=4])
 			pos_factor  = self.card_list[center_idx].mu * self.live.combo_weight_fraction[4]
 			pos_factor += sum([b[0] * w[0] for b, w in zip(bonus_list, weight_list)])
-			if pos_factor > self.mu_bar: self.mu_bar = pos_factor
+			if pos_factor > mu_bar: 
+				mu_bar, placement[4] = pos_factor, center_idx
+				for i in range(8): 
+					placement[weight_list[i][1]] = bonus_list[i][1]
+		return mu_bar, placement
+
+	def update_gem_score(self, sort=False):
+		# Compute team total cover rate
+		self.team_CR = self.compute_team_CR()
+		# Compute optimal placement
+		self.mu_bar, self.placement = self.compute_optimal_placement()
 		# Update settings to compute skill gain of Skill Up and Stamina Restore skills
 		new_setting = self.setting.copy()
 		new_setting['attr_group_factor'] = self.mu_bar
 		new_setting['perfect_rate'] = 1 - (1-self.live.perfect_rate) * (1-self.team_CR)
-		# Compute strength per tap after amending perfect rate
-		for card in self.card_list:
-			if card.skill is not None:
-				self.strength_per_pt_tap = card.skill.skill_gain(setting=new_setting)[1]
+		# Update live settings on new CR
+		if hasattr(self.live, 'update_live_stat'):
+			self.live.update_live_stat(new_setting['perfect_rate'])
 
 		cskill_bonus = np.array([card.cskill_bonus for card in self.card_list])
 		base_bond_value = np.array([card.base_bond_value for card in self.card_list])
-		team_base_bond_cskill_value = (base_bond_value*(1+cskill_bonus)).sum()
+		team_base_bond_cskill_value = np.ceil(base_bond_value*(1+cskill_bonus)).sum()
 		# Compute gem score for each card
 		boost = self.live.pts_per_strength * self.mu_bar * self.setting['score_up_rate']
 		team_base_score, best_gem_score = 0, 0
 		for card in self.card_list:
-			card.update_gem_score(self.mu_bar, self.team_CR, self.strength_per_pt_tap, 
-								  team_base_bond_cskill_value, self.live, new_setting, sort=sort)
+			card.update_gem_score(self.mu_bar, self.team_CR, team_base_bond_cskill_value, self.live, new_setting, sort=sort)
 			team_base_score += card.card_base_score
 			best_gem_score  += card.max_alloc_score
 		return team_base_score, best_gem_score
@@ -254,30 +261,12 @@ class GemAllocator:
 		return self.optimal_alloc, self.total_score
 
 	def construct_team(self):
-		for card, alloc in zip(self.card_list, self.optimal_alloc):
-			card.equip_gem(alloc.gems)
-
-		center_skill = self.card_list[0].cskill
-		center_idx_list = [i for i, card in enumerate(self.card_list) if card.cskill.is_equal(center_skill)]
-
-		max_pos_factor, final_card_list = 0, [None]*9
-		for center_idx in center_idx_list:
-			# Put non-center card with less same group&color bonus at position with smaller combo weight fraction
-			bonus_list  = sorted([(card.mu,i) for i, card in enumerate(self.card_list) if i != center_idx])
-			weight_list = sorted([(self.live.combo_weight_fraction[i], i) for i in range(9) if i!=4])
-			pos_factor  = self.card_list[center_idx].mu * self.live.combo_weight_fraction[4]
-			pos_factor += sum([b[0] * w[0] for b, w in zip(bonus_list, weight_list)])
-			if pos_factor > max_pos_factor:
-				max_pos_factor, final_card_list[4] = pos_factor, self.card_list[center_idx]
-				for i in range(8): 
-					final_card_list[weight_list[i][1]] = self.card_list[bonus_list[i][1]]
+		for card, alloc in zip(self.card_list, self.optimal_alloc): card.equip_gem(alloc.gems)
+		final_card_list = [ self.card_list[self.placement[i]] for i in range(9) ]
 		return Team(final_card_list)
 
 	def view_optimal_details(self, show_cost=False, lang='EN', fixed_team=None):
 		team = self.construct_team() if fixed_team is None else fixed_team
-		# Update live settings on new CR
-		if hasattr(self.live, 'update_live_stat'):
-			self.live.update_live_stat(self.team_CR)
 
 		col_name = { x:'<img src="{0}" width=25/>'.format(misc_path(x)) for x in ['level','bond','smile','pure','cool'] }
 
@@ -297,12 +286,16 @@ class GemAllocator:
 				temp[i] -= card.skill.skill_gain(setting=self.setting)[0]
 		CR = 1 - temp.prod()
 		new_setting = self.setting.copy()
+		new_setting['attr_group_factor'] = self.mu_bar
 		new_setting['perfect_rate'] = 1 - (1-self.live.perfect_rate) * (1-self.team_CR)
 
-		# Compute 
+		# Update live settings on new CR
+		if hasattr(self.live, 'update_live_stat'):
+			self.live.update_live_stat(new_setting['perfect_rate'])
+		self.mu_bar = self.compute_optimal_placement()[0]
+
+		# Compute same group&attr bonus
 		bonus = lambda card: attr_match_factor**(self.live.attr==card.main_attr) * group_match_factor**(self.live.group in card.tags)
-		attr_group_bonus = np.array([bonus(card) for card in team.card_list])
-		mu_bar = (attr_group_bonus * self.live.combo_weight_fraction).sum()
 
 		def get_summary(index, card):
 			res = { 'CID':'<p>{0}</p>'.format(card.card_id), 
@@ -310,7 +303,7 @@ class GemAllocator:
 					'SIS': gem_slot_pic(card, show_cost=show_cost, gem_size=25)}
 			# Skill gain information
 			if card.skill is not None:
-				gain = card.skill.skill_gain(setting=self.setting)[0]
+				gain = card.skill.skill_gain(setting=new_setting)[0]
 				if card.skill.effect_type in ['Strong Judge', 'Weak Judge']:
 					skill_gain_str = '{0:.2f}% covered '.format(100*card.CR)
 				elif card.skill.effect_type == 'Stamina Restore':
@@ -366,13 +359,13 @@ class GemAllocator:
 			# Skill gem equivalent strength
 			res['Charm'], res['Heal'], res['Trick'] = 0, 0, 0
 			if card.skill is not None and card.skill.effect_type in ['Score Up', 'Stamina Restore']:
-				skill_gain, strength_per_pt_tap = card.skill.skill_gain(setting=new_setting)
+				skill_gain = card.skill.skill_gain(setting=new_setting)[0]
 				if card.skill.effect_type == 'Score Up':
-					res['Charm'] = math.ceil(skill_gain*strength_per_pt_tap)
+					res['Charm'] = math.ceil(skill_gain*self.live.strength_per_pt_tap)
 					if any(['Charm' in gem.name for gem in card.equipped_gems]):
-						res['Charm'] += math.ceil(1.5*skill_gain*strength_per_pt_tap)
+						res['Charm'] += math.ceil(1.5*skill_gain*self.live.strength_per_pt_tap)
 				elif card.skill.effect_type == 'Stamina Restore' and any(['Heal' in gem.name for gem in card.equipped_gems]):
-					res['Heal'] = math.ceil(480*skill_gain*strength_per_pt_tap)
+					res['Heal'] = math.ceil(480*skill_gain*self.live.strength_per_pt_tap)
 			res['Judge STR'] = res['Team STR']
 			if self.live.attr == card.main_attr and any(['Trick' in gem.name for gem in card.equipped_gems]):
 				res['Trick'] = math.ceil((res['Card STR']-res['Team ×'])*0.33*self.team_CR)
@@ -401,7 +394,7 @@ class GemAllocator:
 		df_live['Presume PR'] = '{0:.2f}%'.format(self.live.perfect_rate*100)
 		df_live['Score Up Rate'] = self.setting['score_up_rate']
 		df_live['Skill Up Rate'] = self.setting['skill_up_rate']
-		df_live['Avg Pos Bonus'] = mu_bar
+		df_live['Avg Pos Bonus'] = self.mu_bar
 		df_live.index = ['Live Stats']
 		df_live.columns = ['<p>{0}</p>'.format(x) for x in list(df_live.columns)]
 		df_live = df_live.applymap(lambda x: x if type(x)==str and x[0]=='<' else '<p>{0}</p>'.format(round(x,3) if type(x)==float else ('-' if str(x)=='0' else x)))
@@ -426,7 +419,7 @@ class GemAllocator:
 		df_team['Team STR'] = df['Team STR'].sum()
 		df_team['Amend Team STR'] = df['Amend STR'].sum()
 		df_team['Total Skill STR'] = df['Skill STR'].sum()
-		df_team['Expected Score']  = math.floor(df_team['Amend Team STR'] * self.live.pts_per_strength * mu_bar * self.setting['score_up_rate']) 
+		df_team['Expected Score']  = math.floor(df_team['Amend Team STR'] * self.live.pts_per_strength * self.mu_bar * self.setting['score_up_rate']) 
 		df_team['Expected Score'] += math.floor(df_team['Total Skill STR'] * self.live.pts_per_strength)
 		df_team.index = ['Total Stats']
 		df_team.columns = ['<p>{0}</p>'.format(x) for x in list(df_team.columns)]
@@ -434,6 +427,7 @@ class GemAllocator:
 		if lang=='CN':
 			df_team.columns = ['<p>{0}</p>'.format(x) for x in ['Center技', '好友Center技', 'Mic数／援力', '判定覆盖率' ,'队伍强度', '判定修正队伍强度', '总技能强度', '期望得分']]
 		html_team = df_team.to_html(escape=False)
+
 
 		df.columns = ['<p>{0}</p>'.format(x) if '<p>' not in x else x for x in columns]		
 		df = df.applymap(lambda x: x if type(x)==str and x[0]=='<' else '<p>{0}</p>'.format('-' if type(x)==int and x==0 else x))
@@ -475,7 +469,7 @@ class GemAllocator:
 			# compute the expected score if the best guest center skill is present
 			setting = self.setting.copy()
 			setting.update({'score_up_bonus':setting['score_up_rate']-1, 'skill_up_bonus':setting['skill_up_rate']-1, 'guest_cskill':best_guest_cskill})
-			df_guest['Expected Score'] = team.compute_expected_total_score(self.live, setting)
+			df_guest['Expected Score'] = team.compute_expected_total_score(copy.deepcopy(self.live), setting)
 			df_guest.columns = ['<p>{0}</p>'.format(x) for x in list(df_guest.columns)]
 			df_guest = df_guest.applymap(lambda x: x if type(x)==str and x[0]=='<' else '<p>{0}</p>'.format(round(x,3) if type(x)==float else ('-' if str(x)=='0' else x)))
 			if lang=='CN':

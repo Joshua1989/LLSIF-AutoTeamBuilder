@@ -26,7 +26,7 @@ def gem_slot_pic(card, total_slot_num=8, show_cost=True, gem_size=35):
 			result = ''.join(divs)
 		return result
 	else:
-		divs = [fmt.format(gem_path(gem.name), gem_size, gem_name) for gem in gems]
+		divs = [fmt.format(gem_path(gem.name), gem_size, gem.name) for gem in gems]
 		if len(divs) > 4:
 			result = ''.join(divs[:4]) + '<br>' + ''.join(divs[4:])
 		else:

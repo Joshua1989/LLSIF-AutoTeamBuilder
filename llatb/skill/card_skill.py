@@ -35,7 +35,7 @@ class Skill:
 			raise
 		self.effect_type = effect_type
 		if len(odds_list) != 8 or len(reward_list) != 8:
-			print('The length of oddsability and reward must be 8!')
+			print('The length of odds and reward must be 8!')
 			raise
 		self.odds_list, self.reward_list = odds_list, reward_list
 		self.odds, self.reward = odds_list[level-1], reward_list[level-1]
@@ -79,7 +79,10 @@ class Skill:
 		note_judge_factor = perfect_rate*accuracy_factor['Perfect'] + (1-perfect_rate)*accuracy_factor['Great']
 		note_judge_weight = note_judge_factor*(normal_density+swing_factor*swing_density) + note_judge_factor**2 * long_factor*long_density
 		# Corrected strength per point per tap
-		strength_per_pt_tap = 1 / (base_score_factor*combo_weight*note_judge_weight)
+		if setting.get('strength_per_pt_tap') is not None:
+			strength_per_pt_tap = setting['strength_per_pt_tap']
+		else:
+			strength_per_pt_tap = 1 / (base_score_factor*combo_weight*note_judge_weight)
 		# Average score per note = score_up_rate * presumed team strength / strength per point
 		pt_per_note = score_up_rate * team_strength / strength_per_pt_tap
 		

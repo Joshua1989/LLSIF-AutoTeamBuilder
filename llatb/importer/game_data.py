@@ -90,7 +90,7 @@ class GameData:
 			responses = [x for x in [extract_json(packet) for packet in packets] if is_response_data(x)]
 			for resp in responses:
 				resp_data = resp['response_data']
-				if type(resp_data) == list and len(resp_data) > 0 and resp_data[0]['result'].get('present_cnt') is not None:
+				if type(resp_data) == list and len(resp_data) > 0 and len(resp_data) >= 10:
 					useful_info = resp_data
 			result, profile = dict(), dict()
 			for item in useful_info:
